@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -41,5 +42,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_login' => 'datetime'
     ];
+
+    /**
+     * Returns number of players logged in within the past five minutes.
+     * Implements PlayersGateway::selectPlayersLoggedIn()
+     *
+     * @param int $subMinutes
+     * @return int
+     */
+    public static function loggedInCount(int $subMinutes = 5): int
+    {
+        return self::query()
+            ->whereBetween('last_login', [Carbon::now(), Carbon::now()->subMinutes($subMinutes)])
+            ->count();
+    }
 }
