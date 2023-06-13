@@ -1,80 +1,66 @@
 {
-    "name": "thekabal/invasion",
-    "description": "The Kabal Invasion is a web-based 4 space game.",
-    "authors": [
-        {
-            "name": "TheKabal",
-            "email": "TheKabal@gmail.com"
-        }
-    ],
-    "license": "AGPL-3.0-only",
-    "minimum-stability": "alpha",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
     "require": {
-        "smarty/smarty": "^3.1.42",
-        "ezyang/htmlpurifier": "^4.13.0",
-        "swiftmailer/swiftmailer": "^6.2.7",
-        "adodb/adodb-php": "^5.21.2",
-        "symfony/http-foundation": "^5.3.7",
-        "ext-PDO": "*"
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^10.10",
+        "laravel/sanctum": "^3.2",
+        "laravel/tinker": "^2.8"
     },
     "require-dev": {
-        "phpmd/phpmd" : "^2.10.2",
-        "friendsofphp/php-cs-fixer": "^3.1.0",
-        "phpunit/phpunit": "^9.5.10",
-        "phpmetrics/phpmetrics": "^2.7.4",
-        "phpstan/phpstan": "^0.12.99",
-        "phpstan/phpstan-deprecation-rules": "^0.12.6",
-        "phpstan/phpstan-strict-rules": "^0.12.11",
-        "sebastian/phpcpd": "^6.0.3",
-        "squizlabs/php_codesniffer": "^3.6.0",
-        "vimeo/psalm": "^4.10.0"
-    },
-    "config": {
-        "optimize-autoloader": true
+        "fakerphp/faker": "^1.9.1",
+        "laravel/pint": "^1.0",
+        "laravel/sail": "^1.18",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.1",
+        "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
-        "psr-4": { "Tki\\": ["classes/", "tests/", "config/"]}
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
-        "tests": [
-            "vendor/bin/phpunit --dont-report-useless-tests tests | tail -1",
-            "phpcs --standard=/opt/html/tki/vendor/bin/phpcs.xml --ignore=templates,vendor .",
-          "psalm --no-progress --no-suggestions -c psalm.xml . | head -3 | tail -1",
-          "phpstan analyze --memory-limit=1G --no-progress --no-ansi -l 8 -c phpstan.neon . | head -2 | tail -1",
-            "vendor/bin/local-php-security-checker --path=/opt/html/tki/ | head -4 | tail -1"
-            ],
-        "disabled-due-to-php8-problems-tests": [
-            "phpmd . text /opt/html/tki/vendor/bin/phpmd.xml --exclude vendor/,templates/"
-            ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi"
+        ],
         "post-update-cmd": [
-            "rm -rf vendor/ezyang/htmlpurifier/docs/",
-            "rm -rf vendor/ezyang/htmlpurifier/extras/",
-            "rm -rf vendor/ezyang/htmlpurifier/smoketests/",
-            "rm -rf vendor/ezyang/htmlpurifier/tests/",
-            "rm -rf vendor/ezyang/htmlpurifier/art/",
-            "rm -rf vendor/ezyang/htmlpurifier/benchmarks/",
-            "rm -rf vendor/ezyang/htmlpurifier/configdoc/",
-            "rm -rf vendor/ezyang/htmlpurifier/maintenance/",
-            "rm -rf vendor/ezyang/htmlpurifier/plugins/",
-            "rm -rf vendor/ezyang/htmlpurifier/.git/",
-            "rm -rf vendor/ezyang/htmlpurifier/INSTALL.fr.utf8",
-            "rm -rf vendor/ezyang/htmlpurifier/Doxyfile",
-            "rm -rf vendor/ezyang/htmlpurifier/*.php",
-            "rm -rf vendor/ezyang/htmlpurifier/phpdoc.ini",
-            "rm -rf vendor/adodb/adodb-php/contrib/",
-            "rm -rf vendor/adodb/adodb-php/cute_icons_for_site/",
-            "rm -rf vendor/adodb/adodb-php/lang/",
-            "rm -rf vendor/adodb/adodb-php/pear/",
-            "rm -rf vendor/adodb/adodb-php/replicate/",
-            "rm -rf vendor/adodb/adodb-php/scripts/",
-            "rm -rf vendor/adodb/adodb-php/tests/",
-            "rm -rf vendor/adodb/adodb-php/docs/",
-            "rm -rf vendor/adodb/adodb-php/.git/",
-            "rm -rf vendor/smarty/smarty/development",
-            "rm -rf vendor/smarty/smarty/documentation",
-            "rm -rf vendor/swiftmailer/swiftmailer/notes",
-            "rm -rf vendor/swiftmailer/swiftmailer/doc",
-            "rm -rf vendor/swiftmailer/swiftmailer/tests"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-root-package-install": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ],
+        "post-create-project-cmd": [
+            "@php artisan key:generate --ansi"
         ]
-    }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": []
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
