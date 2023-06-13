@@ -39,8 +39,8 @@
         "tests": [
             "vendor/bin/phpunit --dont-report-useless-tests tests | tail -1",
             "phpcs --standard=/opt/html/tki/vendor/bin/phpcs.xml --ignore=templates,vendor .",
-            "psalm --no-progress --no-suggestions -c vendor/bin/psalm.xml . | head -3 | tail -1",
-            "phpstan analyze --memory-limit=1G --no-progress --no-ansi -l 8 -c vendor/bin/phpstan.neon . | head -2 | tail -1",
+          "psalm --no-progress --no-suggestions -c psalm.xml . | head -3 | tail -1",
+          "phpstan analyze --memory-limit=1G --no-progress --no-ansi -l 8 -c phpstan.neon . | head -2 | tail -1",
             "vendor/bin/local-php-security-checker --path=/opt/html/tki/ | head -4 | tail -1"
             ],
         "disabled-due-to-php8-problems-tests": [
