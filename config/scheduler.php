@@ -24,7 +24,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | New Turns Spacing
+    | Minutes between New Turns
     |--------------------------------------------------------------------------
     |
     | New turns rate also includes towing, kabal
@@ -33,7 +33,7 @@ return [
     'sched_turns' => 2,
     /*
     |--------------------------------------------------------------------------
-    | Port Production Spacing
+    | Minutes between Port Production
     |--------------------------------------------------------------------------
     |
     | How often port production occurs
@@ -43,7 +43,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Planetary Production Spacing
+    | Minutes between Planetary Production
     |--------------------------------------------------------------------------
     |
     | How often planet production occurs
@@ -53,7 +53,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Interest Spacing
+    | Minutes between Interest Payments
     |--------------------------------------------------------------------------
     |
     | How often IBANK interests are added
@@ -63,7 +63,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Rankings Spacing
+    | Minutes between Rankings generation
     |--------------------------------------------------------------------------
     |
     | How often rankings will be generated
@@ -73,7 +73,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | News Generation Spacing
+    | Minutes between News Generation
     |--------------------------------------------------------------------------
     |
     | How often news are generated
@@ -83,7 +83,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Sector Fighters degradation spacing
+    | Minutes between Sector Fighters degradation
     |--------------------------------------------------------------------------
     |
     | How often sector fighters degrade when unsupported by a planet
@@ -93,7 +93,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Apocalypse Likelihood
+    | Minutes between Apocalypse Occurrence
     |--------------------------------------------------------------------------
     |
     | How often apocalypse events will occur
@@ -103,7 +103,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Governor
+    | Minutes between Governor running
     |--------------------------------------------------------------------------
     |
     | How often the governor will run, cleaning up out-of-bound values
