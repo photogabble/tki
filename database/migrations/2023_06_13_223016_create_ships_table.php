@@ -53,7 +53,7 @@ return new class extends Migration
             $table->unsignedInteger('dev_emerwarp')->default(0);
             $table->boolean('dev_escapepod')->default(false);
             $table->boolean('dev_fuelscoop')->default(false);
-            $table->boolean('dev_lssd')->default('false');
+            $table->boolean('dev_lssd')->default(false);
             $table->unsignedInteger('dev_minedeflector')->default(0);
 
             $table->unsignedInteger('turns_used')->default(0);
