@@ -11,12 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Is players table
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            $table->timestamp('last_login')->nullable()->default(null);
+            $table->string('lang', 30)->default('en_GB');
+
             $table->rememberToken();
             $table->timestamps();
         });
