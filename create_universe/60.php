@@ -64,6 +64,7 @@ $initbore = $tkireg->ore_limit * $variables['initbcommod'] / 100.0;
 $initborganics = $tkireg->organics_limit * $variables['initbcommod'] / 100.0;
 $initbgoods = $tkireg->goods_limit * $variables['initbcommod'] / 100.0;
 $initbenergy = $tkireg->energy_limit * $variables['initbcommod'] / 100.0;
+
 $local_table_timer = new Tki\Timer();
 $local_table_timer->start(); // Start benchmarking
 $insert = $pdo_db->exec("INSERT INTO ::prefix::universe (sector_id, sector_name, zone_id, port_type, port_organics, port_ore, port_goods, port_energy, beacon, angle1, angle2, distance) VALUES ('1', 'Sol', '1', 'special', '0', '0', '0', '0', 'Sol: Hub of the Universe', '0', '0', '0')");
@@ -80,6 +81,8 @@ $catch_results[$result_count] = $variables['create_ac_results']['result'];
 $result_count++;
 $local_table_timer->stop();
 $variables['create_ac_results']['time'] = $local_table_timer->elapsed();
+
+///////
 
 $loopsize = 1000;
 $loops = round($tkireg->max_sectors / $loopsize);
@@ -176,6 +179,10 @@ $catch_results[$result_count] = $variables['create_warzone_results']['result'];
 $result_count++;
 $local_table_timer->stop();
 $variables['create_warzone_results']['time'] = $local_table_timer->elapsed();
+
+
+////
+
 
 $local_table_timer->start(); // Start benchmarking
 $sql = "UPDATE ::prefix::universe SET zone_id = '2' WHERE sector_id <= :fedsecs";
