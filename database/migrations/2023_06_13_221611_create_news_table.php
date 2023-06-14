@@ -16,10 +16,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->string('headline', 100);
-            $table->text('newstext');
+            $table->text('body');
 
-            $table->unsignedBigInteger('user_id');
-            $table->string('news_type', 10); // TODO int?
+            $table->unsignedBigInteger('user_id')->nullable()->default(null);
+            $table->char('type', 10); // TODO int?
         });
     }
 
