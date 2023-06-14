@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Universe;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unsignedBigInteger('sector_id');
-            $table->string('name', 15);
+            $table->string('name', 15)->nullable()->default(null);
 
             $table->integer('organics')->default(0);
             $table->integer('ore')->default(0);
@@ -40,6 +41,13 @@ return new class extends Migration
             $table->integer('prod_torp')->default(0);
 
             $table->boolean('defeated')->default(false);
+
+            $table->foreign('sector_id')
+                ->references('id')
+                ->on((new Universe)->getTable())
+                ->onDelete('cascade');
+
+            // TODO: Add foreign keys for teams and owner once used
         });
     }
 

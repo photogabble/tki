@@ -2,14 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\ExecutionTimer;
 use App\Installer\CreateAdminAccount;
 use App\Installer\CreateNews;
 use App\Installer\CreatePlanets;
-use App\Installer\CreateSchedulers;
-use App\Installer\CreateSectors;
+use App\Installer\CreateSystemLinks;
+use App\Installer\CreateSystems;
 use App\Installer\CreateZones;
 use App\Installer\InstallConfig;
 use App\Installer\InstallStep;
+use App\Installer\PopulateZoneSectorsPorts;
 use Illuminate\Console\Command;
 
 class BigBang extends Command
@@ -19,7 +21,7 @@ class BigBang extends Command
      *
      * @var string
      */
-    protected $signature = 'app:big-bang';
+    protected $signature = 'app:big-bang {--use-defaults} {--force}';
 
     /**
      * The console command description.
@@ -57,7 +59,9 @@ class BigBang extends Command
         if ($this->configureInstall() !== 0) return 1;
 
         // Fresh Migration
-        if (!$this->confirm(__('create_universe.l_cu_table_drop_warn'))) return 1;
+        if (!$this->option('force')) {
+            if (!$this->confirm(__('create_universe.l_cu_table_drop_warn'))) return 1;
+        }
         $this->call('migrate:fresh');
 
         // Store Max Sectors Value
@@ -65,16 +69,17 @@ class BigBang extends Command
 
         /** @var InstallStep[] $stages */
         $stages = [
-            CreateSectors::class,       // 60
-            CreateZones::class,         // 65
-            CreatePlanets::class,       // 70
-            CreateSchedulers::class,    // 80
-            CreateNews::class,          // 90
-            CreateAdminAccount::class   // 100
+            CreateZones::class,                 // 60
+            CreateSystems::class,               // 65
+            PopulateZoneSectorsPorts::class,    // 68
+            CreatePlanets::class,               // 70
+            CreateSystemLinks::class,           // 75
+            CreateNews::class,                  // 90
+            CreateAdminAccount::class           // 100
         ];
 
         foreach($stages as $stage) {
-            (new $stage)->execute($this->output, $this->installConfig);
+            (new $stage(new ExecutionTimer))->execute($this->output, $this->installConfig);
         }
 
         $this->line(__('create_universe.l_cu_congrats_success'));
@@ -83,6 +88,9 @@ class BigBang extends Command
     }
 
     private function configureInstall(): int {
+
+        // TODO: dont ask questions if $this->option('use-defaults')
+
         // Ports
         $this->line(__('create_universe.l_cu_base_n_planets'));
 
@@ -164,6 +172,8 @@ class BigBang extends Command
                 [__('create_universe.l_cu_loops'), $this->installConfig->loops],
                 [__('create_universe.l_cu_unowned_planets'), $this->installConfig->unownedPlanets],
             ]);
+
+            if ($this->option('force')) return 0;
 
             if ($this->confirm(__('create_universe.l_cu_confirm_settings', ['max_sectors' => $this->installConfig->maxSectors,]))) {
                 return 0;

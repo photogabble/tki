@@ -16,9 +16,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->string('name', 30);
+            $table->string('name', 30)->nullable()->default(null);
 
-            $table->unsignedBigInteger('zone_id');
+            $table->unsignedBigInteger('zone_id')->nullable()->default(null);
 
             $table->string('port_type', 8)->default('none');
             $table->integer('port_organics')->default(0);
@@ -32,6 +32,11 @@ return new class extends Migration
             $table->integer('fighters')->default(0);
 
             $table->index('port_type');
+
+            $table->foreign('zone_id')
+                ->references('id')
+                ->on((new \App\Models\Zone())->getTable())
+                ->onDelete('set null');
         });
     }
 

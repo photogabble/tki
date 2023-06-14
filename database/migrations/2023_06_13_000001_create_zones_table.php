@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('name', 40);
 
-            $table->unsignedBigInteger('owner');
+            $table->unsignedBigInteger('owner')->nullable()->default(null);
 
             $table->boolean('team_zone')->default(false);
             $table->boolean('allow_beacon')->default(true);

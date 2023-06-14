@@ -3,37 +3,75 @@
 namespace App\Installer;
 
 // Second half of 60.php
+use App\Models\Zone;
 use Illuminate\Console\OutputStyle;
 
-class CreateZones implements InstallStep{
+class CreateZones extends Step implements InstallStep
+{
     public function execute(OutputStyle $output, InstallConfig $config): int
     {
+        $this->timer->start();
 
-        // Insert zones - Unchartered, fed, free trade, war & Fed space
+        // Insert Unchartered Zone
+        $zone = new Zone();
+        $zone->name = 'Unchartered space';
+        $zone->team_zone = false;
+        $zone->allow_beacon = true;
+        $zone->allow_attack = true;
+        $zone->allow_planetattack = true;
+        $zone->allow_warpedit = true;
+        $zone->allow_planet = true;
+        $zone->allow_trade = true;
+        $zone->allow_defenses = true;
+        $zone->save();
 
-        // Finding random sectors where port=none and getting their sector ids in one sql query
+        $output->writeln(__('create_universe.l_cu_setup_unchartered', ['elapsed' => $this->timer->sample()]));
 
-        // TODO: Insert special ports
+        // Insert Federation Zone
+        $zone = new Zone();
+        $zone->name = 'Federation space';
+        $zone->team_zone = false;
+        $zone->allow_beacon = false;
+        $zone->allow_attack = false;
+        $zone->allow_planetattack = false;
+        $zone->allow_warpedit = false;
+        $zone->allow_planet = false;
+        $zone->allow_trade = true;
+        $zone->allow_defenses = false;
+        $zone->max_hull = config('game.max_fed_hull');
+        $zone->save();
 
-        // Finding random sectors where port=none and getting their sector ids in one sql query
-        // For Ore Ports
+        $output->writeln(__('create_universe.l_cu_setup_fedspace', ['elapsed' => $this->timer->sample()]));
 
-        // TODO: Insert ore ports
+        // Insert Free Trade Zone
+        $zone = new Zone();
+        $zone->name = 'Free-Trade space';
+        $zone->team_zone = false;
+        $zone->allow_beacon = false;
+        $zone->allow_attack = true;
+        $zone->allow_planetattack = false;
+        $zone->allow_warpedit = false;
+        $zone->allow_planet = false;
+        $zone->allow_trade = true;
+        $zone->allow_defenses = false;
+        $zone->save();
 
-        // Finding random sectors where port=none and getting their sector ids in one sql query
-        // For Organic Ports
+        $output->writeln(__('create_universe.l_cu_setup_free', ['elapsed' => $this->timer->sample()]));
 
-        // TODO: Insert organics ports
+        // Insert War Zone
+        $zone = new Zone();
+        $zone->name = 'War Zone';
+        $zone->team_zone = false;
+        $zone->allow_beacon = true;
+        $zone->allow_attack = true;
+        $zone->allow_planetattack = true;
+        $zone->allow_warpedit = true;
+        $zone->allow_planet = true;
+        $zone->allow_trade = false;
+        $zone->allow_defenses = true;
+        $zone->save();
 
-        // Finding random sectors where port=none and getting their sector ids in one sql query
-        // For Goods Ports
-
-        // TODO: Insert goods ports
-
-        // Finding random sectors where port=none and getting their sector ids in one sql query
-        // For Energy Ports
-
-        // TODO: Insert energy ports
+        $output->writeln(__('create_universe.l_cu_setup_warzone', ['elapsed' => $this->timer->sample()]));
 
         return 0;
     }
