@@ -1,0 +1,15 @@
+<?php return [
+    "l_mines_title" => "Deploy sector mines &amp; fighters",
+    "l_mines_noturn" => "You need at least one turn to deploy sector defenses.",
+    "l_mines_nopermit" => "Deploying mines and fighters in this sector is not permitted.",
+    "l_mines_nodeploy" => "Can not deploy here. Another ship or team has mines or fighters in this sector.",
+    "l_mines_info1" => "You are presently in sector [sector]. There are [mines] mines and [fighters] fighters here.",
+    "l_mines_info2" => "You have [mines] mines and [fighters] fighters available to deploy",
+    "l_mines_deploy" => "Deploy",
+    "l_mines_att" => "Attack",
+    "l_mines_toll" => "Toll",
+    "l_mines_notorps" => "You do not have enough torpedos.",
+    "l_mines_nofighters" => "You do not have enough fighters",
+    "l_mines_dmines" => "Deployed [mines] mines.",
+    "l_mines_dfighter" => "Deployed [fighters] fighters in [mode] mode.",
+];

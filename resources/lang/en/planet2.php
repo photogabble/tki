@@ -1,0 +1,16 @@
+<?php return [
+    "l_planet2_title" => "Planetary transfer",
+    "l_planet2_noturn" => "You need at least one turn to perform a planetary transfer.",
+    "l_planet2_noten" => "You don't have enough",
+    "l_planet2_fortr" => "for the requested transfer.",
+    "l_planet2_settr" => "Setting transfer amount to",
+    "l_planet2_losup" => "The planet was only able to supply",
+    "l_planet2_notowner" => "You do not own this planet.",
+    "l_planet2_compl" => "Transfer complete.",
+    "l_planet2_power" => "power capacity",
+    "l_planet2_comp" => "computer capacity",
+    "l_planet2_laun" => "launcher capacity",
+    "l_planet2_noteamtransfer" => "You cannot transfer credits to or from team planets.",
+    "l_planet2_baseexceeded" => "Planets without a base can not hold that amount of credits.",
+    "l_planet2_invalid_planet" => "Invalid Planet",
+];
