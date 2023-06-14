@@ -47,11 +47,11 @@ class Kernel extends ConsoleKernel
         | PlanetsScheduler => sched_planets.php
         |
         */
-        $schedule->job(TurnsScheduler::class)->spliceIntoPosition(1, '*/2')->withoutOverlapping();
-        $schedule->job(KabalScheduler::class)->spliceIntoPosition(1, '*/2')->withoutOverlapping();
-        $schedule->job(TowScheduler::class)->spliceIntoPosition(1, '*/2')->withoutOverlapping();
-        $schedule->job(BankScheduler::class)->spliceIntoPosition(1, '*/2')->withoutOverlapping();;
-        $schedule->job(PlanetsScheduler::class)->spliceIntoPosition(1, '*/2')->withoutOverlapping();;
+        $schedule->job(TurnsScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();
+        $schedule->job(KabalScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();
+        $schedule->job(TowScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();
+        $schedule->job(BankScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();;
+        $schedule->job(PlanetsScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();;
 
         /*
         |--------------------------------------------------------------------------
