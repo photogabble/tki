@@ -26,6 +26,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
+    // This is akin to main.php
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

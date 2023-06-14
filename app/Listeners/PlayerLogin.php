@@ -17,5 +17,7 @@ class PlayerLogin
         $event->user->update([
             'last_login' => Carbon::now(),
         ]);
+
+        // TODO: Copy functionality from login2.php
     }
 }
