@@ -47,11 +47,11 @@ class Kernel extends ConsoleKernel
         | PlanetsScheduler => sched_planets.php
         |
         */
-        $schedule->job(TurnsScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();
-        $schedule->job(KabalScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();
-        $schedule->job(TowScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();
-        $schedule->job(BankScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();;
-        $schedule->job(PlanetsScheduler::class)->cron('*/2 * * * *')->withoutOverlapping();;
+        $schedule->job(TurnsScheduler::class)->everyTwoMinutes()->withoutOverlapping();
+        $schedule->job(KabalScheduler::class)->everyTwoMinutes()->withoutOverlapping();
+        $schedule->job(TowScheduler::class)->everyTwoMinutes()->withoutOverlapping();
+        $schedule->job(BankScheduler::class)->everyTwoMinutes()->withoutOverlapping();;
+        $schedule->job(PlanetsScheduler::class)->everyTwoMinutes()->withoutOverlapping();;
 
         /*
         |--------------------------------------------------------------------------
@@ -84,7 +84,6 @@ class Kernel extends ConsoleKernel
         |
         */
         $schedule->job(RankingScheduler::class)->everyThirtyMinutes()->withoutOverlapping();
-
     }
 
     /**
