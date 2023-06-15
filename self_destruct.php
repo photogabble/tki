@@ -81,7 +81,7 @@ elseif ($sure == 2)
 
     $admin_log = new Tki\AdminLog();
     $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_HARAKIRI, "$playerinfo[character_name]|" . $request->server->get('REMOTE_ADDR') . "");
-    Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::HARAKIRI, $request->server->get('REMOTE_ADDR'));
+    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::HARAKIRI, $request->server->get('REMOTE_ADDR'));
     echo $langvars['l_die_lost_planets'] . "<br>\n";
 }
 else

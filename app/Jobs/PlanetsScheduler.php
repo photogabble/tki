@@ -55,7 +55,7 @@ class PlanetsScheduler extends ScheduledTask
                 $starvation = floor($planet->colonists * config('game.starvation_death_rate'));
 
                 if (!is_null($planet->owner_id)) {
-                    \Tki\PlayerLog::writeLog($planet->owner_id, \Tki\LogEnums::STARVATION, "$planet->sector_id|$starvation");
+                    \Tki\Models\PlayerLog::writeLog($planet->owner_id, \Tki\LogEnums::STARVATION, "$planet->sector_id|$starvation");
                 }
             }
 

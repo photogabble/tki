@@ -62,7 +62,7 @@ class KabalToShip
 
         if ($zonerow['allow_attack'] == "N")                        //  Dest link must allow attacking
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Attack failed, you are in a sector that prohibits attacks.");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Attack failed, you are in a sector that prohibits attacks.");
 
             return;
         }
@@ -70,7 +70,7 @@ class KabalToShip
         // Use emergency warp device
         if ($targetinfo['dev_emerwarp'] > 0)
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_EWD, "Kabal $playerinfo[character_name]");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_EWD, "Kabal $playerinfo[character_name]");
             $dest_sector = random_int(1, $tkireg->max_sectors);
 
             $sql = "UPDATE ::prefix::ships SET sector = :sector, dev_emerwarp = dev_emerwarp - 1 " .
@@ -366,12 +366,12 @@ class KabalToShip
                 $stmt->bindParam(':ship_id', $targetinfo['ship_id'], \PDO::PARAM_INT);
                 $stmt->execute();
                 \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                \Tki\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_LOSE, "Kabal $playerinfo[character_name]|Y");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_LOSE, "Kabal $playerinfo[character_name]|Y");
             }
             else
             // Target had no pod
             {
-                \Tki\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_LOSE, "Kabal $playerinfo[character_name]|N");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_LOSE, "Kabal $playerinfo[character_name]|N");
                 $character_object->kill($pdo_db, $lang, $targetinfo['ship_id'], $tkireg);
             }
 
@@ -418,7 +418,7 @@ class KabalToShip
                 $ship_value = $tkireg->upgrade_cost * (round(pow($tkireg->upgrade_factor, $targetinfo['hull'])) + round(pow($tkireg->upgrade_factor, $targetinfo['engines'])) + round(pow($tkireg->upgrade_factor, $targetinfo['power'])) + round(pow($tkireg->upgrade_factor, $targetinfo['computer'])) + round(pow($tkireg->upgrade_factor, $targetinfo['sensors'])) + round(pow($tkireg->upgrade_factor, $targetinfo['beams'])) + round(pow($tkireg->upgrade_factor, $targetinfo['torp_launchers'])) + round(pow($tkireg->upgrade_factor, $targetinfo['shields'])) + round(pow($tkireg->upgrade_factor, $targetinfo['armor'])) + round(pow($tkireg->upgrade_factor, $targetinfo['cloak'])));
                 $ship_salvage_rate = random_int(10, 20);
                 $ship_salvage = $ship_value * $ship_salvage_rate / 100;
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Attack successful, $targetinfo[character_name] was defeated and salvaged for $ship_salvage credits.");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Attack successful, $targetinfo[character_name] was defeated and salvaged for $ship_salvage credits.");
 
                 $sql = "UPDATE ::prefix::ships SET  ship_ore = ship_ore + :salv_ore, " .
                        "ship_organics = ship_organics + :salv_organics, ship_goods = ship_goods + :salv_goods, " .
@@ -463,8 +463,8 @@ class KabalToShip
             $target_armor_lost = $targetinfo['armor_pts'] - $targetarmor;
             $target_fighters_lost = $targetinfo['ship_fighters'] - $targetfighters;
             $target_energy = $targetinfo['ship_energy'];
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Attack failed, $targetinfo[character_name] survived.");
-            \Tki\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_WIN, "Kabal $playerinfo[character_name]|$target_armor_lost|$target_fighters_lost");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Attack failed, $targetinfo[character_name] survived.");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_WIN, "Kabal $playerinfo[character_name]|$target_armor_lost|$target_fighters_lost");
 
             $sql = "UPDATE ::prefix::ships SET ship_energy = :energy, " .
                    "ship_fighters = ship_fighters - :fighters_lost, " .
@@ -502,7 +502,7 @@ class KabalToShip
         // Attacker ship destroyed
         if (!$attackerarmor > 0)
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "$targetinfo[character_name] destroyed your ship!");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "$targetinfo[character_name] destroyed your ship!");
             $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
             if ($targetarmor > 0)
             {
@@ -549,8 +549,8 @@ class KabalToShip
                 $ship_value = $tkireg->upgrade_cost * (round(pow($tkireg->upgrade_factor, $playerinfo['hull'])) + round(pow($tkireg->upgrade_factor, $playerinfo['engines'])) + round(pow($tkireg->upgrade_factor, $playerinfo['power'])) + round(pow($tkireg->upgrade_factor, $playerinfo['computer'])) + round(pow($tkireg->upgrade_factor, $playerinfo['sensors'])) + round(pow($tkireg->upgrade_factor, $playerinfo['beams'])) + round(pow($tkireg->upgrade_factor, $playerinfo['torp_launchers'])) + round(pow($tkireg->upgrade_factor, $playerinfo['shields'])) + round(pow($tkireg->upgrade_factor, $playerinfo['armor'])) + round(pow($tkireg->upgrade_factor, $playerinfo['cloak'])));
                 $ship_salvage_rate = random_int(10, 20);
                 $ship_salvage = $ship_value * $ship_salvage_rate / 100;
-                \Tki\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_WIN, "Kabal $playerinfo[character_name]|$armor_lost|$fighters_lost");
-                \Tki\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::RAW, "You destroyed the Kabal ship and salvaged $salv_ore units of ore, $salv_organics units of organics, $salv_goods units of goods, and salvaged $ship_salvage_rate% of the ship for $ship_salvage credits.");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::ATTACK_WIN, "Kabal $playerinfo[character_name]|$armor_lost|$fighters_lost");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], LogEnums::RAW, "You destroyed the Kabal ship and salvaged $salv_ore units of ore, $salv_organics units of organics, $salv_goods units of goods, and salvaged $ship_salvage_rate% of the ship for $ship_salvage credits.");
 
                 $sql = "UPDATE ::prefix::ships SET ship_ore = ship_ore + :salv_ore , " .
                        "ship_organics = ship_organics + :salv_organics, ship_goods = ship_goods + :salv_goods, credits = credits + :ship_salvage " .

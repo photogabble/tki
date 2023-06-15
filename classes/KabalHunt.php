@@ -57,7 +57,7 @@ class KabalHunt
         // Make sure we have a target
         if (!$targetinfo)
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Hunt Failed: No Target ");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Hunt Failed: No Target ");
             return;
         }
 
@@ -90,12 +90,12 @@ class KabalHunt
             \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
             echo "<br>" . $langvars['l_nonexistant_pl'] . "<br><br>";
 
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal used a wormhole to warp to sector $targetinfo[sector] where he is hunting player $targetinfo[character_name].");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal used a wormhole to warp to sector $targetinfo[sector] where he is hunting player $targetinfo[character_name].");
             if (!$result)
             {
                 $error = null;
                 // $error = $old_db->ErrorMsg();
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed with error: $error ");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed with error: $error ");
 
                 return;
             }
@@ -150,7 +150,7 @@ class KabalHunt
                 return; // Sector defenses killed the Kabal
             }
 
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal launching an attack on $targetinfo[character_name]."); // Attack the target
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal launching an attack on $targetinfo[character_name]."); // Attack the target
 
             if ($targetinfo['planet_id'] > 0) // Is player target on a planet?
             {
@@ -163,7 +163,7 @@ class KabalHunt
         }
         else
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal hunt failed, target $targetinfo[character_name] was in a no attack zone (sector $targetinfo[sector]).");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal hunt failed, target $targetinfo[character_name] was in a no attack zone (sector $targetinfo[sector]).");
         }
     }
 }

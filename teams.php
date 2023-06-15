@@ -220,7 +220,7 @@ switch ($teamwhat)
 
                 $langvars['l_team_onlymember'] = str_replace("[team_name]", "<strong>$team[team_name]</strong>", $langvars['l_team_onlymember']);
                 echo $langvars['l_team_onlymember'] . "<br><br>";
-                Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_LEAVE, $team['team_name']);
+                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_LEAVE, $team['team_name']);
             }
             else
             {
@@ -279,8 +279,8 @@ switch ($teamwhat)
                     echo $langvars['l_team_youveleft'] . " <strong>" . $team['team_name'] . "</strong>.<br><br>";
                     Tki\Defense::defenseVsDefense($pdo_db, $lang, $playerinfo['ship_id']);
                     Tki\Ship::leavePlanet($pdo_db, $playerinfo['ship_id']);
-                    Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_LEAVE, $team['team_name']);
-                    Tki\PlayerLog::writeLog($pdo_db, $team['creator'], \Tki\LogEnums::TEAM_NOT_LEAVE, $playerinfo['character_name']);
+                    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_LEAVE, $team['team_name']);
+                    Tki\Models\PlayerLog::writeLog($pdo_db, $team['creator'], \Tki\LogEnums::TEAM_NOT_LEAVE, $playerinfo['character_name']);
                 }
             }
         }
@@ -322,8 +322,8 @@ switch ($teamwhat)
                 }
             }
 
-            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_NEWLEAD, $team['team_name'] . "|" . $newcreatorname['character_name']);
-            Tki\PlayerLog::writeLog($pdo_db, $newcreator, \Tki\LogEnums::TEAM_LEAD, $team['team_name']);
+            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_NEWLEAD, $team['team_name'] . "|" . $newcreatorname['character_name']);
+            Tki\Models\PlayerLog::writeLog($pdo_db, $newcreator, \Tki\LogEnums::TEAM_LEAD, $team['team_name']);
         }
 
         echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
@@ -345,8 +345,8 @@ switch ($teamwhat)
                 Tki\Db::logDbErrors($pdo_db, $resy, __LINE__, __FILE__);
 
                 echo $langvars['l_team_welcome'] . " <strong>" . $team['team_name'] . "</strong>.<br><br>";
-                Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_JOIN, $team['team_name']);
-                Tki\PlayerLog::writeLog($pdo_db, $team['creator'], \Tki\LogEnums::TEAM_NEWMEMBER, $team['team_name'] . "|" . $playerinfo['character_name']);
+                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_JOIN, $team['team_name']);
+                Tki\Models\PlayerLog::writeLog($pdo_db, $team['creator'], \Tki\LogEnums::TEAM_NEWMEMBER, $team['team_name'] . "|" . $playerinfo['character_name']);
             }
             else
             {
@@ -398,7 +398,7 @@ switch ($teamwhat)
                 // No longer necessary due to COUNT(*) in the previous SQL statement
                 $old_db->Execute("UPDATE {$old_db->prefix}teams SET number_of_members = number_of_members - 1 WHERE id = ?;", array($whotoexpel['team']));
 
-                Tki\PlayerLog::writeLog($pdo_db, $who, \Tki\LogEnums::TEAM_KICK, $team['team_name']);
+                Tki\Models\PlayerLog::writeLog($pdo_db, $who, \Tki\LogEnums::TEAM_KICK, $team['team_name']);
                 echo $whotoexpel['character_name'] . " " . $langvars['l_team_ejected'] . "<br>";
             }
 
@@ -467,7 +467,7 @@ switch ($teamwhat)
             $debug3 = Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
 
             echo $langvars['l_team_team'] . " <strong>" . $teamname . "</strong> " . $langvars['l_team_hcreated'] . ".<br><br>";
-            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_CREATE, $teamname);
+            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_CREATE, $teamname);
         }
 
         echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
@@ -528,7 +528,7 @@ switch ($teamwhat)
                     $resx = $old_db->Execute("UPDATE {$old_db->prefix}ships SET team_invite = ? WHERE ship_id = ?;", array($whichteam, $who));
                     Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
                     echo $langvars['l_team_plinvted'] . "<br>" . $langvars['l_team_plinvted2'] . "<br>";
-                    Tki\PlayerLog::writeLog($pdo_db, $who, \Tki\LogEnums::TEAM_INVITE, $team['team_name']);
+                    Tki\Models\PlayerLog::writeLog($pdo_db, $who, \Tki\LogEnums::TEAM_INVITE, $team['team_name']);
                 }
             }
             else
@@ -544,7 +544,7 @@ switch ($teamwhat)
         echo $langvars['l_team_refuse'] . " <strong>" . $invite_info['team_name'] . "</strong>.<br><br>";
         $resx = $old_db->Execute("UPDATE {$old_db->prefix}ships SET team_invite = 0 WHERE ship_id = ?;", array($playerinfo['ship_id']));
         Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-        Tki\PlayerLog::writeLog($pdo_db, $team['creator'], \Tki\LogEnums::TEAM_REJECT, $playerinfo['character_name'] . "|" . $invite_info['team_name']);
+        Tki\Models\PlayerLog::writeLog($pdo_db, $team['creator'], \Tki\LogEnums::TEAM_REJECT, $playerinfo['character_name'] . "|" . $invite_info['team_name']);
         echo "<br><br><a href=\"teams.php\">" . $langvars['l_clickme'] . "</a> " . $langvars['l_team_menu'] . ".<br><br>";
         break;
 
@@ -594,11 +594,11 @@ switch ($teamwhat)
             // Adding a log entry to all members of the renamed team
             $result_team_name = $old_db->Execute("SELECT ship_id FROM {$old_db->prefix}ships WHERE team = ? AND ship_id <> ?;", array($whichteam, $playerinfo['ship_id']));
             Tki\Db::logDbErrors($pdo_db, $result_team_name, __LINE__, __FILE__);
-            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_RENAME, $teamname);
+            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TEAM_RENAME, $teamname);
             while (!$result_team_name->EOF)
             {
                 $teamname_array = $result_team_name->fields;
-                Tki\PlayerLog::writeLog($pdo_db, $teamname_array['ship_id'], \Tki\LogEnums::TEAM_M_RENAME, $teamname);
+                Tki\Models\PlayerLog::writeLog($pdo_db, $teamname_array['ship_id'], \Tki\LogEnums::TEAM_M_RENAME, $teamname);
                 $result_team_name->MoveNext();
             }
         }

@@ -37,7 +37,7 @@ class SectorDefense
         {
             foreach ($defense_present as $tmp_defense)
             {
-                PlayerLog::writeLog($pdo_db, $tmp_defense['ship_id'], LogEnums::RAW, $message);
+               Tki\Models\PlayerLog::writeLog($pdo_db, $tmp_defense['ship_id'], LogEnums::RAW, $message);
             }
         }
     }

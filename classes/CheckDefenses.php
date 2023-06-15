@@ -154,7 +154,7 @@ class CheckDefenses
         $langvars['l_sf_sendlog'] = str_replace("[sector]", (string) $sector, $langvars['l_sf_sendlog']);
 
         \Tki\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_sf_sendlog']);
-        \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::DEFS_DESTROYED_F, "$fighterslost|$sector");
+        \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::DEFS_DESTROYED_F, "$fighterslost|$sector");
         $armor_lost = $playerinfo['armor_pts'] - $playerarmor;
         $fighters_lost = $playerinfo['ship_fighters'] - $playerfighters;
 
@@ -176,7 +176,7 @@ class CheckDefenses
         if ($playerarmor < 1)
         {
             echo $langvars['l_sf_shipdestroyed'] . "<br><br>";
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::DEFS_KABOOM, "$sector|$playerinfo[dev_escapepod]");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::DEFS_KABOOM, "$sector|$playerinfo[dev_escapepod]");
             $langvars['l_sf_sendlog2'] = str_replace("[player]", $playerinfo['character_name'], $langvars['l_sf_sendlog2']);
             $langvars['l_sf_sendlog2'] = str_replace("[sector]", (string) $sector, $langvars['l_sf_sendlog2']);
             \Tki\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_sf_sendlog2']);
@@ -374,7 +374,7 @@ class CheckDefenses
                             $stmt->execute();
                             \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
                             \Tki\Toll::distribute($pdo_db, $sector, $fighterstoll, (int) $total_sec_fighters);
-                            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TOLL_PAID, "$tollstring|$sector");
+                            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::TOLL_PAID, "$tollstring|$sector");
                             $status = 1;
                         }
                         break;
@@ -539,7 +539,7 @@ class CheckDefenses
                 // You are hit. Tell the player and put it in the log
                 $langvars['l_chm_youhitsomemines'] = str_replace("[chm_roll]", (string) $roll, $langvars['l_chm_youhitsomemines']);
                 echo $langvars['l_chm_youhitsomemines'] . "<br>";
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::HIT_MINES, "$roll|$sector");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::HIT_MINES, "$roll|$sector");
 
                 // Tell the owner that his mines were hit
                 $langvars['l_chm_hehitminesinsector'] = str_replace("[chm_playerinfo_character_name]", $playerinfo['character_name'], $langvars['l_chm_hehitminesinsector']);
@@ -623,7 +623,7 @@ class CheckDefenses
                         {
                             // BOOM
                             $pod = $playerinfo['dev_escapepod'];
-                            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::SHIP_DESTROYED_MINES, "$sector|$pod");
+                            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::SHIP_DESTROYED_MINES, "$sector|$pod");
                             $langvars['l_chm_hewasdestroyedbyyourmines'] = str_replace("[chm_playerinfo_character_name]", $playerinfo['character_name'], $langvars['l_chm_hewasdestroyedbyyourmines']);
                             $langvars['l_chm_hewasdestroyedbyyourmines'] = str_replace("[chm_sector]", (string) $sector, $langvars['l_chm_hewasdestroyedbyyourmines']);
                             \Tki\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_chm_hewasdestroyedbyyourmines']);

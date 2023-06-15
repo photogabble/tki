@@ -43,7 +43,7 @@ class Toll
                 $stmt->bindParam(':toll_amount', $toll_amount, \PDO::PARAM_INT);
                 $stmt->bindParam(':ship_id', $tmp_defense['ship_id'], \PDO::PARAM_INT);
                 $stmt->execute();
-                PlayerLog::writeLog($pdo_db, $tmp_defense['ship_id'], LogEnums::TOLL_RECV, "$toll_amount|$sector");
+               Tki\Models\PlayerLog::writeLog($pdo_db, $tmp_defense['ship_id'], LogEnums::TOLL_RECV, "$toll_amount|$sector");
             }
         }
     }

@@ -104,7 +104,7 @@ class KabalRegen
 
         if ($gene !== null || $gena !== null || $genf !== null || $gent !== null)
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal $gene $gena $genf $gent and has been updated.");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal $gene $gena $genf $gent and has been updated.");
         }
     }
 }

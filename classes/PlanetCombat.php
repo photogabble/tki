@@ -553,7 +553,7 @@ class PlanetCombat
                     $stmt->bindParam(':planet_id', $planetinfo['planet_id'], \PDO::PARAM_INT);
                     $stmt->execute();
 
-                    \Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED_D, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                    \Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED_D, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                     $admin_log = new AdminLog();
                     $admin_log->writeLog($pdo_db, LogEnums::ADMIN_PLANETDEL, "$playerinfo[character_name]|$ownerinfo[character_name]|$playerinfo[sector]");
                     \Tki\Score::updateScore($pdo_db, $ownerinfo['ship_id'], $tkireg, $playerinfo);
@@ -562,7 +562,7 @@ class PlanetCombat
                 {
                     $langvars['l_cmb_youmaycapture'] = str_replace("[capture]", "<a href='planet.php?planet_id=" . $planetinfo['planet_id'] . "&amp;command=capture'>" . $langvars['l_planet_capture1'] . "</a>", $langvars['l_cmb_youmaycapture']);
                     echo "<center><font color=red>" . $langvars['l_cmb_youmaycapture'] . "</font></center><br><br>";
-                    \Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                    \Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                     \Tki\Score::updateScore($pdo_db, $ownerinfo['ship_id'], $tkireg, $playerinfo);
                     $planets_gateway = new \Tki\Models\Planet($pdo_db);
                     $planets_gateway->updateDefeatedPlanet($pdo_db, $planetinfo, $planettorps);
@@ -572,7 +572,7 @@ class PlanetCombat
             {
                 $langvars['l_cmb_youmaycapture'] = str_replace("[capture]", "<a href='planet.php?planet_id=" . $planetinfo['planet_id'] . "&amp;command=capture'>" . $langvars['l_planet_capture1'] . "</a>", $langvars['l_cmb_youmaycapture']);
                 echo "<center>" . $langvars['l_cmb_youmaycapture'] . "</center><br><br>";
-                \Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                 \Tki\Score::updateScore($pdo_db, $ownerinfo['ship_id'], $tkireg, $playerinfo);
                 $planets_gateway = new \Tki\Models\Planet($pdo_db);
                 $planets_gateway->updateDefeatedPlanet($pdo_db, $planetinfo, $planettorps);
@@ -588,7 +588,7 @@ class PlanetCombat
             $langvars['l_cmb_fighterloststat'] = str_replace("[cmb_planetinfo_fighters]", $planetinfo['fighters'], $langvars['l_cmb_fighterloststat']);
             $langvars['l_cmb_fighterloststat'] = str_replace("[cmb_planetfighters]", $planetfighters, $langvars['l_cmb_fighterloststat']);
             $energy = $planetinfo['energy'];
-            \Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]|$free_ore|$free_organics|$free_goods|$ship_salvage_rate|$ship_salvage");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]|$free_ore|$free_organics|$free_goods|$ship_salvage_rate|$ship_salvage");
             \Tki\Score::updateScore($pdo_db, $ownerinfo['ship_id'], $tkireg, $playerinfo);
 
             $sql = "UPDATE ::prefix::planets SET energy = :energy, " .

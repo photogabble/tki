@@ -268,7 +268,7 @@ class KabalToPlanet
 
         if (!$attackerarmor > 0) // Check if attackers ship destroyed
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Ship destroyed by planetary defenses on planet $planetinfo[name]");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Ship destroyed by planetary defenses on planet $planetinfo[name]");
             $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
 
             $free_ore = round($playerinfo['ship_ore'] / 2);
@@ -280,7 +280,7 @@ class KabalToPlanet
             $fighters_lost = $planetinfo['fighters'] - $targetfighters;
 
             // Log attack to planet owner
-            \Tki\PlayerLog::writeLog($pdo_db, $planetinfo['owner'], LogEnums::PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|Kabal $playerinfo[character_name]|$free_ore|$free_organics|$free_goods|$ship_salvage_rate|$ship_salvage");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $planetinfo['owner'], LogEnums::PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|Kabal $playerinfo[character_name]|$free_ore|$free_organics|$free_goods|$ship_salvage_rate|$ship_salvage");
 
             // Update planet
             $sql = "UPDATE ::prefix::planets SET energy = :planet_energy, " .
@@ -307,7 +307,7 @@ class KabalToPlanet
         {
             $armor_lost = $playerinfo['armor_pts'] - $attackerarmor;
             $fighters_lost = $playerinfo['ship_fighters'] - $attackerfighters;
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Made it past defenses on planet $planetinfo[name]");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Made it past defenses on planet $planetinfo[name]");
 
             // Update attackers
             $sql = "UPDATE ::prefix::ships SET ship_energy = :ship_energy, " .
@@ -378,10 +378,10 @@ class KabalToPlanet
             if ($shipsonplanet == 0)
             {
                 // Must have killed all ships on the planet
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Defeated all ships on planet $planetinfo[name]");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Defeated all ships on planet $planetinfo[name]");
 
                 // Log attack to planet owner
-                \Tki\PlayerLog::writeLog($pdo_db, $planetinfo['owner'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $planetinfo['owner'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
 
                 // Update planet
                 $sql = "UPDATE ::prefix::planets SET fighters = :fighters, " .
@@ -403,9 +403,9 @@ class KabalToPlanet
             else
             {
                 // Must have died trying
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "We were KILLED by ships defending planet $planetinfo[name]");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "We were KILLED by ships defending planet $planetinfo[name]");
                 // Log attack to planet owner
-                \Tki\PlayerLog::writeLog($pdo_db, $planetinfo['owner'], LogEnums::PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|Kabal $playerinfo[character_name]|0|0|0|0|0");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $planetinfo['owner'], LogEnums::PLANET_NOT_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|Kabal $playerinfo[character_name]|0|0|0|0|0");
                 // No salvage for planet because it went to the ship that won
             }
         }

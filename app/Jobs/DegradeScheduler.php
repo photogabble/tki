@@ -69,7 +69,7 @@ class DegradeScheduler extends ScheduledTask
                     $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
                     $sectorDefense->decrement('quantity', $degradeAmount);
 
-                    \Tki\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
+                    \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
                 }
                 continue;
             }
@@ -95,7 +95,7 @@ class DegradeScheduler extends ScheduledTask
             $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
             $sectorDefense->decrement('quantity', $degradeAmount);
 
-            \Tki\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
+            \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
         }
 
         // Clean up any expired defense

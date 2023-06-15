@@ -130,7 +130,7 @@ class Planet
         }
 
         echo "<br><br>\n";
-        \Tki\PlayerLog::writeLog(
+        \Tki\Models\PlayerLog::writeLog(
             $pdo_db,
             $ownerinfo['ship_id'],
             LogEnums::PLANET_BOMBED,

@@ -48,7 +48,7 @@ if ($playerinfo['dev_emerwarp'] > 0)
     $stmt->bindParam(':sector', $dest_sector, PDO::PARAM_INT);
     $stmt->bindParam(':ship_id', $playerinfo['ship_id'], PDO::PARAM_INT);
     $stmt->execute();
-    Tki\LogMove::writeLog($pdo_db, $playerinfo['ship_id'], $dest_sector);
+    Tki\MovementLog::writeLog($pdo_db, $playerinfo['ship_id'], $dest_sector);
     $variables['dest_sector'] = $dest_sector;
 }
 

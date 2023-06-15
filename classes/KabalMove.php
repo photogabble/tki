@@ -90,7 +90,7 @@ class KabalMove
                 if ($zonerow['allow_attack'] == "Y")
                 {
                     $targetlink = $wormto;
-                    \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Used a wormhole to warp to a zone where attacks are allowed.");
+                    \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Used a wormhole to warp to a zone where attacks are allowed.");
                 }
 
                 $wormto++;
@@ -148,7 +148,7 @@ class KabalMove
                 }
                 else
                 {
-                    \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed, the sector is defended by $all_sector_fighters fighters and $total_sector_mines mines.");
+                    \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed, the sector is defended by $all_sector_fighters fighters and $total_sector_mines mines.");
 
                     return;
                 }
@@ -171,12 +171,12 @@ class KabalMove
             {
                 //$error = $old_db->ErrorMsg();
                 $error = 'DB Error';
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed with error: $error ");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed with error: $error ");
             }
         }
         else
         {
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed due to lack of target link."); // We have no target link for some reason
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Move failed due to lack of target link."); // We have no target link for some reason
         }
     }
 }

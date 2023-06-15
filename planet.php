@@ -691,7 +691,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                 // If scan fails - inform both player and target.
                 echo $langvars['l_planet_noscan'] . "<br><br>";
                 Tki\Text::gotoMain($pdo_db, $lang);
-                Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\LogEnums::PLANET_SCAN_FAIL, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\LogEnums::PLANET_SCAN_FAIL, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
 
                 $footer = new Tki\Footer();
                 $footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
@@ -699,7 +699,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
             }
             else
             {
-                Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\LogEnums::PLANET_SCAN, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\LogEnums::PLANET_SCAN, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                 // Scramble results by scan error factor.
                 $sc_error = Tki\Scan::error($playerinfo['sensors'], $ownerinfo['cloak'], $scan_error_factor);
                 if (empty($planetinfo['name']))
@@ -918,7 +918,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                 $planetowner = $langvars['l_planet_noone'];
             }
 
-            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::PLANET_CAPTURED, "$planetinfo[colonists]|$planetinfo[credits]|$planetowner");
+            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::PLANET_CAPTURED, "$planetinfo[colonists]|$planetinfo[credits]|$planetowner");
         }
         elseif ($command == "capture" && ($planetinfo['owner'] == 0 || $planetinfo['defeated'] == 'Y'))
         {

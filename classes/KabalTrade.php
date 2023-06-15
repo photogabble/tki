@@ -188,7 +188,7 @@ class KabalTrade
             $stmt->bindParam(':sector_id', $sectorinfo['sector_id'], \PDO::PARAM_INT);
             $stmt->execute();
 
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal Trade Results: Sold $amount_organics Organics Sold $amount_goods Goods Bought $amount_ore Ore Cost $total_cost");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal Trade Results: Sold $amount_organics Organics Sold $amount_goods Goods Bought $amount_ore Ore Cost $total_cost");
         }
 
         if ($sectorinfo['port_type'] == "organics") // Port organics
@@ -240,7 +240,7 @@ class KabalTrade
             $stmt->bindParam(':sector_id', $sectorinfo['sector_id'], \PDO::PARAM_INT);
             $stmt->execute();
 
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal Trade Results: Sold $amount_goods Goods Sold $amount_ore Ore Bought $amount_organics Organics Cost $total_cost");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal Trade Results: Sold $amount_goods Goods Sold $amount_ore Ore Bought $amount_organics Organics Cost $total_cost");
         }
 
         if ($sectorinfo['port_type'] == "goods") // Port goods
@@ -292,7 +292,7 @@ class KabalTrade
             $stmt->bindParam(':sector_id', $sectorinfo['sector_id'], \PDO::PARAM_INT);
             $stmt->execute();
 
-            \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal Trade Results: Sold $amount_ore Ore Sold $amount_organics Organics Bought $amount_goods Goods Cost $total_cost");
+            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "Kabal Trade Results: Sold $amount_ore Ore Sold $amount_organics Organics Bought $amount_goods Goods Cost $total_cost");
         }
     }
 }

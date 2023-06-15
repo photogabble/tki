@@ -200,7 +200,7 @@ else
                 // Future: Determine where $destination gets changed to something other than int. In the meantime, make it correct here.
                 $destination = (int) $destination;
 
-                Tki\LogMove::writeLog($pdo_db, $playerinfo['ship_id'], $destination);
+                Tki\MovementLog::writeLog($pdo_db, $playerinfo['ship_id'], $destination);
                 $langvars['l_rs_ready'] = str_replace("[sector]", (string) $destination, $langvars['l_rs_ready']);
                 $langvars['l_rs_ready'] = str_replace("[triptime]", number_format($triptime, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_rs_ready']);
                 $langvars['l_rs_ready'] = str_replace("[energy]", number_format($energyscooped, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_rs_ready']);

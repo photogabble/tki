@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * classes/PlayerLog.php from The Kabal Invasion.
+ * classes/LogMove.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,24 +22,19 @@
  *
  */
 
-// TODO change namespace to App\Models
-// TODO Move file to app\Models\Log.php (delete Log.php and move this there)
 namespace Tki;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PlayerLog extends Model
+// TODO: copy to app/models
+class MovementLog extends Model
 {
-    public static function writeLog(int $ship_id, int $log_type, ?string $data = null): void
+    public static function writeLog(int $ship_id, int $sector_id): void
     {
-        if (!is_null($data)) $data = addslashes($data);
-
-        // Write log_entry to the player's log - identified by player's ship_id.
         static::query()
             ->create([
                 'ship_id' => $ship_id,
-                'type' => $log_type,
-                'data' => $data
+                'sector_id' => $sector_id
             ]);
     }
 }

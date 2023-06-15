@@ -76,8 +76,8 @@ class TowScheduler extends ScheduledTask
                 'cleared_defenses' => ' '
             ]);
 
-            \Tki\PlayerLog::writeLog($ship->id, \Tki\LogEnums::TOW, "$oldsector|$newsector|$ship->max_hull");
-            \Tki\LogMove::writeLog($ship->id, $newsector);
+            \Tki\Models\PlayerLog::writeLog($ship->id, \Tki\LogEnums::TOW, "$oldsector|$newsector|$ship->max_hull");
+            \Tki\MovementLog::writeLog($ship->id, $newsector);
         }
 
         Log::info(__('scheduler.l_sched_tow_none'));

@@ -93,7 +93,7 @@ class KabalScheduler extends ScheduledTask
                             if ($playerinfo['ship_fighters'] > $rowo0['ship_fighters'])
                             {
                                 $furcount0a++;
-                                Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo0[character_name]");
+                                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo0[character_name]");
                                 Tki\KabalToShip::ship($pdo_db, $lang, $rowo0['ship_id'], $tkireg, $playerinfo, $langvars);
                                 if ($kabalisdead > 0)
                                 {
@@ -105,7 +105,7 @@ class KabalScheduler extends ScheduledTask
                         elseif ($playerinfo['aggression'] == 2)        // O = 0 & Aggression = 2 attack always
                         {
                             $furcount0a++;
-                            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo0[character_name]");
+                            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo0[character_name]");
                             Tki\KabalToShip::ship($pdo_db, $lang, $rowo0['ship_id'], $tkireg, $playerinfo, $langvars);
                             if ($kabalisdead > 0)
                             {
@@ -142,7 +142,7 @@ class KabalScheduler extends ScheduledTask
                             if ($playerinfo['ship_fighters'] > $rowo1['ship_fighters'] && $rowo1['planet_id'] == 0)
                             {
                                 $furcount1a++;
-                                Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo1[character_name]");
+                                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo1[character_name]");
                                 Tki\KabalToShip::ship($pdo_db, $lang, $rowo1['ship_id'], $tkireg, $playerinfo, $langvars);
                                 if ($kabalisdead > 0)
                                 {
@@ -154,7 +154,7 @@ class KabalScheduler extends ScheduledTask
                         elseif ($playerinfo['aggression'] == 2)        //  O = 1 & AGRESSION = 2 ATTACK ALLWAYS
                         {
                             $furcount1a++;
-                            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo1[character_name]");
+                            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo1[character_name]");
                             if (!$rowo1['planet_id'] == 0)
                             {              // Is on planet
                                 Tki\KabalToShip::planet($pdo_db, $rowo1['planet_id'], $tkireg, $playerinfo, $langvars);
@@ -204,7 +204,7 @@ class KabalScheduler extends ScheduledTask
                             if ($playerinfo['ship_fighters'] > $rowo2['ship_fighters'] && $rowo2['planet_id'] == 0)
                             {
                                 $furcount2a++;
-                                Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo2[character_name]");
+                                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo2[character_name]");
                                 Tki\KabalToShip::ship($pdo_db, $lang, $rowo2['ship_id'], $tkireg, $playerinfo, $langvars);
                                 if ($kabalisdead > 0)
                                 {
@@ -216,7 +216,7 @@ class KabalScheduler extends ScheduledTask
                         elseif ($playerinfo['aggression'] == 2)        // O = 2 & AGRESSION = 2 ATTACK ALLWAYS
                         {
                             $furcount2a++;
-                            Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo2[character_name]");
+                            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo2[character_name]");
                             if (!$rowo2['planet_id'] == 0)
                             {              // IS ON PLANET
                                 Tki\KabalToPlanet::planet($pdo_db, $lang, $rowo2['planet_id'], $tkireg, $playerinfo, $langvars);
@@ -279,7 +279,7 @@ class KabalScheduler extends ScheduledTask
                                 if ($playerinfo['ship_fighters'] > $rowo3['ship_fighters'] && $rowo3['planet_id'] == 0)
                                 {
                                     $furcount3a++;
-                                    Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo3[character_name]");
+                                    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo3[character_name]");
                                     Tki\KabalToShip::ship($pdo_db, $lang, $rowo3['ship_id'], $tkireg, $playerinfo, $langvars);
                                     if ($kabalisdead > 0)
                                     {
@@ -291,7 +291,7 @@ class KabalScheduler extends ScheduledTask
                             elseif ($playerinfo['aggression'] == 2)        // O = 3 & AGRESSION = 2 ATTACK ALLWAYS
                             {
                                 $furcount3a++;
-                                Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo3[character_name]");
+                                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::KABAL_ATTACK, "$rowo3[character_name]");
                                 if (!$rowo3['planet_id'] == 0)
                                 {              // IS ON PLANET
                                     Tki\KabalToPlanet::planet($pdo_db, $lang, $rowo3['planet_id'], $tkireg, $playerinfo, $langvars);

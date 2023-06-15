@@ -72,7 +72,7 @@ class KabalToSecDef
 
             if ($all_sector_fighters > 0 || $total_sector_mines > 0 || ($all_sector_fighters > 0 && $total_sector_mines > 0)) // Dest link has defenses so lets attack them
             {
-                \Tki\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "ATTACKING SECTOR DEFENSES $all_sector_fighters fighters and $total_sector_mines mines.");
+                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], LogEnums::RAW, "ATTACKING SECTOR DEFENSES $all_sector_fighters fighters and $total_sector_mines mines.");
                 $targetfighters = $all_sector_fighters;
                 $playerbeams = \Tki\CalcLevels::abstractLevels($playerinfo['beams'], $tkireg);
                 if ($playerbeams > $playerinfo['ship_energy'])
