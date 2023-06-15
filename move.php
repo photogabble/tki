@@ -83,7 +83,7 @@ if ($flag == 1)
     Tki\CheckDefenses::fighters($pdo_db, $lang, $sector, $playerinfo, $tkireg, $title, $calledfrom);
 
     $cur_time_stamp = date("Y-m-d H:i:s");
-    Tki\MovementLog::writeLog($pdo_db, $playerinfo['ship_id'], $sector);
+    \Tki\Models\MovementLog::writeLog($pdo_db, $playerinfo['ship_id'], $sector);
     $move_result = $old_db->Execute("UPDATE {$old_db->prefix}ships " .
                                 "SET last_login = ?, " .
                                 "turns = turns - 1, " .

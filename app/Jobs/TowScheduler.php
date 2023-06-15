@@ -24,11 +24,11 @@
 
 namespace Tki\Jobs;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Tki\Models\Ship;
 use Tki\Models\Universe;
 use Tki\Models\Zone;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 class TowScheduler extends ScheduledTask
 {
@@ -77,7 +77,7 @@ class TowScheduler extends ScheduledTask
             ]);
 
             \Tki\Models\PlayerLog::writeLog($ship->id, \Tki\LogEnums::TOW, "$oldsector|$newsector|$ship->max_hull");
-            \Tki\MovementLog::writeLog($ship->id, $newsector);
+            \Tki\Models\MovementLog::writeLog($ship->id, $newsector);
         }
 
         Log::info(__('scheduler.l_sched_tow_none'));

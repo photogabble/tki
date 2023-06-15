@@ -22,7 +22,7 @@
  *
  */
 
-namespace Tki;
+namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
