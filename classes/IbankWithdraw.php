@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions/Banking
+
 class IbankWithdraw
 {
     public static function before(\PDO $pdo_db, string $lang, array $account): void

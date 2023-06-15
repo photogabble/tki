@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+// TODO: Replace with SchedulerGateway
+
 /**
  * @property string $class_name
  * @property Carbon $last_run_at

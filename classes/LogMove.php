@@ -26,7 +26,7 @@ namespace Tki;
 
 use Illuminate\Database\Eloquent\Model;
 
-// TODO: Rename to MovementLog
+// TODO: Rename to MovementLog ^^^
 class LogMove extends Model
 {
     public static function writeLog(int $ship_id, int $sector_id): void

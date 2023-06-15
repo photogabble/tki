@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO Move to app/Actions/Banking
+
 class IbankConsolidate
 {
     public static function before(\PDO $pdo_db, string $lang, Registry $tkireg, int $dplanet_id): void

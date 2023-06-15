@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions/Banking
+
 class IbankTransferSpecific
 {
     public static function specific(

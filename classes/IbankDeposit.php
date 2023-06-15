@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions/Banking
+
 class IbankDeposit
 {
     public static function before(\PDO $pdo_db, string $lang, array $account, array $playerinfo): void

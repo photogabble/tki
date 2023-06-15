@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions/Banking
+
 class IbankTransferMain
 {
     public static function main(\PDO $pdo_db, string $lang, array $playerinfo, Registry $tkireg): void

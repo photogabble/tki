@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Turn into Controller ??
+
 class Ibank
 {
     public static function ibankBorrow(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, array $playerinfo, array $account, int $amount, Smarty $template): void

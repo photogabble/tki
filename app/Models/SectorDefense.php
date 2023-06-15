@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+// TODO Replace File with DefensesGateway
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

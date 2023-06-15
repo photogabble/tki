@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions/Banking
+
 class IbankTransferFinal
 {
     public static function final(\PDO $pdo_db, string $lang, array $playerinfo, int $ship_id, int $splanet_id, int $dplanet_id, int $amount, Registry $tkireg, Timer $tkitimer, Smarty $template): void
