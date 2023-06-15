@@ -22,9 +22,9 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Scheduler;
+use Tki\Models\Scheduler;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

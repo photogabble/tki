@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
 // 70.php
-use App\Models\Planet;
-use App\Models\Universe;
-use App\Models\Zone;
+use Tki\Models\Planet;
+use Tki\Models\Universe;
+use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -53,8 +53,8 @@ class CreatePlanets extends Step implements InstallStep
             for ($i = 0; $i < $adding; $i++) {
                 $planet = new Planet();
                 $planet->colonists = 2;
-                $planet->owner = null; // default
-                $planet->team = null; // default
+                $planet->owner_id = null; // default
+                $planet->team_id = null; // default
                 $planet->prod_ore = $default_prod_ore;
                 $planet->prod_organics = $default_prod_organics;
                 $planet->prod_goods = $default_prod_goods;

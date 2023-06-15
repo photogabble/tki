@@ -28,8 +28,8 @@ namespace Tki\Defenses;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Universe;
-use App\Models\Ship;
+use Tki\Models\Universe;
+use Tki\Models\Ship;
 
 class DefensesGateway extends Model
 {

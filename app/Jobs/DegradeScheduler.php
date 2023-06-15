@@ -22,10 +22,10 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Planet;
-use App\Models\SectorDefense;
+use Tki\Models\Planet;
+use Tki\Models\SectorDefense;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Collection;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
 // First half of 60.php
-use App\Models\Universe;
-use App\Models\Zone;
+use Tki\Models\Universe;
+use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
 
 class CreateSystems extends Step implements InstallStep{

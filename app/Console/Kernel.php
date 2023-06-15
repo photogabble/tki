@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Console;
+namespace Tki\Console;
 
-use App\Jobs\ApocalypseScheduler;
-use App\Jobs\BankScheduler;
-use App\Jobs\DegradeScheduler;
-use App\Jobs\GovenorScheduler;
-use App\Jobs\KabalScheduler;
-use App\Jobs\NewsScheduler;
-use App\Jobs\PlanetsScheduler;
-use App\Jobs\PortsScheduler;
-use App\Jobs\RankingScheduler;
-use App\Jobs\TowScheduler;
-use App\Jobs\TurnsScheduler;
+use Tki\Jobs\ApocalypseScheduler;
+use Tki\Jobs\BankScheduler;
+use Tki\Jobs\DegradeScheduler;
+use Tki\Jobs\GovenorScheduler;
+use Tki\Jobs\KabalScheduler;
+use Tki\Jobs\NewsScheduler;
+use Tki\Jobs\PlanetsScheduler;
+use Tki\Jobs\PortsScheduler;
+use Tki\Jobs\RankingScheduler;
+use Tki\Jobs\TowScheduler;
+use Tki\Jobs\TurnsScheduler;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 

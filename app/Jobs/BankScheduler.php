@@ -22,10 +22,10 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\BankAccount;
+use Tki\Models\BankAccount;
 use Illuminate\Support\Facades\Log;
 
 class BankScheduler extends ScheduledTask

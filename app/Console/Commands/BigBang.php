@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Tki\Console\Commands;
 
-use App\Helpers\ExecutionTimer;
-use App\Installer\CreateAdminAccount;
-use App\Installer\CreateNews;
-use App\Installer\CreatePlanets;
-use App\Installer\CreateSystemLinks;
-use App\Installer\CreateSystems;
-use App\Installer\CreateZones;
-use App\Installer\InstallConfig;
-use App\Installer\InstallStep;
-use App\Installer\PopulateZoneSectorsPorts;
+use Tki\Helpers\ExecutionTimer;
+use Tki\Installer\CreateAdminAccount;
+use Tki\Installer\CreateNews;
+use Tki\Installer\CreatePlanets;
+use Tki\Installer\CreateSystemLinks;
+use Tki\Installer\CreateSystems;
+use Tki\Installer\CreateZones;
+use Tki\Installer\InstallConfig;
+use Tki\Installer\InstallStep;
+use Tki\Installer\PopulateZoneSectorsPorts;
 use Illuminate\Console\Command;
 
 class BigBang extends Command

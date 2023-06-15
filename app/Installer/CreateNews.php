@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
 // 70.php
-use App\Models\News;
+use Tki\Models\News;
 use Illuminate\Console\OutputStyle;
 
 class CreateNews extends Step implements InstallStep{

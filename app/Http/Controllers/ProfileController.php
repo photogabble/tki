@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Tki\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
+use Tki\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

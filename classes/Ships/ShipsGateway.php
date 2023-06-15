@@ -26,7 +26,7 @@ namespace Tki\Ships; // Domain Entity organization pattern, Ships objects
 
 // TODO: Rename Ship and move to app/Models
 
-use App\Models\Team;
+use Tki\Models\Team;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

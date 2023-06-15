@@ -22,7 +22,7 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
 use Illuminate\Support\Facades\Log;
 

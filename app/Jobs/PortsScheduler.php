@@ -22,9 +22,9 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Universe;
+use Tki\Models\Universe;
 use Illuminate\Support\Facades\Log;
 
 class PortsScheduler extends ScheduledTask

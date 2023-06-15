@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace Tki\Helpers;
 
 use Exception;
 use Stringable;

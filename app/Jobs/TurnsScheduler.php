@@ -22,11 +22,11 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use App\Models\Ship;
+use Tki\Models\Ship;
 
 class TurnsScheduler extends ScheduledTask
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Tki\Http\Requests;
 
-use App\Models\User;
+use Tki\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

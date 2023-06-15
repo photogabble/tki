@@ -26,8 +26,8 @@ namespace Tki\Sectors; // Domain Entity organization pattern, Sectors objects
 
 // TODO: Rename Universe or Sector and move to app/Models
 
-use App\Models\Planet;
-use App\Models\Zone;
+use Tki\Models\Planet;
+use Tki\Models\Zone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

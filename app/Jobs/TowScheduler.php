@@ -22,11 +22,11 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Ship;
-use App\Models\Universe;
-use App\Models\Zone;
+use Tki\Models\Ship;
+use Tki\Models\Universe;
+use Tki\Models\Zone;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 

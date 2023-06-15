@@ -22,9 +22,9 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Ship;
+use Tki\Models\Ship;
 use Illuminate\Support\Facades\DB;
 
 class GovenorScheduler extends ScheduledTask

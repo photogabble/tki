@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
 // Second half of 60.php
-use App\Models\Zone;
+use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
 
 class CreateZones extends Step implements InstallStep

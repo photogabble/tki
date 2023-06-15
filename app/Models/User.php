@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Tki\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\Carbon;

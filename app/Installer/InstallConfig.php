@@ -1,5 +1,5 @@
 <?php
-namespace App\Installer;
+namespace Tki\Installer;
 
 class InstallConfig {
     public int $maxSectors;

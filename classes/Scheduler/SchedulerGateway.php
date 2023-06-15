@@ -26,7 +26,7 @@ namespace Tki\Scheduler; // Domain Entity organization pattern, Scheduler object
 
 // TODO: Rename Scheduler and move to app/Models
 
-use App\Models\Scheduler;
+use Tki\Models\Scheduler;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

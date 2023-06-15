@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
 // 70.php
 use Illuminate\Console\OutputStyle;

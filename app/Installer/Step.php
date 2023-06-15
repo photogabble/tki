@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
-use App\Helpers\ExecutionTimer;
+use Tki\Helpers\ExecutionTimer;
 
 abstract class Step implements InstallStep {
     protected ExecutionTimer $timer;

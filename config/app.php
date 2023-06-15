@@ -163,12 +163,12 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-        App\Providers\LocalisationServiceProvider::class,
+        Tki\Providers\AppServiceProvider::class,
+        Tki\Providers\AuthServiceProvider::class,
+        // Tki\Providers\BroadcastServiceProvider::class,
+        Tki\Providers\EventServiceProvider::class,
+        Tki\Providers\RouteServiceProvider::class,
+        Tki\Providers\LocalisationServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -183,7 +183,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        // 'Example' => Tki\Facades\Example::class,
     ])->toArray(),
 
 ];

@@ -22,9 +22,9 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Ship;
+use Tki\Models\Ship;
 
 // FUTURE: Use a single FetchAll to grab all users at once, process as an array, and switch to PDO, improve debug/output handling
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Tki\Models;
 
 // TODO Replace File with IBankGateway
 

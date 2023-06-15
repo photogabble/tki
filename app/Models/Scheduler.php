@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Tki\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

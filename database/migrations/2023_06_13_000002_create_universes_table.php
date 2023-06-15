@@ -35,7 +35,7 @@ return new class extends Migration
 
             $table->foreign('zone_id')
                 ->references('id')
-                ->on((new \App\Models\Zone())->getTable())
+                ->on((new \Tki\Models\Zone())->getTable())
                 ->onDelete('set null');
         });
     }

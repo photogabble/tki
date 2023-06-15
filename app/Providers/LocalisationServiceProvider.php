@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Providers;
+namespace Tki\Providers;
 
-use App\Helpers\LocalisationScript;
+use Tki\Helpers\LocalisationScript;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Compilers\BladeCompiler;

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Installer;
+namespace Tki\Installer;
 
 // Last half of 70.php
-use App\Models\Link;
+use Tki\Models\Link;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Facades\DB;
 

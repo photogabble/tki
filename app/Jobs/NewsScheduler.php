@@ -22,10 +22,10 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\News;
-use App\Models\Planet;
+use Tki\Models\News;
+use Tki\Models\Planet;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 

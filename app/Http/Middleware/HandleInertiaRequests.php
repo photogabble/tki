@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace Tki\Http\Middleware;
 
-use App\Models\Scheduler;
-use App\Models\User;
+use Tki\Models\Scheduler;
+use Tki\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;

@@ -22,9 +22,9 @@
  *
  */
 
-namespace App\Jobs;
+namespace Tki\Jobs;
 
-use App\Models\Planet;
+use Tki\Models\Planet;
 use Illuminate\Support\Facades\DB;
 
 class PlanetsScheduler extends ScheduledTask
