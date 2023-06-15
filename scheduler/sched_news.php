@@ -22,213 +22,143 @@
  *
  */
 
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
+namespace App\Jobs;
 
-// FUTURE: PDO, better output feedback, better debugging
+use App\Models\News;
+use App\Models\Planet;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-echo "<strong>" . $langvars['l_sched_news_title'] . "</strong><br>\n";
-$sql = $old_db->Execute("SELECT IF(COUNT(*)>0, SUM(colonists), 0) AS total_colonists, COUNT(owner) AS total_planets,  owner, character_name FROM {$old_db->prefix}planets, {$old_db->prefix}ships WHERE owner != '0' AND owner=ship_id GROUP BY owner ORDER BY owner ASC;");
-Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-while (!$sql->EOF)
+class NewsScheduler extends ScheduledTask
 {
-    $row = $sql->fields;
-
-    // Get the owner name.
-    $name = $row['character_name'];
-    $langvars['l_sched_news_processing'] = str_replace("[name]", $name, $langvars['l_sched_news_processing']);
-    $langvars['l_sched_news_processing'] = str_replace("[owner]", $row['owner'], $langvars['l_sched_news_processing']);
-    $langvars['l_sched_news_processing'] = str_replace("[planet_row]", number_format($row['total_planets']), $langvars['l_sched_news_processing']);
-    $langvars['l_sched_news_processing'] = str_replace("[colonists_row]", number_format($row['total_colonists']), $langvars['l_sched_news_processing']);
-    echo "&nbsp;&nbsp;" . $langvars['l_sched_news_processing'] . "<br>\n";
-
-    // Generation of planet amount
-    if ($row['total_planets'] >= 1000)
+    public function periodMinutes(): int
     {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet1000';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 1000;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text1002'] = str_replace("[name]", $name, $langvars['l_news_p_text1000']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet1000');", array($headline, $langvars['l_news_p_text1002'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 500)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet500';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 500;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text502'] = str_replace("[name]", $name, $langvars['l_news_p_text500']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet500');", array($headline, $langvars['l_news_p_text502'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 250)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet250';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 250;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text2502'] = str_replace("[name]", $name, $langvars['l_news_p_text250']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet250');", array($headline, $langvars['l_news_p_text2502'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 100)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet100';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 100;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text102'] = str_replace("[name]", $name, $langvars['l_news_p_text100']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet100');", array($headline, $langvars['l_news_p_text102'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 50)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet50';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 50;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text502'] = str_replace("[name]", $name, $langvars['l_news_p_text50']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet50');", array($headline, $langvars['l_news_p_text502'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 25)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet25';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 25;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text252'] = str_replace("[name]", $name, $langvars['l_news_p_text25']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet25');", array($headline, $langvars['l_news_p_text252'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 10)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet10'", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 10;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text102'] = str_replace("[name]", $name, $langvars['l_news_p_text10']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet10');", array($headline, $langvars['l_news_p_text102'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_planets'] >= 5)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'planet5';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $planetcount = 5;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $planetcount . " " . $langvars['l_news_planets'];
-            $langvars['l_news_p_text52'] = str_replace("[name]", $name, $langvars['l_news_p_text5']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'planet5');", array($headline, $langvars['l_news_p_text52'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    } // End generation of planet amount
-
-    // Generation of colonist amount
-    if ($row['total_colonists'] >= 1000000000)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'col1000';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $colcount = 1000;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $colcount . " " . $langvars['l_news_cols'];
-            $langvars['l_news_c_text10002'] = str_replace("[name]", $name, $langvars['l_news_c_text1000']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'col1000');", array($headline, $langvars['l_news_c_text10002'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_colonists'] >= 500000000)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'col500';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $colcount = 500;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $colcount . " " . $langvars['l_news_cols'];
-            $langvars['l_news_c_text5002'] = str_replace("[name]", $name, $langvars['l_news_c_text500']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'col500');", array($headline, $langvars['l_news_c_text5002'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_colonists'] >= 100000000)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'col100';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $colcount = 100;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $colcount . " " . $langvars['l_news_cols'];
-            $langvars['l_news_c_text1002'] = str_replace("[name]", $name, $langvars['l_news_c_text100']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'col100');", array($headline, $langvars['l_news_c_text1002'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
-    }
-    elseif ($row['total_colonists'] >= 25000000)
-    {
-        $sql2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}news WHERE user_id = ? AND news_type = 'col25';", array($row['owner']));
-        Tki\Db::logDbErrors($pdo_db, $sql2, __LINE__, __FILE__);
-
-        if ($sql2->EOF)
-        {
-            $colcount = 25;
-            $langvars['l_news_p_headline2'] = str_replace("[player]", $name, $langvars['l_news_p_headline']);
-            $headline = $langvars['l_news_p_headline2'] . " " . $colcount . " " . $langvars['l_news_cols'];
-            $langvars['l_news_c_text252'] = str_replace("[name]", $name, $langvars['l_news_c_text25']);
-            $news = $old_db->Execute("INSERT INTO {$old_db->prefix}news (headline, newstext, user_id, date, news_type) VALUES (?, ?, ?, NOW(), 'col25');", array($headline, $langvars['l_news_c_text252'], $row['owner']));
-            Tki\Db::logDbErrors($pdo_db, $news, __LINE__, __FILE__);
-        }
+        return 15;
     }
 
-    // End generation of colonist amount
-    $sql->MoveNext();
-} // while
+    public function maxCatchup(): int
+    {
+        return 1; // Only need to run once
+    }
 
-echo "<strong>" . $langvars['l_sched_news_end'] . "</strong><br><br>";
-$multiplier = 0; // No need to run this again
+    protected function run(): void
+    {
+        Log::info(__('scheduler.l_sched_news_title'));
+
+        // TODO: ships should be users...
+        /** @var Planet $playerPlanets */
+        $playerPlanets = Planet::query()
+            ->join('ships', 'owner_id', '=', 'ships.id')
+            ->whereNotNull('owner_id')
+            ->groupBy('owner_id')
+            ->select([
+                DB::raw('IF(COUNT(*)>0,SUM(colonists), 0) AS total_colonists'),
+                DB::raw('COUNT(owner) AS total_planets'),
+                'owner_id',
+                'ships.character_name'
+            ]);
+
+        foreach ($playerPlanets as $planet) {
+            Log::info(__('scheduler.l_sched_news_processing',[
+                'name' => $planet->character_name,
+                'owner' => $planet->owner_id,
+                'planet_row' => number_format($planet->total_planets),
+                'colonists_row' => number_format($planet->total_colonists)
+            ]));
+
+            // Generation of planet amount
+
+            if ($planet->total_planets >= 1000 && !News::alreadyPublished($planet->owner_id, 'planet1000')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 1000 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text1000', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet1000'
+                ]);
+            } else if ($planet->total_planets >= 500 && !News::alreadyPublished($planet->owner_id, 'planet500')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 500 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text500', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet500'
+                ]);
+            } else if ($planet->total_planets >= 250 && !News::alreadyPublished($planet->owner_id, 'planet250')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 250 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text250', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet250'
+                ]);
+            } else if ($planet->total_planets >= 100 && !News::alreadyPublished($planet->owner_id, 'planet100')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 100 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text100', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet100'
+                ]);
+            } else if ($planet->total_planets >= 50 && !News::alreadyPublished($planet->owner_id, 'planet50')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 50 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text50', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet50'
+                ]);
+            } else if ($planet->total_planets >= 25 && !News::alreadyPublished($planet->owner_id, 'planet25')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 25 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text25', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet25'
+                ]);
+            } else if ($planet->total_planets >= 10 && !News::alreadyPublished($planet->owner_id, 'planet10')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 10 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text10', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet10'
+                ]);
+            } else if ($planet->total_planets >= 5 && !News::alreadyPublished($planet->owner_id, 'planet5')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 10 ' . __('news.l_news_planets'),
+                    'body' => __('news.l_news_p_text5', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'planet5'
+                ]);
+            }
+
+            // Generation of colonist amount
+
+            if ($planet->total_colonists >= 1000000000 && !News::alreadyPublished($planet->owner_id, 'col1000')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 1000 ' . __('news.l_news_cols'),
+                    'body' => __('news.l_news_c_text1000', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'col1000'
+                ]);
+            } else if ($planet->total_colonists >= 500000000 && !News::alreadyPublished($planet->owner_id, 'col500')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 500 ' . __('news.l_news_cols'),
+                    'body' => __('news.l_news_c_text500', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'col500'
+                ]);
+            } else if ($planet->total_colonists >= 100000000 && !News::alreadyPublished($planet->owner_id, 'col100')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 100 ' . __('news.l_news_cols'),
+                    'body' => __('news.l_news_c_text100', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'col100'
+                ]);
+            } else if ($planet->total_colonists >= 25000000 && !News::alreadyPublished($planet->owner_id, 'col25')) {
+                News::create([
+                    'headline' => __('news.l_news_p_headline', ['player' => $planet->character_name]) . ' 25 ' . __('news.l_news_cols'),
+                    'body' => __('news.l_news_c_text25', ['name' => $planet->character_name]),
+                    'user_id' => $planet->owner_id,
+                    'type' => 'col25'
+                ]);
+            }
+        }
+
+        Log::info(__('scheduler.l_sched_news_end'));
+    }
+}

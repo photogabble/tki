@@ -22,75 +22,89 @@
  *
  */
 
-// FUTURE: PDO, better debugging, better output formatting
-// Database driven language entries
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
+namespace App\Jobs;
 
-echo "<strong>" . $langvars['l_sched_planets_title'] . "</strong><p>";
+use App\Models\Planet;
+use Illuminate\Support\Facades\DB;
 
-$res = $old_db->Execute("SELECT * FROM {$old_db->prefix}planets WHERE owner > 0");
-Tki\Db::logDbErrors($pdo_db, $res, __LINE__, __FILE__);
-// We are now using transactions to off load the SQL stuff in full to the Database Server.
-
-$result = $old_db->Execute("START TRANSACTION");
-Tki\Db::logDbErrors($pdo_db, $result, __LINE__, __FILE__);
-while (!$res->EOF)
+class PlanetsScheduler extends ScheduledTask
 {
-    $row = $res->fields;
-    $production = floor(min($row['colonists'], $tkireg->colonist_limit) * $tkireg->colonist_production_rate);
-    $organics_production = floor($production * $tkireg->organics_prate * $row['prod_organics'] / 100.0);// - ($production * $tkireg->organics_consumption);
-    $organics_production -= floor($production * $tkireg->organics_consumption);
-
-    if ($row['organics'] + $organics_production < 0)
+    public function periodMinutes(): int
     {
-        $organics_production = -$row['organics'];
-        $starvation = floor($row['colonists'] * $starvation_death_rate);
-        if ($row['owner'] && $starvation >= 1)
-        {
-            Tki\PlayerLog::writeLog($pdo_db, $row['owner'], \Tki\LogEnums::STARVATION, "$row[sector_id]|$starvation");
+        return 2;
+    }
+
+    protected function run(): void
+    {
+        /** @var Planet[] $ownedPlanets */
+        $ownedPlanets = Planet::query()
+            ->whereNotNull('owner_id')
+            ->get();
+
+        DB::beginTransaction();
+
+        foreach($ownedPlanets as $planet) {
+            $production = floor(min($planet->colonists, config('game.colonist_limit')) * config('game.colonist_production_rate'));
+            $organics_production = floor($production * config('game.organics_prate') * $planet->prod_organics / 100.0);
+            $organics_production -= floor($production * config('game.organics_consumption'));
+
+            $starvation = 0;
+
+            if ($planet->organics + $organics_production < 0) {
+                $organics_production = -$planet->organics;
+                $starvation = floor($planet->colonists * config('game.starvation_death_rate'));
+
+                if (!is_null($planet->owner_id)) {
+                    \Tki\PlayerLog::writeLog($planet->owner_id, \Tki\LogEnums::STARVATION, "$planet->sector_id|$starvation");
+                }
+            }
+
+            $ore_production = floor($production * config('game.ore_prate') * $planet->prod_ore / 100.0);
+            $goods_production = floor($production * config('game.goods_prate') * $planet->prod_goods / 100.0);
+            $energy_production = floor($production * config('game.energy_prate') * $planet->prod_energy / 100.0);
+            $reproduction = floor(($planet->colonists - $starvation) * config('game.colonist_reproduction_rate'));
+
+            if (($planet->colonists + $reproduction - $starvation) > config('game.colonist_limit')) {
+                $reproduction = config('game.colonist_limit' - $planet->colonists);
+            }
+
+            $total_percent = $planet->prod_organics + $planet->prod_ore + $planet->prod_goods + $planet->prod_energy;
+
+            $fighter_production = 0;
+            $torp_production = 0;
+
+            if (!is_null($planet->owner_id)) {
+                $fighter_production = floor($production * config('game.fighter_prate') * $planet->prod_fighters / 100.0);
+                $torp_production = floor($production * config('game.torpedo_prate') * $planet->prod_torp / 100.0);
+                $total_percent += $planet->prod_fighters + $planet->prod_torp;
+            }
+
+            $credits_production = floor($production * config('game.credits_prate') * (100.0 - $total_percent) / 100.0);
+
+            $planet->update([
+                'organics' => $planet->organics + $organics_production,
+                'ore' => $planet->ore + $ore_production,
+                'goods' => $planet->goods + $goods_production,
+                'energy' => $planet->energy + $energy_production,
+                'colonists' => $planet->colonists + $reproduction - $starvation,
+                'torps' => $planet->torps + $torp_production,
+                'fighters' => $planet->fighters + $fighter_production,
+                'credits' => $planet->credits * config('game.interest_rate') + $credits_production,
+            ]);
         }
-    }
-    else
-    {
-        $starvation = 0;
-    }
 
-    $ore_production = floor($production * $ore_prate * $row['prod_ore'] / 100.0);
-    $goods_production = floor($production * $goods_prate * $row['prod_goods'] / 100.0);
-    $energy_production = floor($production * $energy_prate * $row['prod_energy'] / 100.0);
-    $reproduction = floor(($row['colonists'] - $starvation) * $tkireg->colonist_reproduction_rate);
+        DB::commit();
 
-    if (($row['colonists'] + $reproduction - $starvation) > $tkireg->colonist_limit)
-    {
-        $reproduction = $tkireg->colonist_limit - $row['colonists'];
+        // Limit max credits on Planets without a base
+        if (config('game.sched_planet_valid_credits')) {
+            Planet::query()
+                ->where('credits', '>', config('game.max_credits_without_base'))
+                ->where('base', false)
+                ->update([
+                    'credits' => config('game.max_credits_without_base')
+                ]);
+        }
+
+        // l_sched_planets_updated
     }
-
-    $total_percent = $row['prod_organics'] + $row['prod_ore'] + $row['prod_goods'] + $row['prod_energy'];
-
-    if ($row['owner'])
-    {
-        $fighter_production = floor($production * $fighter_prate * $row['prod_fighters'] / 100.0);
-        $torp_production = floor($production * $torpedo_prate * $row['prod_torp'] / 100.0);
-        $total_percent += $row['prod_fighters'] + $row['prod_torp'];
-    }
-    else
-    {
-        $fighter_production = 0;
-        $torp_production = 0;
-    }
-
-    $credits_production = floor($production * $credits_prate * (100.0 - $total_percent) / 100.0);
-    $ret = $old_db->Execute("UPDATE {$old_db->prefix}planets SET organics = organics + ?, ore = ore + ?, goods = goods + ?, energy = energy + ?, colonists = colonists + ? - ?, torps = torps + ?, fighters = fighters + ?, credits = credits * ? + ? WHERE planet_id = ? LIMIT 1; ", array($organics_production, $ore_production, $goods_production, $energy_production, $reproduction, $starvation, $torp_production, $fighter_production, $interest_rate, $credits_production, $row['planet_id']));
-    Tki\Db::logDbErrors($pdo_db, $ret, __LINE__, __FILE__);
-    $res->MoveNext();
 }
-
-$ret = $old_db->Execute("COMMIT");
-Tki\Db::logDbErrors($pdo_db, $ret, __LINE__, __FILE__);
-if ($tkireg->sched_planet_valid_credits)
-{
-    $ret = $old_db->Execute("UPDATE {$old_db->prefix}planets SET credits = ? WHERE credits > ? AND base = 'N';", array($tkireg->max_credits_without_base, $tkireg->max_credits_without_base));
-    Tki\Db::logDbErrors($pdo_db, $ret, __LINE__, __FILE__);
-}
-
-echo $langvars['l_sched_planets_updated'] . ".<br><br>";

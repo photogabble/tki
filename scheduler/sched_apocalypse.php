@@ -22,57 +22,59 @@
  *
  */
 
-// FUTURE: Rewrite to use PDO, better handling ("break?!") of logic, substantial output management
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
+namespace App\Jobs;
 
-echo "<strong>" . $langvars['l_sched_apoc_title'] . "</strong><br><br>";
-echo $langvars['l_sched_apoc_begins'] . "..<br>";
+use App\Models\Planet;
+use Exception;
 
-$doomsday = $old_db->Execute("SELECT * FROM {$old_db->prefix}planets WHERE colonists > ?;", array($tkireg->doomsday_value));
-Tki\Db::logDbErrors($pdo_db, $doomsday, __LINE__, __FILE__);
-$chance = 9;
-$reccount = $doomsday->RecordCount();
-if ($reccount > 200)
+class ApocalypseScheduler extends ScheduledTask
 {
-    $chance = 7; // Increase the chance it will happen if we have lots of planets meeting the criteria
-}
 
-$targetinfo = null;
-
-$affliction = random_int(1, $chance); // The chance something bad will happen
-if ($doomsday && $affliction < 3 && $reccount > 0)
-{
-    $i = 1;
-    $targetnum = random_int(1, (int) $reccount);
-    while (!$doomsday->EOF)
+    /**
+     * If there are more than 200 planets in the universe that have a population greater than the set
+     * doomsday value then pick one of those planets to have a terrible day.
+     *
+     * @todo Create news item for each apocalypse
+     * @todo Add more dreadful things
+     * @throws Exception
+     */
+    public function run(): void
     {
-        if ($i == $targetnum)
-        {
-            $targetinfo = $doomsday->fields;
-            break;
+        // Log: l_sched_apoc_title
+        // Log: l_sched_apoc_begins ???
+
+        $potentiallyDoomed = Planet::query()
+            ->where('colonists', '>', config('scheduler.doomsday_value'))
+            ->get();
+
+        if ($potentiallyDoomed->count() === 0) return; // Nobody dies
+
+        $chance = 9;
+
+        // Increase the chance it will happen if we have lots of planets meeting the criteria
+        // TODO make this a percentage of total planets
+        if ($potentiallyDoomed->count() > 200) $chance = 7;
+
+        // Chance something bad will happen
+        $affliction = random_int(1, $chance);
+
+        // Get a doomed planet at random and ruin their day, return on null
+        if (!$actuallyDoomed = $potentiallyDoomed->random(1)->first()) return;
+
+        if ($affliction < 3) {
+            if ($affliction === 1) {
+                // Space Plague
+                $actuallyDoomed->colonists = floor($actuallyDoomed->colonists - $actuallyDoomed->colonists * config('game.space_plague_kills'));
+            } else {
+                // Plasma storm
+                $actuallyDoomed->energy = 0;
+            }
+            $actuallyDoomed->save();
         }
-
-        $i++;
-        $doomsday->MoveNext();
     }
 
-    if ($affliction == 1) // Space Plague
+    public function periodMinutes(): int
     {
-        echo $langvars['l_sched_apoc_plague'] . "<br>.";
-        $sql = "UPDATE {$old_db->prefix}planets SET colonists = ROUND (colonists - colonists * ?) WHERE planet_id = ?;";
-        $resx = $old_db->Execute($sql, array($tkireg->space_plague_kills, $targetinfo['planet_id']));
-        Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-        $logpercent = round($tkireg->space_plague_kills * 100);
-        Tki\PlayerLog::writeLog($pdo_db, $targetinfo['owner'], \Tki\LogEnums::SPACE_PLAGUE, "$targetinfo[name]|$targetinfo[sector_id]|$logpercent");
-    }
-    else
-    {
-        echo $langvars['l_sched_apoc_plasma'] . "<br>.";
-        $sql2 = "UPDATE {$old_db->prefix}planets SET energy = 0 WHERE planet_id = ?;";
-        $resy = $old_db->Execute($sql2, array($targetinfo['planet_id']));
-        Tki\Db::logDbErrors($pdo_db, $resy, __LINE__, __FILE__);
-        Tki\PlayerLog::writeLog($pdo_db, $targetinfo['owner'], \Tki\LogEnums::PLASMA_STORM, "$targetinfo[name]|$targetinfo[sector_id]");
+        return 15;
     }
 }
-
-echo "<br>";

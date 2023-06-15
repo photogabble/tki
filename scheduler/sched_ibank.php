@@ -22,20 +22,46 @@
  *
  */
 
-// FUTURE: PDO, better debugging, better output formatting
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
+namespace App\Jobs;
 
-$exponinter = pow($tkireg->ibank_interest + 1, $multiplier);
-$expoloan = pow($tkireg->ibank_loaninterest + 1, $multiplier);
+use Illuminate\Support\Facades\DB;
+use App\Models\BankAccount;
+use Illuminate\Support\Facades\Log;
 
-echo "<strong>" . $langvars['l_sched_ibank_title'] . "</strong><p>";
+class BankScheduler extends ScheduledTask
+{
+    /**
+     * Apply interest rate to all bank accounts
+     *
+     * @todo Have the interest rate move around each day
+     * @todo Have interest added be a transaction logged
+     * @return void
+     */
+    public function run(): void
+    {
+        // l_sched_ibank_title
 
-$qry = "UPDATE ::prefix::ibank_accounts SET balance = balance * :exponinter, loan = loan * :expoloan ";
-$stmt = $this->pdo_db->prepare($qry);
-$stmt->bindParam(':exponinter', $exponinter, \PDO::PARAM_INT);
-$stmt->bindParam(':expoloan', $expoloan, \PDO::PARAM_INT);
-$stmt->execute();
+        $exponinter = pow(config('game.ibank_interest') + 1, $this->multiplier);
+        $expoloan = pow(config('game.ibank_loaninterest') + 1, $this->multiplier);
 
-$langvars['l_sched_ibank_note'] = str_replace("[multiplier]", $multiplier, $langvars['l_sched_ibank_note']);
-echo $langvars['l_sched_ibank_note'] . "<p>";
-$multiplier = 0;
+        BankAccount::query()
+            ->update([
+                'balance' => DB::raw('balance * ' . $exponinter),
+                'loan' => DB::raw('loan * ' . $expoloan)
+            ]);
+
+        // TODO: Add to translations table
+        // l_sched_ibank_note
+        Log::info("BankScheduler: Applied interest rates: balance: $exponinter, loan: $expoloan");
+    }
+
+    public function periodMinutes(): int
+    {
+        return 2;
+    }
+
+    public function maxCatchup(): int
+    {
+        return 1; // Only need to run once as we use multiplier to fill in lost time
+    }
+}

@@ -22,16 +22,33 @@
  *
  */
 
-// FUTURE: PDO, debug/output, error handling (what happens when run too often)
-// Database driven language entries
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
+namespace App\Jobs;
 
-echo "<strong>" . $langvars['l_sched_turns_title'] . "</strong><br><br>";
-echo $langvars['l_sched_turns_note'];
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use App\Models\Ship;
 
-$resa = $old_db->Execute("UPDATE {$old_db->prefix}ships SET turns = LEAST (turns + ($tkireg->turns_per_tick * $multiplier), $tkireg->max_turns) WHERE turns < $tkireg->max_turns");
-//$resa = $old_db->Execute("UPDATE {$old_db->prefix}ships SET turns = LEAST (turns + (? * ?), ?) WHERE turns < ?", array($tkireg->turns_per_tick, $multiplier, $tkireg->max_turns, $tkireg->max_turns));
-$debug = (string) Tki\Db::logDbErrors($pdo_db, $resa, __LINE__, __FILE__);
-\Tki\Scheduler::isQueryOk($pdo_db, $debug);
-echo "<br>";
-$multiplier = 0;
+class TurnsScheduler extends ScheduledTask
+{
+    public function periodMinutes(): int
+    {
+        return 2;
+    }
+
+    public function maxCatchup(): int
+    {
+        return 1;
+    }
+
+    protected function run(): void
+    {
+        Log::info(__('scheduler.l_sched_turns_title'));
+        Log::info(__('scheduler.l_sched_turns_note'));
+
+        Ship::query()
+            ->where('turns', '<', config('scheduler.max_turns'))
+            ->update([
+                'turns' => DB::raw('LEAST(turns + '. config('scheduler.turns_per_tick') .', '.config('scheduler.max_turns').')')
+            ]);
+    }
+}

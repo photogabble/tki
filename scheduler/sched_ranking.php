@@ -22,17 +22,34 @@
  *
  */
 
+namespace App\Jobs;
+
+use App\Models\Ship;
+
 // FUTURE: Use a single FetchAll to grab all users at once, process as an array, and switch to PDO, improve debug/output handling
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
 
-echo "<strong>" . $langvars['l_sched_ranking_title'] . "</strong><br><br>";
-$res = $old_db->Execute("SELECT ship_id FROM {$old_db->prefix}ships WHERE ship_destroyed='N'");
-Tki\Db::logDbErrors($pdo_db, $res, __LINE__, __FILE__);
-while (!$res->EOF)
+class RankingScheduler extends ScheduledTask
 {
-    Tki\Score::updateScore($pdo_db, $res->fields['ship_id'], $tkireg, $playerinfo);
-    $res->MoveNext();
-}
+    public function periodMinutes(): int
+    {
+        return 30;
+    }
 
-echo "<br>";
-$multiplier = 0;
+    public function maxCatchup(): int
+    {
+        return 1;
+    }
+
+    protected function run(): void
+    {
+        /** @var Ship[] $ships */
+        $ships = Ship::query()
+            ->where('ship_destroyed', false)
+            ->get();
+
+        foreach ($ships as $ship) {
+            // TODO Implement Tki\Score::updateScore
+            // Tki\Score::updateScore($pdo_db, $res->fields['ship_id'], $tkireg, $playerinfo);
+        }
+    }
+}

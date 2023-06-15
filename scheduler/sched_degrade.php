@@ -22,59 +22,90 @@
  *
  */
 
-// FUTURE: Better debugging and output for all paths
-$langvars = Tki\Translate::load($pdo_db, $lang, array('scheduler'));
+namespace App\Jobs;
 
-echo "<strong>" . $langvars['l_sched_degrade_title'] . "</strong><br><br>";
-$res = $old_db->Execute("SELECT * FROM {$old_db->prefix}sector_defense WHERE defense_type = 'F'");
-Tki\Db::logDbErrors($pdo_db, $res, __LINE__, __FILE__);
+use App\Models\Planet;
+use App\Models\SectorDefense;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
-while (!$res->EOF)
+class DegradeScheduler extends ScheduledTask
 {
-    $row = $res->fields;
-    $res3 = $old_db->Execute("SELECT * FROM {$old_db->prefix}ships WHERE ship_id = ?;", array($row['ship_id']));
-    Tki\Db::logDbErrors($pdo_db, $res3, __LINE__, __FILE__);
-    $sched_playerinfo = $res3->fields;
-    $res2 = $old_db->Execute("SELECT * FROM {$old_db->prefix}planets WHERE (owner = ? OR (team = ? AND ? <> 0)) AND sector_id = ? AND energy > 0;", array($row['ship_id'], $sched_playerinfo['team'], $sched_playerinfo['team'], $row['sector_id']));
-    Tki\Db::logDbErrors($pdo_db, $res2, __LINE__, __FILE__);
-    if ($res2->EOF)
+    /**
+     * Degrades deployed defense if it has no supporting planets, otherwise it consumes
+     * the required energy from supporting planets.
+     *
+     * @return void
+     */
+    protected function run(): void
     {
-        $resa = $old_db->Execute("UPDATE {$old_db->prefix}sector_defense SET quantity = quantity - GREATEST(ROUND(quantity * ?),1) WHERE defense_id = ? AND quantity > 0;", array($tkireg->defense_degrade_rate, $row['defense_id']));
-        Tki\Db::logDbErrors($pdo_db, $resa, __LINE__, __FILE__);
-        $degrade_rate = $tkireg->defense_degrade_rate * 100;
-        Tki\PlayerLog::writeLog($pdo_db, $row['ship_id'], \Tki\LogEnums::DEFENSE_DEGRADE, $row['sector_id'] . "|" . $degrade_rate);
-    }
-    else
-    {
-        $energy_required = round($row['quantity'] * $tkireg->energy_per_fighter);
-        $res4 = $old_db->Execute("SELECT IFNULL(SUM(energy),0) AS energy_available FROM {$old_db->prefix}planets WHERE (owner = ? OR (team = ? AND ? <> 0)) AND sector_id = ?", array($row['ship_id'], $sched_playerinfo['team'], $sched_playerinfo['team'], $row['sector_id']));
-        Tki\Db::logDbErrors($pdo_db, $res4, __LINE__, __FILE__);
-        $planet_energy = $res4->fields;
-        $energy_available = $planet_energy['energy_available'];
-        $langvars['l_sched_degrade_note'] = str_replace("[energy_avail]", (string) $energy_available, $langvars['l_sched_degrade_note']);
-        $langvars['l_sched_degrade_note'] = str_replace("[energy_required]", (string) $energy_required, $langvars['l_sched_degrade_note']);
-        echo $langvars['l_sched_degrade_note'];
-        if ($energy_available > $energy_required)
-        {
-            while (!$res2->EOF)
-            {
-                $degrade_row = $res2->fields;
-                $resb = $old_db->Execute("UPDATE {$old_db->prefix}planets SET energy = energy - GREATEST(ROUND(? * (energy / ?)),1)  WHERE planet_id = ?", array($energy_required, $energy_available, $degrade_row['planet_id']));
-                Tki\Db::logDbErrors($pdo_db, $resb, __LINE__, __FILE__);
-                $res2->MoveNext();
+        // l_sched_degrade_title
+
+        /** @var SectorDefense[] $found */
+        $found = SectorDefense::query()
+            ->with('ship')
+            ->where('defense_type', 'F')
+            ->get();
+
+        foreach ($found as $sectorDefense) {
+            // Get planets within the sector that are owned by the player who deployed the defense
+            // or the team they belong to.
+
+            /** @var Planet[]|Collection $planets */
+            $planets = Planet::query()
+                ->where('sector_id', $sectorDefense->sector_id)
+                ->where('energy', '>', 0)
+                ->where(function(Builder $builder) use ($sectorDefense){
+                    // TODO: check this is equivilant to (owner = ? OR (team_id = ? AND ? <> 0))
+                    $builder->where('owner', $sectorDefense->ship->id);
+                    if ($sectorDefense->ship->team_id) {
+                        $builder->orWhere('team_id', $sectorDefense->ship->team_id);
+                    }
+                })->get();
+
+            if ($planets->count() === 0) {
+                // Degrade the defense if quantity > 0
+                if ($sectorDefense->quantity > 0) {
+                    $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
+                    $sectorDefense->decrement('quantity', $degradeAmount);
+
+                    \Tki\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
+                }
+                continue;
             }
+
+            $energyRequired = round($sectorDefense->quantity * config('game.energy_per_fighter'));
+            $energyAvailable = $planets->reduce(function(int $available, Planet $planet) {
+                $available += $planet->energy;
+                return $available;
+            }, 0);
+
+            if ($energyAvailable >= $energyRequired) {
+                foreach ($planets as $planet) {
+                    // Consume energy from supporting planets
+                    $planet->update([
+                        'energy' => $planet->energy - max(round($energyRequired * ($planet->energy / $energyAvailable)), 1)
+                    ]);
+                }
+
+                continue;
+            }
+
+            // Not enough energy to operate, degrade defenses
+            $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
+            $sectorDefense->decrement('quantity', $degradeAmount);
+
+            \Tki\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
         }
-        else
-        {
-            $resc = $old_db->Execute("UPDATE {$old_db->prefix}sector_defense SET quantity = quantity - GREATEST(ROUND(quantity * ?),1) WHERE defense_id = ?;", array($tkireg->defense_degrade_rate, $row['defense_id']));
-            Tki\Db::logDbErrors($pdo_db, $resc, __LINE__, __FILE__);
-            $degrade_rate = $tkireg->defense_degrade_rate * 100;
-            Tki\PlayerLog::writeLog($pdo_db, $row['ship_id'], \Tki\LogEnums::DEFENSE_DEGRADE, $row['sector_id'] . "|" . $degrade_rate);
-        }
+
+        // Clean up any expired defense
+        SectorDefense::query()
+            ->where('quantity', '<=', 0)
+            ->delete();
     }
 
-    $res->MoveNext();
+    public function periodMinutes(): int
+    {
+        return 5;
+    }
 }
-
-$resx = $old_db->Execute("DELETE FROM {$old_db->prefix}sector_defense WHERE quantity <= 0");
-Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
