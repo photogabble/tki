@@ -24,36 +24,59 @@
 
 namespace Tki\Scheduler; // Domain Entity organization pattern, Scheduler objects
 
-class SchedulerGateway // Gateway for SQL calls related to the Scheduler
-{
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
+// TODO: Rename Scheduler and move to app/Models
 
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+use App\Models\Scheduler;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @property string $class_name
+ * @property Carbon $last_run_at
+ * @property Carbon $next_run_after
+ */
+class SchedulerGateway extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'class_name',
+        'last_run_at',
+        'next_run_after',
+        'multiplier'
+    ];
+
+    protected $casts = [
+        'next_run_after' => 'datetime',
+        'last_run_at' => 'datetime'
+    ];
+
+    /**
+     * @todo refactor usage tobe Carbon aware
+     * @return Carbon|null
+     */
+    public function selectSchedulerLastRun(): ?Carbon
     {
-        $this->pdo_db = $pdo_db;
+        /** @var Scheduler|null $last */
+        $last = self::query()
+            ->orderBy('last_run_at', 'DESC')
+            ->first();
+
+        return (is_null($last))
+            ? null
+            : $last->last_run_at;
     }
 
-    public function selectSchedulerLastRun(): ?int
+    public static function nextRun(): ?Carbon
     {
-        // It is possible to have this call run before the game is setup, so we need to test to ensure the db is active
-        if (\Tki\Db::isActive($this->pdo_db))
-        {
-            // SQL call that selects the last run of the scheduler, and only one record
-            $sql = "SELECT last_run FROM ::prefix::scheduler LIMIT 1";
-            $result = $this->pdo_db->query($sql); // Query the pdo DB using this SQL call
+        /** @var Scheduler|null $last */
+        $last = self::query()
+            ->orderBy('next_run_after', 'DESC')
+            ->first();
 
-            if ($result !== false)
-            {
-                $row = $result->fetchObject();
-                \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-                if (is_object($row) && (property_exists($row, 'last_run')))
-                {
-                    return (int) $row->last_run; // Return the int value of the last scheduler run
-                }
-            }
-        }
-
-        return null; // If anything goes wrong, db not active, etc, return null
+        return (is_null($last))
+            ? null
+            : $last->next_run_after;
     }
 }

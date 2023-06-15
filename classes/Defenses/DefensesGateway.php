@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /**
  * classes/Defenses/DefensesGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
@@ -22,74 +22,69 @@
  *
  */
 
-namespace Tki\Defenses; // Domain Entity organization pattern, Defenses objects
+namespace Tki\Defenses;
+// TODO: Rename SectorDefense and move to app/Models
 
-class DefensesGateway // Gateway for SQL calls related to Defenses
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Universe;
+use App\Models\Ship;
+
+class DefensesGateway extends Model
 {
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
+    protected $fillable = [
+        'quantity'
+    ];
 
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+    public function ship(): BelongsTo
     {
-        $this->pdo_db = $pdo_db;
+        return $this->belongsTo(Ship::class);
     }
 
-    public function selectFighterDefenses(int $sector_id): ?array
+    // TODO: Rename to System?
+    public function sector(): BelongsTo
     {
-        $sql = "SELECT * FROM ::prefix::sector_defense WHERE sector_id = :sector_id AND defense_type ='F' ORDER BY quantity DESC";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-        // A little magic here. If it couldn't select a defense in the sector, the following call will return false - which is what we want for "no defenses found".
-        $defense_present = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($defense_present !== false)
-        {
-            return $defense_present; // FUTURE: Eventually we want this to return a defense object instead, for now, defensesinfo array or false for no defense found.
-        }
-        else
-        {
-            return null;
-        }
+        return $this->belongsTo(Universe::class, 'sector_id');
     }
 
-    public function selectMineDefenses(int $sector_id): ?array
+    /**
+     * @todo refactor usages for new Collection return
+     * @param int $sector_id
+     * @return Collection<DefensesGateway>
+     */
+    public function selectFighterDefenses(int $sector_id): Collection
     {
-        $sql = "SELECT * FROM ::prefix::sector_defense WHERE sector_id = :sector_id AND defense_type ='M'";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-        // A little magic here. If it couldn't select a defense in the sector, the following call will return false - which is what we want for "no defenses found".
-        $defense_present = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($defense_present !== false)
-        {
-            return $defense_present; // FUTURE: Eventually we want this to return a defense object instead, for now, defensesinfo array or false for no defense found.
-        }
-        else
-        {
-            return null;
-        }
+        return DefensesGateway::query()
+            ->where('sector_id', $sector_id)
+            ->where('defense_type', 'F')
+            ->orderBy('quantity', 'DESC')
+            ->get();
     }
 
-    public function selectDefenses(int $sector_id): ?array
+    /**
+     * @todo refactor usages for new Collection return
+     * @param int $sector_id
+     * @return Collection<DefensesGateway>
+     */
+    public function selectMineDefenses(int $sector_id): Collection
     {
-        $sql = "SELECT * FROM ::prefix::sector_defense WHERE sector_id = :sector_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-        // A little magic here. If it couldn't select a defense in the sector, the following call will return false - which is what we want for "no defenses found".
-        $defense_present = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return DefensesGateway::query()
+            ->where('sector_id', $sector_id)
+            ->where('defense_type', 'M')
+            ->orderBy('quantity', 'DESC')
+            ->get();
+    }
 
-        if ($defense_present !== false)
-        {
-            return $defense_present; // FUTURE: Eventually we want this to return a defense object instead, for now, defensesinfo array or false for no defense found.
-        }
-        else
-        {
-            return null;
-        }
+    /**
+     * @todo Refactor usages to use Sector -> SectorDefense relationship
+     * @param int $sector_id
+     * @return Collection
+     */
+    public function selectDefenses(int $sector_id): Collection
+    {
+        return DefensesGateway::query()
+            ->where('sector_id', $sector_id)
+            ->get();
     }
 }

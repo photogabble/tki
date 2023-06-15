@@ -24,34 +24,23 @@
 
 namespace Tki\Logs; // Domain Entity organization pattern, Logs objects
 
-class LogsGateway // Gateway for SQL calls related to Logs
+// TODO: Rename Log and move to app/Models
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+class LogsGateway extends Model
 {
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
-
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+    /**
+     * @todo refactor usage to be Collection aware
+     * @param int $ship_id
+     * @param string $startdate
+     * @return Collection
+     */
+    public function selectLogsInfo(int $ship_id, string $startdate): Collection
     {
-        $this->pdo_db = $pdo_db;
-    }
-
-    public function selectLogsInfo(int $ship_id, string $startdate): array
-    {
-        $logsinfo = array();
-        $sql = "SELECT * FROM ::prefix::logs WHERE ship_id = :ship_id AND time LIKE ':start_date%' ORDER BY time DESC, type DESC";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':ship_id', $ship_id, \PDO::PARAM_INT);
-        $stmt->bindValue(':start_date', $startdate . '%');
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a log, the following call will return false - which is what we want for "no logs found".
-        $logs_select = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        if ($logs_select !== false)
-        {
-            return $logs_select;
-        }
-        else
-        {
-            return $logsinfo; // Note: Returns empty Array if select found no logs
-        }
+        return LogsGateway::where('ship_id', $ship_id)
+            ->where('created_at', 'LIKE', "$startdate%")
+            ->get();
     }
 }

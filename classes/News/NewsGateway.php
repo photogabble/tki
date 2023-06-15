@@ -24,33 +24,24 @@
 
 namespace Tki\News; // Domain Entity organization pattern, News objects
 
-class NewsGateway // Gateway for SQL calls related to News
+// TODO: Rename News and move to app/Models
+
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+class NewsGateway extends Model
 {
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
-
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
-    {
-        $this->pdo_db = $pdo_db;
-    }
-
-    public function selectNewsByDay(string $day): ?array
+    /**
+     * @todo make usage aware of Carbon requirement
+     * @param Carbon $day
+     * @return Collection
+     */
+    public function selectNewsByDay(Carbon $day): Collection
     {
         // SQL call that selects all of the news items between the start date beginning of day, and the end of day.
-        $sql = "SELECT * FROM ::prefix::news WHERE date > :start AND date < :end ORDER BY news_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindValue(':start', $day . ' 00:00:00', \PDO::PARAM_STR);
-        $stmt->bindValue(':end', $day . ' 23:59:59', \PDO::PARAM_STR);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log errors, if there are any
-
-        $return_value = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        if ($return_value !== false)
-        {
-            return $return_value;
-        }
-        else
-        {
-            return null;
-        }
+        return NewsGateway::query()
+            ->whereBetween('created_at', [$day->startOfDay(), $day->endOfDay()])
+            ->get();
     }
 }

@@ -22,53 +22,34 @@
  *
  */
 
-namespace Tki\Links; // Domain Entity organization pattern, Links objects
+namespace Tki\Links;
+// TODO: Rename Link and move to app/Models
 
-class LinksGateway // Gateway for SQL calls related to Links
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+class LinksGateway extends Model
 {
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
-
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+    /**
+     * @todo Refactor usage to be Collection aware
+     * @param int $sector_id
+     * @return Collection
+     */
+    public function selectAllLinkInfoByLinkStart(int $sector_id): Collection
     {
-        $this->pdo_db = $pdo_db;
+        return LinksGateway::where('link_start', $sector_id)->orderBy('link_dest', 'ASC')->get();
     }
 
-    public function selectAllLinkInfoByLinkStart(int $sector_id): ?array
+    /**
+     * @todo Refactor usage to be Model aware
+     * @param int $src
+     * @param int $dest
+     * @return LinksGateway|null
+     */
+    public function selectLinkId(int $src, int $dest): ?LinksGateway
     {
-        $sql = "SELECT * FROM ::prefix::links WHERE link_start = :link_start ORDER BY link_dest ASC";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':link_start', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        $linksinfo = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($linksinfo !== false)
-        {
-            // A little magic here. If it couldn't select a link, the following call will return false - which is what we want for "no link found".
-            return $linksinfo; // FUTURE: Eventually we want this to return a link object instead, for now, linkinfo array or false for no link found.
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    public function selectLinkId(int $src, int $dest): ?array
-    {
-        $sql = "SELECT link_id FROM ::prefix::links WHERE link_start = :link_start AND link_dest = :link_dest";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':link_start', $src, \PDO::PARAM_INT);
-        $stmt->bindParam(':link_dest', $dest, \PDO::PARAM_INT);
-        $stmt->execute();
-        $linksinfo = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($linksinfo !== false)
-        {
-            // A little magic here. If it couldn't select a link, the following call will return false - which is what we want for "no link found".
-            return $linksinfo; // FUTURE: Eventually we want this to return a link object instead, for now, linkinfo array or false for no link found.
-        }
-        else
-        {
-            return null;
-        }
+        return LinksGateway::where('link_start', $src)
+            ->where('link_dest', $dest)
+            ->first();
     }
 }

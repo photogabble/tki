@@ -24,51 +24,41 @@
 
 namespace Tki\Zones; // Domain Entity organization pattern, zones objects
 
-class ZonesGateway // Gateway for SQL calls related to Zones
+// TODO: Rename Zone and move to app/Models
+
+use Illuminate\Database\Eloquent\Model;
+
+class ZonesGateway extends Model
 {
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
-
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+    /**
+     * @todo refactor usages to be Model aware
+     * @param int $sector_id
+     * @return ZonesGateway|null
+     */
+    public function selectZoneInfo(int $sector_id): ?ZonesGateway
     {
-        $this->pdo_db = $pdo_db;
+        return ZonesGateway::where('sector_id', $sector_id)->first();
     }
 
-    public function selectZoneInfo(int $sector_id): mixed
+    /**
+     * @todo refactor usage to be Model aware
+     * @param int $zone
+     * @return ZonesGateway|null
+     */
+    public function selectZoneInfoByZone(int $zone): ?ZonesGateway
     {
-        $sql = "SELECT * FROM ::prefix::zones WHERE sector_id = :sector_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a zone in the sector, the following call will return false - which is what we want for "no zone found".
-        $zoneinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $zoneinfo; // FUTURE: Eventually we want this to return a zone object instead, for now, zoneinfo array or null array for no zone found.
+        return ZonesGateway::find($zone);
     }
 
-    public function selectZoneInfoByZone(int $zone): mixed
+    /**
+     * @todo refactor usage to be Model aware
+     * @param int $sector_id
+     * @return ZonesGateway|null
+     */
+    public function selectMatchingZoneInfo(int $sector_id): ?ZonesGateway
     {
-        $sql = "SELECT * FROM ::prefix::zones WHERE zone_id = :zone_id LIMIT 1";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':zone_id', $zone, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a zone in the sector, the following call will return false - which is what we want for "no zone found".
-        $zoneinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $zoneinfo; // FUTURE: Eventually we want this to return a zone object instead, for now, zoneinfo array or false for no zone found.
-    }
-
-    public function selectMatchingZoneInfo(int $sector_id): mixed
-    {
-        $sql = "SELECT * FROM ::prefix::zones, ::prefix::universe WHERE ::prefix::universe.sector_id = :sector_id AND ::prefix::zones.zone_id = ::prefix::universe.zone_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':zone_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a zone in the sector, the following call will return false - which is what we want for "no zone found".
-        $zoneinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $zoneinfo; // FUTURE: Eventually we want this to return a zone object instead, for now, zoneinfo array or false for no zone found.
+        return ZonesGateway::join('universe', 'universe.sector_id', '=', $sector_id)
+            ->where('zones.zone_id', '=', 'universe.zone_id')
+            ->first();
     }
 }

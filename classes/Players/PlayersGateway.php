@@ -24,70 +24,87 @@
 
 namespace Tki\Players; // Domain Entity organization pattern, Players objects
 
-class PlayersGateway // Gateway for SQL calls related to Players
+// TODO: Rename User and move to app/Models
+
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+class PlayersGateway extends Authenticatable
 {
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
+    use HasApiTokens, HasFactory, Notifiable;
 
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
-    {
-        $this->pdo_db = $pdo_db;
-    }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'last_login',
+    ];
 
-    public function selectPlayersLoggedIn(string $since_stamp, string $cur_time_stamp): ?int
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'last_login' => 'datetime'
+    ];
+
+    /**
+     * @todo refactor to use Carbon and an offset in minutes
+     * @param string $since_stamp
+     * @param string $cur_time_stamp
+     * @return int
+     */
+    public function selectPlayersLoggedIn(string $since_stamp, string $cur_time_stamp): int
     {
         // SQL call that selected the number (count) of logged in ships (should be players)
         // where last login time is between the since_stamp, and the current timestamp ($cur_time_stamp)
         // But it excludes kabal.
-        $sql = "SELECT COUNT(*) AS loggedin FROM ::prefix::ships " .
-               "WHERE ::prefix::ships.last_login BETWEEN timestamp '"
-               . $since_stamp . "' AND timestamp '" . $cur_time_stamp . "' AND email NOT LIKE '%@kabal'";
-        $result = $this->pdo_db->query($sql); // Query the pdo DB using this SQL call
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
 
-        if ($result !== false)
-        {
-            $row = $result->fetchObject(); // Fetch the associated object from the select
-            $online = $row->loggedin; // Set online variable to the loggedin count from SQL
-            return (int) $online;
-        }
-        else
-        {
-            return null;
-        }
+        return self::query()
+            ->whereBetween('last_login', [$since_stamp, $cur_time_stamp])
+            ->where('email', 'NOT LIKE', '%@kabal')
+            ->count();
     }
 
-    public function selectPlayerInfo(?string $email): array | bool
+    /**
+     * @todo refactor all usages to use authenticated user as provided by Laravel!
+     * @todo also this used to use the ships table instead of users, things need to be aware of that
+     * @param string|null $email
+     * @return PlayersGateway|null
+     */
+    public function selectPlayerInfo(?string $email): ?PlayersGateway
     {
-        $sql = "SELECT * FROM ::prefix::ships WHERE email = :email LIMIT 1";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':email', $email, \PDO::PARAM_STR);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a user, the following call will return false - which is what we want for "no user found".
-        $playerinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $playerinfo; // FUTURE: Eventually we want this to return a player object instead, for now, playerinfo array or false for no user found.
+        return PlayersGateway::where('email', $email)->first();
     }
 
+    /**
+     * @todo refactor all usages to be aware that this returns User rather than Ship
+     * @param int|null $ship_id
+     * @return array
+     */
     public function selectPlayerInfoById(?int $ship_id): array
     {
-        $sql = "SELECT * FROM ::prefix::ships WHERE ship_id = :ship_id LIMIT 1";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':ship_id', $ship_id, \PDO::PARAM_STR);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a user, the following call will return false - which is what we want for "no user found".
-        $playerinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if ($playerinfo !== false)
-        {
-            return $playerinfo; // FUTURE: Eventually we want this to return a player object instead, for now, playerinfo array or false for no user found.
-        }
-        else
-        {
-            $playerinfo = array();
-            return $playerinfo;
-        }
+        return PlayersGateway::find($ship_id);
     }
 }

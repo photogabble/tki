@@ -24,34 +24,107 @@
 
 namespace Tki\Ships; // Domain Entity organization pattern, Ships objects
 
-class ShipsGateway // Gateway for SQL calls related to Ships
-{
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
+// TODO: Rename Ship and move to app/Models
 
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+use App\Models\Team;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+/**
+ * @property int $hull
+ * @property int $engines
+ * @property int $power
+ * @property int $computer
+ * @property int $sensors
+ * @property int $beams
+ * @property int $torp_launchers
+ * @property int $torps
+ * @property int $shields
+ * @property int $armor
+ * @property int $armor_pts
+ * @property int $cloak
+ * @property int $credits
+ * @property int $sector_id
+ * @property int $ship_ore
+ * @property int $ship_organics
+ * @property int $ship_goods
+ * @property int $ship_energy
+ * @property int $ship_colonists
+ * @property int $ship_fighters
+ * @property int $ship_damage
+ * @property int $turns
+ *
+ * @property bool $on_planet
+ *
+ * @property int $dev_warpedit
+ * @property int $dev_genesis
+ * @property int $dev_beacon
+ * @property int $dev_emerwarp
+ * @property bool $dev_escapepod
+ * @property bool $dev_fuelscoop
+ * @property bool $dev_lssd
+ * @property int $dev_minedeflector
+ */
+class ShipsGateway extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'sector_id',
+        'cleared_defenses',
+    ];
+
+    public function team(): BelongsTo
     {
-        $this->pdo_db = $pdo_db;
+        return $this->belongsTo(Team::class);
     }
 
+    // TODO: Has One BankAccount
+
+    /**
+     * @todo refactor usages to be Model aware
+     * @todo then remove $ship_id
+     * @param int $ship_id
+     * @param int $rating
+     * @return void
+     */
     public function updateDestroyedShip(int $ship_id, int $rating = 0): void
     {
-        $sql = "UPDATE ::prefix::ships SET hull=0," .
-               "engines=0, power=0, computer=0, sensors=0," .
-               "beams=0, torp_launchers=0, torps=0, armor=0," .
-               "armor_pts=100, cloak=0, shields=0, sector=1," .
-               "rating=0, cleared_defense=' ', " .
-               "ship_ore=0, ship_organics=0, ship_energy=1000," .
-               "ship_colonists=0, ship_goods=0," .
-               "ship_fighters=100, ship_damage=0, credits=1000," .
-               "on_planet='N', dev_warpedit=0, dev_genesis=0," .
-               "dev_beacon=0, dev_emerwarp=0, dev_escapepod='N'," .
-               "dev_fuelscoop='N', dev_minedeflector=0," .
-               "ship_destroyed='N', dev_lssd='N' " .
-               "WHERE ship_id = :ship_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':ship_id', $ship_id, \PDO::PARAM_INT);
-        $stmt->bindParam(':rating', $rating, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__);
+        $this->engines = 0;
+        $this->power = 0;
+        $this->computer = 0;
+        $this->sensors = 0;
+        $this->beams = 0;
+        $this->torp_launchers = 0;
+        $this->torps = 0;
+        $this->armor = 0;
+        $this->armor_pts = 100;
+        $this->cloak = 0;
+        $this->shields = 0;
+        $this->sector_id = 1;
+        $this->rating = $rating;
+        $this->cleared_defense = ' ';
+
+        $this->ship_ore = 0;
+        $this->ship_organics = 0;
+        $this->ship_energy = 1000;
+        $this->ship_colonists =0;
+        $this->ship_goods = 0;
+        $this->ship_fighters = 100;
+        $this->ship_damage =  0;
+        $this->credits = 1000;
+        $this->on_planet = false;
+        $this->dev_warpedit = 0;
+        $this->dev_genesis =0;
+        $this->dev_beacon = 0;
+        $this->dev_emerwarp = 0;
+        $this->dev_escapepod = false;
+        $this->dev_fuelscoop = false;
+        $this->dev_minedeflector = 0;
+        $this->ship_destroyed =false;
+        $this->dev_lssd = false;
+
+        $this->save();
     }
 }

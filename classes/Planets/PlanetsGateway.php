@@ -24,32 +24,34 @@
 
 namespace Tki\Planets; // Domain Entity organization pattern, Planets objects
 
-class PlanetsGateway // Gateway for SQL calls related to Planets
-{
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
+// TODO: Rename Planet and move to app/Models
+use Illuminate\Database\Eloquent\Model;
+use Psy\Exception\DeprecatedException;
 
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+class PlanetsGateway extends Model
+{
+    public function setDefeated(int $planettorps): void
     {
-        $this->pdo_db = $pdo_db;
+        $this->torps -= $planettorps;
+        $this->base = false;
+        $this->defeated = true;
+        $this->owner_id = null;
+        $this->fighters = 0;
+
+        $this->save();
     }
 
+    /**
+     * @todo update usages to use setDefeated method on this Model
+     * @deprecated
+     * @param \PDO $pdo_db
+     * @param array $planetinfo
+     * @param int $planettorps
+     * @return void
+     */
     public function updateDefeatedPlanet(\PDO $pdo_db, array $planetinfo, int $planettorps): void
     {
-        $sql = "UPDATE ::prefix::planets SET owner = :owner, " .
-               "fighters = :fighters, " .
-               "torps = torps - :planettorps, " .
-               "base = :base, " .
-               "defeated = :defeated, " .
-               "WHERE planet_id = :planet_id";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindValue(':owner', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':fighters', 0, \PDO::PARAM_INT);
-        $stmt->bindParam(':planettorps', $planettorps, \PDO::PARAM_INT);
-        $stmt->bindValue(':base', 'N', \PDO::PARAM_STR);
-        $stmt->bindValue(':defeated', 'Y', \PDO::PARAM_STR);
-        $stmt->bindParam(':planet_id', $planetinfo['planet_id'], \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
+        throw new DeprecatedException('use setDefeated method');
     }
 
     public function genesisAddPlanet(\PDO $pdo_db, \Tki\Registry $tkireg, array $playerinfo, string $planetname): void

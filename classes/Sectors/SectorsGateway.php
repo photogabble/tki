@@ -24,25 +24,43 @@
 
 namespace Tki\Sectors; // Domain Entity organization pattern, Sectors objects
 
-class SectorsGateway // Gateway for SQL calls related to Sectors
-{
-    protected \PDO $pdo_db; // This will hold a protected version of the pdo_db variable
+// TODO: Rename Universe or Sector and move to app/Models
 
-    public function __construct(\PDO $pdo_db) // Create the this->pdo_db object
+use App\Models\Planet;
+use App\Models\Zone;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Psy\Exception\DeprecatedException;
+
+class SectorsGateway extends Model
+{
+    use HasFactory;
+
+    public function zone(): BelongsTo
     {
-        $this->pdo_db = $pdo_db;
+        return $this->belongsTo(Zone::class);
     }
 
+    public function planets(): HasMany
+    {
+        return $this->hasMany(Planet::class, 'sector_id');
+    }
+
+    public function ships(): HasMany
+    {
+        // TODO: implement ships relationship
+    }
+
+    /**
+     * @todo refactor all usages to use sector relationship
+     * @deprecated
+     * @param int $sector_id
+     * @return array|bool
+     */
     public function selectSectorInfo(int $sector_id): array | bool
     {
-        $sql = "SELECT * FROM ::prefix::universe WHERE sector_id = :sector_id LIMIT 1";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a sector, the following call will return false - which is what we want for "no sector found".
-        $sectorinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $sectorinfo; // FUTURE: Eventually we want this to return a sector object instead, for now, sectorinfo array or false for no user found.
+        throw new DeprecatedException('refactor usage to use sector relationship');
     }
 }
