@@ -32,7 +32,7 @@ $langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'device',
                                 'footer', 'insignias', 'main', 'regional',
                                 'report', 'universal'));
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 $shiptypes = array();

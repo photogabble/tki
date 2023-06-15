@@ -49,7 +49,7 @@ if (array_key_exists('sort', $_GET))
 }
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Determine what type of report is displayed and display it's title

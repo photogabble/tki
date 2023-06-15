@@ -35,7 +35,7 @@ class Ship
             if ($playerinfo['dev_escapepod'] === 'Y')
             {
                 $rating = (int) round($playerinfo['rating'] / 2);
-                $ships_gateway = new \Tki\Ships\Ship($pdo_db);
+                $ships_gateway = new \Tki\Models\Ship($pdo_db);
                 $ships_gateway->updateDestroyedShip($_SESSION['username'], $rating);
                 return true;
 
@@ -74,7 +74,7 @@ class Ship
     public static function leavePlanet(\PDO $pdo_db, int $ship_id): void
     {
         // Get planetinfo from database
-        $planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+        $planets_gateway = new \Tki\Models\Planet($pdo_db);
         $planetinfo = $planets_gateway->selectAllPlanetInfoByOwner($ship_id);
 
         if (is_array($planetinfo))

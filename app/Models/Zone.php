@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Links/LinksGateway.php from The Kabal Invasion.
+ * classes/Zones/ZonesGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,34 +22,56 @@
  *
  */
 
-namespace Tki\Links;
+namespace Tki\Models; // Domain Entity organization pattern, zones objects
+
 // TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Link extends Model
+/**
+ * @property-read Universe[]|Collection $sectors
+ */
+class Zone extends Model
 {
-    /**
-     * @todo Refactor usage to be Collection aware
-     * @param int $sector_id
-     * @return Collection
-     */
-    public function selectAllLinkInfoByLinkStart(int $sector_id): Collection
+    use HasFactory;
+
+    public function sectors(): HasMany
     {
-        return Link::where('link_start', $sector_id)->orderBy('link_dest', 'ASC')->get();
+        return $this->hasMany(Universe::class);
     }
 
     /**
-     * @param int $src
-     * @param int $dest
-     * @return Link|null
-     *@todo Refactor usage to be Model aware
+     * @param int $sector_id
+     * @return Zone|null
+     *@todo refactor usages to be Model aware
      */
-    public function selectLinkId(int $src, int $dest): ?Link
+    public function selectZoneInfo(int $sector_id): ?Zone
     {
-        return Link::where('link_start', $src)
-            ->where('link_dest', $dest)
+        return Zone::where('sector_id', $sector_id)->first();
+    }
+
+    /**
+     * @param int $zone
+     * @return Zone|null
+     *@todo refactor usage to be Model aware
+     */
+    public function selectZoneInfoByZone(int $zone): ?Zone
+    {
+        return Zone::find($zone);
+    }
+
+    /**
+     * @param int $sector_id
+     * @return Zone|null
+     *@todo refactor usage to be Model aware
+     */
+    public function selectMatchingZoneInfo(int $sector_id): ?Zone
+    {
+        return Zone::join('universe', 'universe.sector_id', '=', $sector_id)
+            ->where('zones.zone_id', '=', 'universe.zone_id')
             ->first();
     }
 }

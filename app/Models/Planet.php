@@ -22,7 +22,7 @@
  *
  */
 
-namespace Tki\Planets; // Domain Entity organization pattern, Planets objects
+namespace Tki\Models; // Domain Entity organization pattern, Planets objects
 
 // TODO: move to app/Models
 

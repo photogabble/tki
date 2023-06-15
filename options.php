@@ -37,7 +37,7 @@ $title = $langvars['l_opt_title'];
 $header = new Tki\Header();
 $header->display($pdo_db, $lang, $template, $title, $body_class);
 
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 echo "<body class='options'>\n";

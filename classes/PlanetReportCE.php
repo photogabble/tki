@@ -30,7 +30,7 @@ class PlanetReportCE
     {
         $langvars = Translate::load($pdo_db, $lang, array('common', 'planet_report'));
         $current_state = "GO"; // Current State
-        $players_gateway = new \Tki\Players\User($pdo_db);
+        $players_gateway = new \Tki\Models\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
         // Set s_p_pair as an array.
@@ -101,7 +101,7 @@ class PlanetReportCE
 
         // Get playerinfo from database
         $playerinfo = array();
-        $players_gateway = new \Tki\Players\User($pdo_db);
+        $players_gateway = new \Tki\Models\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
         // Get planetinfo from database

@@ -37,15 +37,15 @@ $langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'device',
                                 'footer', 'insignias', 'news', 'port',
                                 'port2', 'regional', 'report', 'universal'));
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 // Get zoneinfo from database
-$zones_gateway = new \Tki\Zones\Zone($pdo_db);
+$zones_gateway = new \Tki\Models\Zone($pdo_db);
 $zoneinfo = $zones_gateway->selectZoneInfo($sectorinfo['zone_id']);
 
 if (!empty($zoneinfo))
@@ -65,7 +65,7 @@ if (!empty($zoneinfo))
     {
         if ($zoneinfo['team_zone'] == 'N')
         {
-            $players_gateway = new \Tki\Players\User($pdo_db);
+            $players_gateway = new \Tki\Models\User($pdo_db);
             $ownerinfo = $players_gateway->selectPlayerInfoById($zoneinfo['owner']);
 
             if (($playerinfo['ship_id'] != $zoneinfo['owner'] && $playerinfo['team'] == 0) || ($playerinfo['team'] != $ownerinfo['team']))

@@ -22,7 +22,7 @@
  *
  */
 
-namespace Tki\Players; // Domain Entity organization pattern, Players objects
+namespace Tki\Models; // Domain Entity organization pattern, Players objects
 
 // TODO: move to app/Models
 

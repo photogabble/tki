@@ -38,9 +38,9 @@ $langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'footer',
                                 'warpedit'));
 echo "<h1>" . $title . "</h1>\n";
 
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 if ($playerinfo['turns'] < 1)
@@ -63,7 +63,7 @@ if ($playerinfo['dev_warpedit'] < 1)
     die();
 }
 
-$zones_gateway = new \Tki\Zones\Zone($pdo_db);
+$zones_gateway = new \Tki\Models\Zone($pdo_db);
 $zoneinfo = $zones_gateway->selectZoneInfo($sectorinfo['zone_id']);
 
 if (!empty($zoneinfo))

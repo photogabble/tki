@@ -45,7 +45,7 @@ class Player
 
         if ($_SESSION['username'] !== null && $_SESSION['password'] !== null)
         {
-            $players_gateway = new Players\User($pdo_db);
+            $players_gateway = new Tki\Models\User($pdo_db);
             $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
             // Check the password against the stored hashed password

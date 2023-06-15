@@ -41,7 +41,7 @@ class IbankTransferMain
         \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
         $ships = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+        $planets_gateway = new \Tki\Models\Planet($pdo_db);
         $planets = $planets_gateway->selectSomePlanetInfoByOwner($playerinfo['ship_id']);
         echo "<tr><td colspan=2 align=center valign=top>" . $langvars['l_ibank_transfertype'] . "<br>---------------------------------</td></tr>" .
              "<tr valign=top>" .

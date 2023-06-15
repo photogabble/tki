@@ -99,7 +99,7 @@ else
     // Load Player information from their username (i.e. email)
     $playerinfo = false;
 
-    $players_gateway = new \Tki\Players\User($pdo_db);
+    $players_gateway = new \Tki\Models\User($pdo_db);
     $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
     // Does the oldpass and the players password match?

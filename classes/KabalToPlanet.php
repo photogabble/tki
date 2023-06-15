@@ -29,7 +29,7 @@ class KabalToPlanet
     public static function planet(\PDO $pdo_db, string $lang, int $planet_id, Registry $tkireg, array $playerinfo): void
     {
         // Get planetinfo from database
-        $planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+        $planets_gateway = new \Tki\Models\Planet($pdo_db);
         $planetinfo = $planets_gateway->selectPlanetInfoByPlanet($planet_id);
         if (empty($planetinfo))
         {

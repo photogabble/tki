@@ -564,7 +564,7 @@ class PlanetCombat
                     echo "<center><font color=red>" . $langvars['l_cmb_youmaycapture'] . "</font></center><br><br>";
                     \Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                     \Tki\Score::updateScore($pdo_db, $ownerinfo['ship_id'], $tkireg, $playerinfo);
-                    $planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+                    $planets_gateway = new \Tki\Models\Planet($pdo_db);
                     $planets_gateway->updateDefeatedPlanet($pdo_db, $planetinfo, $planettorps);
                 }
             }
@@ -574,7 +574,7 @@ class PlanetCombat
                 echo "<center>" . $langvars['l_cmb_youmaycapture'] . "</center><br><br>";
                 \Tki\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], LogEnums::PLANET_DEFEATED, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                 \Tki\Score::updateScore($pdo_db, $ownerinfo['ship_id'], $tkireg, $playerinfo);
-                $planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+                $planets_gateway = new \Tki\Models\Planet($pdo_db);
                 $planets_gateway->updateDefeatedPlanet($pdo_db, $planetinfo, $planettorps);
             }
 

@@ -39,11 +39,11 @@ $login = new Tki\Login();
 $login->checkLogin($pdo_db, $lang, $tkireg, $tkitimer, $template);
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 $allowed_rsw = "N";
@@ -57,7 +57,7 @@ if ($beacon_text === 0)
 }
 
 // Get zoneinfo from database
-$zones_gateway = new \Tki\Zones\Zone($pdo_db);
+$zones_gateway = new \Tki\Models\Zone($pdo_db);
 $zoneinfo = $zones_gateway->selectZoneInfo($sectorinfo['zone_id']);
 
 if (!empty($zoneinfo))

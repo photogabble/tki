@@ -31,7 +31,7 @@ class IbankTransferFinal
     public static function final(\PDO $pdo_db, string $lang, array $playerinfo, int $ship_id, int $splanet_id, int $dplanet_id, int $amount, Registry $tkireg, Timer $tkitimer, Smarty $template): void
     {
         $langvars = Translate::load($pdo_db, $lang, array('ibank', 'regional'));
-        $ibank_gateway = new Ibank\BankAccount($pdo_db);
+        $ibank_gateway = new Tki\Models\BankAccount($pdo_db);
         $bank_account = $ibank_gateway->selectIbankAccount($playerinfo['ship_id']);
         $amount = preg_replace("/[^0-9]/", '', (string) $amount);
         $amount = (int) $amount;

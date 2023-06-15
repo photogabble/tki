@@ -43,7 +43,7 @@ class TraderouteCheck
         // Check warp links compatibility
         if ($move == 'warp')
         {
-            $links_gateway = new \Tki\Links\Link($pdo_db);
+            $links_gateway = new \Tki\Models\Link($pdo_db);
             $link1_results = $links_gateway->selectLinkId($src['sector_id'], $dest['sector_id']);
 
             if (empty($link1_results))
@@ -55,7 +55,7 @@ class TraderouteCheck
 
             if ($circuit == '2')
             {
-                $links_gateway = new \Tki\Links\Link($pdo_db);
+                $links_gateway = new \Tki\Models\Link($pdo_db);
                 $link2_results = $links_gateway->selectLinkId($dest['sector_id'], $src['sector_id']); // Note that the link start/dest is flipped on purpose
 
                 if (empty($link2_results))

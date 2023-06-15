@@ -123,7 +123,7 @@ class Ibank
         if ($account['loan'] != 0)
         {
             $curtime = time();
-            $ibank_gateway = new Ibank\BankAccount($pdo_db);
+            $ibank_gateway = new Models\BankAccount($pdo_db);
             $bank_loan_time = $ibank_gateway->selectIbankLoanTime($playerinfo['ship_id']);
             $difftime = ($curtime - $bank_loan_time) / 60;
 

@@ -262,7 +262,7 @@ class CheckDefenses
         }
 
         // Get sector defense info from database
-        $defenses_gateway = new \Tki\Defenses\SectorDefense($pdo_db);
+        $defenses_gateway = new \Tki\Models\SectorDefense($pdo_db);
         $defenses_present = $defenses_gateway->selectFighterDefenses($sector);
         $defenses = array();
         $num_defenses = 0;
@@ -478,7 +478,7 @@ class CheckDefenses
                                          'insignias', 'footer', 'news'));
 
         // Get sector defense info from database
-        $defenses_gateway = new \Tki\Defenses\SectorDefense($pdo_db);
+        $defenses_gateway = new \Tki\Models\SectorDefense($pdo_db);
         $defenses_present = $defenses_gateway->selectMineDefenses($sector);
 
         // Correct the targetship bug to reflect the player info
@@ -635,7 +635,7 @@ class CheckDefenses
                                 $rating = round($playerinfo['rating'] / 2);
                                 echo $langvars['l_chm_luckescapepod'] . "<br><br>";
 
-                                $ships_gateway = new \Tki\Ships\Ship($pdo_db);
+                                $ships_gateway = new \Tki\Models\Ship($pdo_db);
                                 $ships_gateway->updateDestroyedShip($playerinfo['ship_id'], $rating);
 
                                 $bounty = new \Tki\Bounty();

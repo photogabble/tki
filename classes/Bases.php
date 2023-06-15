@@ -34,9 +34,9 @@ class Bases
              $langvars['l_here'] . "</a>", $langvars['l_pr_click_return_status']);
         echo "<br><br>";
 
-        $players_gateway = new Players\User($pdo_db);
+        $players_gateway = new Tki\Models\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-        $planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+        $planets_gateway = new \Tki\Models\Planet($pdo_db);
         $planetinfo = $planets_gateway->selectPlanetInfoByPlanet($planet_id);
 
         if (!empty($planetinfo))

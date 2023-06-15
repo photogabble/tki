@@ -22,7 +22,7 @@
  *
  */
 
-namespace Tki\Sectors; // Domain Entity organization pattern, Sectors objects
+namespace Tki\Models; // Domain Entity organization pattern, Sectors objects
 
 // TODO: move to app/Models then rename Sector and handle all the migration stuff
 

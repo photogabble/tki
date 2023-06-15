@@ -75,7 +75,7 @@ class Bounty
                 }
                 else
                 {
-                    $players_gateway = new \Tki\Players\User($pdo_db);
+                    $players_gateway = new \Tki\Models\User($pdo_db);
                     $tmp_return = $players_gateway->selectPlayerInfoById($tmp_bounty['placed_by']);
                     $placed = $tmp_return['character_name'];
                 }

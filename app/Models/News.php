@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Logs/LogsGateway.php from The Kabal Invasion.
+ * classes/News/NewsGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,25 +22,31 @@
  *
  */
 
-namespace Tki\Logs; // Domain Entity organization pattern, Logs objects
+namespace Tki\Models; // Domain Entity organization pattern, News objects
 
-// TODO: move to app/Models
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class Log extends Model
+class News extends Model
 {
+    public static function alreadyPublished(int $user_id, string $type): bool
+    {
+        return News::where('user_id', $user_id)
+                ->where('news_type', $type)
+                ->count() > 0;
+    }
+
     /**
-     * @todo refactor usage to be Collection aware
-     * @param int $ship_id
-     * @param string $startdate
+     * @todo make usage aware of Carbon requirement
+     * @param Carbon $day
      * @return Collection
      */
-    public function selectLogsInfo(int $ship_id, string $startdate): Collection
+    public function selectNewsByDay(Carbon $day): Collection
     {
-        return Log::where('ship_id', $ship_id)
-            ->where('created_at', 'LIKE', "$startdate%")
+        // SQL call that selects all of the news items between the start date beginning of day, and the end of day.
+        return News::query()
+            ->whereBetween('created_at', [$day->startOfDay(), $day->endOfDay()])
             ->get();
     }
 }

@@ -54,7 +54,7 @@ $target_sector = (int) filter_input(INPUT_POST, 'target_sector', FILTER_VALIDATE
 $target_sector = (string) $target_sector;
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 if ($playerinfo['turns'] < 1)
@@ -94,7 +94,7 @@ if ($zoneinfo['allow_warpedit'] == 'N')
 }
 
 $target_sector = (int) $target_sector;
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 $sql = "SELECT allow_warpedit, ::prefix::universe.zone_id FROM ::prefix::zones, ::prefix::universe WHERE sector_id = :sector_id AND ::prefix::universe.zone_id = ::prefix::zones.zone_id;";
@@ -115,7 +115,7 @@ if ($zoneinfo['allow_warpedit'] == 'N' && $bothway)
 }
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($target_sector);
 
 if (empty($sectorinfo))

@@ -74,11 +74,11 @@ if ($planet_id <= 0)
 }
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Get planetinfo from database
-$planets_gateway = new \Tki\Planets\PlanetsGateway($pdo_db);
+$planets_gateway = new \Tki\Models\Planet($pdo_db);
 $planetinfo = $planets_gateway->selectPlanetInfoByPlanet($planet_id);
 
 // Check to see if it returned valid planet info.

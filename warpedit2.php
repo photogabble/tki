@@ -60,7 +60,7 @@ if ($target_sector === 0)
 }
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 if ($playerinfo['turns'] < 1)
@@ -99,9 +99,9 @@ if ($zoneinfo['allow_warpedit'] == 'N')
     die();
 }
 
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($target_sector);
 
 if (!is_array($sectorinfo))

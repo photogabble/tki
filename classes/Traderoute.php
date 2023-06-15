@@ -238,7 +238,7 @@ class Traderoute
 
         if (!empty($destport))
         {
-            $players_gateway = new \Tki\Players\User($pdo_db);
+            $players_gateway = new \Tki\Models\User($pdo_db);
             $nsfighters = $players_gateway->selectPlayerInfoById($fighters_owner['ship_id']);
 
             if ($nsfighters['team'] != $playerinfo['team'] || $playerinfo['team'] == 0)
@@ -256,7 +256,7 @@ class Traderoute
 
         if (!empty($destport))
         {
-            $players_gateway = new \Tki\Players\User($pdo_db);
+            $players_gateway = new \Tki\Models\User($pdo_db);
             $nsfighters = $players_gateway->selectPlayerInfoById($fighters_owner['ship_id']);
 
             if ($nsfighters['team'] != $playerinfo['team'] || $playerinfo['team'] == 0)
@@ -280,7 +280,7 @@ class Traderoute
         if ($traderoute['source_type'] == 'P')
         {
             // Get zoneinfo from database
-            $zones_gateway = new \Tki\Zones\Zone($pdo_db);
+            $zones_gateway = new \Tki\Models\Zone($pdo_db);
             $zoneinfo = $zones_gateway->selectMatchingZoneInfo($traderoute['source_id']);
 
             if (empty($zoneinfo))
@@ -321,7 +321,7 @@ class Traderoute
         if ($traderoute['dest_type'] == 'P')
         {
             // Get zoneinfo from database
-            $zones_gateway = new \Tki\Zones\Zone($pdo_db);
+            $zones_gateway = new \Tki\Models\Zone($pdo_db);
             $zoneinfo = $zones_gateway->selectMatchingZoneInfo($traderoute['dest_id']);
 
             if (empty($zoneinfo))

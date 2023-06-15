@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * classes/News/NewsGateway.php from The Kabal Invasion.
+ * classes/Links/LinksGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,33 +22,34 @@
  *
  */
 
-namespace Tki\News; // Domain Entity organization pattern, News objects
-
+namespace Tki\Models;
 // TODO: move to app/Models
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class News extends Model
+class Link extends Model
 {
-    public static function alreadyPublished(int $user_id, string $type): bool
+    /**
+     * @todo Refactor usage to be Collection aware
+     * @param int $sector_id
+     * @return Collection
+     */
+    public function selectAllLinkInfoByLinkStart(int $sector_id): Collection
     {
-        return News::where('user_id', $user_id)
-                ->where('news_type', $type)
-                ->count() > 0;
+        return Link::where('link_start', $sector_id)->orderBy('link_dest', 'ASC')->get();
     }
 
     /**
-     * @todo make usage aware of Carbon requirement
-     * @param Carbon $day
-     * @return Collection
+     * @param int $src
+     * @param int $dest
+     * @return Link|null
+     *@todo Refactor usage to be Model aware
      */
-    public function selectNewsByDay(Carbon $day): Collection
+    public function selectLinkId(int $src, int $dest): ?Link
     {
-        // SQL call that selects all of the news items between the start date beginning of day, and the end of day.
-        return News::query()
-            ->whereBetween('created_at', [$day->startOfDay(), $day->endOfDay()])
-            ->get();
+        return Link::where('link_start', $src)
+            ->where('link_dest', $dest)
+            ->first();
     }
 }

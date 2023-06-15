@@ -96,7 +96,7 @@ class Character
     public function getInsignia(\PDO $pdo_db, string $language, string $a_username): string
     {
         // Lookup players score.
-        $players_gateway = new Players\User($pdo_db);
+        $players_gateway = new Tki\Models\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($a_username);
 
         $langvars = Translate::load($pdo_db, $language, array('insignias'));

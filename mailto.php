@@ -91,7 +91,7 @@ if ($subject !== null)
 }
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\User($pdo_db);
+$players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 echo "<h1>" . $title . "</h1>\n";

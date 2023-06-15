@@ -22,7 +22,7 @@
  *
  */
 
-namespace Tki\Defenses;
+namespace Tki\Models;
 // TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Collection;

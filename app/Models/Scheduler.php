@@ -22,9 +22,7 @@
  *
  */
 
-namespace Tki\Scheduler; // Domain Entity organization pattern, Scheduler objects
-
-// TODO: move to app/Models
+namespace Tki\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

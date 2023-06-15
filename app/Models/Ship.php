@@ -22,7 +22,7 @@
  *
  */
 
-namespace Tki\Ships; // Domain Entity organization pattern, Ships objects
+namespace Tki\Models; // Domain Entity organization pattern, Ships objects
 
 // TODO: move to app/Models
 

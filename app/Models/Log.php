@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Loan.php from The Kabal Invasion.
+ * classes/Logs/LogsGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,29 +22,25 @@
  *
  */
 
-namespace Tki;
+namespace Tki\Models; // Domain Entity organization pattern, Logs objects
 
-class Loan
+// TODO: move to app/Models
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+class Log extends Model
 {
-    public static function isPending(\PDO $pdo_db, Registry $tkireg): bool
+    /**
+     * @todo refactor usage to be Collection aware
+     * @param int $ship_id
+     * @param string $startdate
+     * @return Collection
+     */
+    public function selectLogsInfo(int $ship_id, string $startdate): Collection
     {
-        // Get playerinfo from database
-        $players_gateway = new \Tki\Models\User($pdo_db);
-        $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-
-        $ibank_gateway = new Tki\Models\BankAccount($pdo_db);
-        $loan_and_time = $ibank_gateway->selectIbankLoanandTime($playerinfo['ship_id']);
-
-        if ($loan_and_time['loan'] > 0)
-        {
-            $curtime = time();
-            $difftime = ($curtime - $loan_and_time['time']) / 60;
-            if ($difftime > $tkireg->ibank_lrate)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return Log::where('ship_id', $ship_id)
+            ->where('created_at', 'LIKE', "$startdate%")
+            ->get();
     }
 }

@@ -120,7 +120,7 @@ if (strlen(trim($trades)) === 0)
 }
 
 // Get zoneinfo from database
-$zones_gateway = new \Tki\Zones\Zone($pdo_db);
+$zones_gateway = new \Tki\Models\Zone($pdo_db);
 $zoneinfo = $zones_gateway->selectZoneInfo($zone);
 
 if (empty($zoneinfo))
@@ -141,7 +141,7 @@ if (array_key_exists('zone_name', $zoneinfo))
 
 if ($zoneinfo['team_zone'] == 'N')
 {
-    $players_gateway = new \Tki\Players\User($pdo_db);
+    $players_gateway = new \Tki\Models\User($pdo_db);
     $ownerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 }
 else

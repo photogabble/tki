@@ -33,7 +33,7 @@ class KabalTrade
         $shipgoods = null;
 
         // Pull sector info from database
-        $sectors_gateway = new Sectors\Universe($pdo_db);
+        $sectors_gateway = new Tki\Models\Universe($pdo_db);
         $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
         // Obtain zone information
