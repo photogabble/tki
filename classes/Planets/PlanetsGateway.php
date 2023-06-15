@@ -25,8 +25,10 @@
 namespace Tki\Planets; // Domain Entity organization pattern, Planets objects
 
 // TODO: Rename Planet and move to app/Models
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
+use Tki\Models\Ship;
 
 class PlanetsGateway extends Model
 {
@@ -54,140 +56,99 @@ class PlanetsGateway extends Model
         throw new DeprecatedException('use setDefeated method');
     }
 
+    /**
+     * @todo refactor usage to pass a model as $playerinfo
+     * @param \PDO $pdo_db
+     * @param \Tki\Registry $tkireg
+     * @param array $playerinfo
+     * @param string $planetname
+     * @return void
+     */
     public function genesisAddPlanet(\PDO $pdo_db, \Tki\Registry $tkireg, array $playerinfo, string $planetname): void
     {
-        $prod_organics = $tkireg->default_prod_organics;
-        $prod_ore = $tkireg->default_prod_ore;
-        $prod_goods = $tkireg->default_prod_goods;
-        $prod_energy = $tkireg->default_prod_energy;
-        $prod_fighters = $tkireg->default_prod_fighters;
-        $prod_torp = $tkireg->default_prod_torp;
+        PlanetsGateway::create([
+            'sector_id' => $playerinfo['sector'],
+            'name' => $planetname,
+            'organics' => 0,
+            'ore' => 0,
+            'goods' => 0,
+            'energy' => 0,
+            'colonists' => 0,
+            'credits' => 0,
+            'fighters' => 0,
+            'torps' => 0,
+            'owner_id' => $playerinfo['ship_id'],
+            'team_id' => null,
+            'base' => false,
+            'sells' => false,
+            'prod_organics' => config('game.default_prod_organics'),
+            'prod_ore' => config('game.default_prod_ore'),
+            'prod_goods' => config('game.default_prod_goods'),
+            'prod_energy' => config('game.default_prod_energy'),
+            'prod_fighters' => config('game.default_prod_fighters'),
+            'prod_torp' => config('game.default_prod_torp'),
+            'defeated' => false,
+        ]);
 
-        $sql = "INSERT INTO ::prefix::planets (" .
-               "planet_id, sector_id, planet_name, organics, ore, goods, " .
-               "energy, colonists, credits, fighters, torps, owner, " .
-               "team, base, sells, prod_organics, prod_ore, prod_goods, " .
-               "prod_energy, prod_fighters, prod_torp, defeated) VALUES" .
-               " (:planet_id, :sector_id, :name, :organics, :ore, " .
-               ":goods, :energy, :colonists, :credits, :fighters, " .
-               ":torps, :owner, :team, :base, :sells, :prod_organics, " .
-               ":prod_ore, :prod_goods, :prod_energy, :prod_fighters, " .
-               ":prod_torp, :defeated)";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindValue(':planet_id', null, \PDO::PARAM_NULL);
-        $stmt->bindParam(':sector_id', $playerinfo['sector'], \PDO::PARAM_INT);
-        $stmt->bindParam(':name', $planetname, \PDO::PARAM_STR);
-        $stmt->bindValue(':organics', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':ore', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':goods', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':energy', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':colonists', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':credits', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':fighters', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':torps', 0, \PDO::PARAM_INT);
-        $stmt->bindParam(':owner', $playerinfo['ship_id'], \PDO::PARAM_INT);
-        $stmt->bindValue(':team', 0, \PDO::PARAM_INT);
-        $stmt->bindValue(':base', 'N', \PDO::PARAM_STR);
-        $stmt->bindValue(':sells', 'N', \PDO::PARAM_STR);
-        $stmt->bindParam(':organics', $prod_organics, \PDO::PARAM_STR);
-        $stmt->bindParam(':ore', $prod_ore, \PDO::PARAM_STR);
-        $stmt->bindParam(':goods', $prod_goods, \PDO::PARAM_STR);
-        $stmt->bindParam(':energy', $prod_energy, \PDO::PARAM_STR);
-        $stmt->bindParam(':fighters', $prod_fighters, \PDO::PARAM_STR);
-        $stmt->bindParam(':torp', $prod_torp, \PDO::PARAM_STR);
-        $stmt->bindValue(':defeated', 'N', \PDO::PARAM_STR);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-        $sql = "UPDATE ::prefix::ships SET turns_used = turns_used + 1, turns = turns - 1, dev_genesis = dev_genesis - 1 WHERE ship_id = :ship_id";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
+        // Todo: $playerinfo will eventually be Ship... or User... or well you know what I mean
+        // TODO: by the time we get here its assumed that player has enough dev_genesis and turns to do this
+        /** @var Ship $ship */
+        $ship = Ship::find($playerinfo['ship_id']);
+        $ship->update([
+            'turns_used' => $ship->turns_used + 1,
+            'turns' => max($ship->turns - 1, 0),
+            'dev_genesis' => max($ship->dev_genesis - 1),
+        ]);
     }
 
-    public function selectPlanetInfo(int $sector_id): ?array
+    /**
+     * @todo refactor usage to be model aware
+     * @param int $sector_id
+     * @return Collection<PlanetsGateway>
+     */
+    public function selectPlanetInfo(int $sector_id): Collection
     {
-        $sql = "SELECT * FROM ::prefix::planets WHERE sector_id = :sector_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a planet in the sector, the following call will return false - which is what we want for "no planet found".
-        $planetinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $planetinfo; // FUTURE: Eventually we want this to return a planet object instead, for now, planetinfo array or false for no planet found.
+        return PlanetsGateway::where('sector_id', $sector_id)->get();
     }
 
+    /**
+     * @todo refactor usage to use selectPlanetInfo
+     * @deprecated
+     * @param int $sector_id
+     * @return array|null
+     */
     public function selectAllPlanetInfo(int $sector_id): ?array
     {
-        $sql = "SELECT * FROM ::prefix::planets WHERE sector_id = :sector_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-        // A little magic here. If it couldn't select a planet in the sector, the following call will return false - which is what we want for "no planet found".
-        $planetinfo = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        if ($planetinfo !== false)
-        {
-            return $planetinfo; // FUTURE: Eventually we want this to return a planet object instead, for now, planetinfo array or false for no planet found.
-        }
-        else
-        {
-            return null;
-        }
+        throw new DeprecatedException('use selectPlanetInfo');
     }
 
-    public function selectPlanetInfoByPlanet(int $planet_id): ?array
+    /**
+     * @todo refactor usage to be model aware
+     * @param int $planet_id
+     * @return PlanetsGateway|null
+     */
+    public function selectPlanetInfoByPlanet(int $planet_id): ?PlanetsGateway
     {
-        $sql = "SELECT * FROM ::prefix::planets WHERE planet_id = :planet_id";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':planet_id', $planet_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-
-        // A little magic here. If it couldn't select a planet in the sector, the following call will return false - which is what we want for "no planet found".
-        $planetinfo = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return $planetinfo; // FUTURE: Eventually we want this to return a planet object instead, for now, planetinfo array or false for no planet found.
+        return PlanetsGateway::find($planet_id);
     }
 
-    public function selectAllPlanetInfoByOwner(int $ship_id): ?array
+    /**
+     * @todo refactor usage to use planet relationship on user/ship/whatever...
+     * @param int $ship_id
+     * @return Collection<PlanetsGateway>
+     */
+    public function selectAllPlanetInfoByOwner(int $ship_id): Collection
     {
-        $sql = "SELECT * FROM ::prefix::planets WHERE owner = :owner";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':owner', $ship_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-        // A little magic here. If it couldn't select a planet in the sector, the following call will return false - which is what we want for "no planet found".
-        $planetinfo = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($planetinfo !== false)
-        {
-            return $planetinfo; // FUTURE: Eventually we want this to return a planet object instead, for now, planetinfo array or false for no planet found.
-        }
-        else
-        {
-            return null;
-        }
+        return PlanetsGateway::where('owner_id', $ship_id)->get();
     }
 
-    public function selectSomePlanetInfoByOwner(int $ship_id): ?array
+    /**
+     * @todo refactor usage to use planet relationship on user/ship/whatever...
+     * @param int $ship_id
+     * @return Collection
+     */
+    public function selectSomePlanetInfoByOwner(int $ship_id): Collection
     {
-        $sql = "SELECT name, planet_id, sector_id FROM ::prefix::planets WHERE owner = :owner ORDER BY sector_id ASC";
-        $stmt = $this->pdo_db->prepare($sql);
-        $stmt->bindParam(':owner', $ship_id, \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($this->pdo_db, $sql, __LINE__, __FILE__); // Log any errors, if there are any
-        // A little magic here. If it couldn't select a planet in the sector, the following call will return false - which is what we want for "no planet found".
-        $planetinfo = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        if ($planetinfo !== false)
-        {
-            return $planetinfo; // FUTURE: Eventually we want this to return a planet object instead, for now, planetinfo array or false for no planet found.
-        }
-        else
-        {
-            return null;
-        }
+        return PlanetsGateway::where('owner_id', $ship_id)->orderBy('sector_id', 'ASC')->get();
     }
 }
