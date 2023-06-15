@@ -24,14 +24,62 @@
 
 namespace Tki\Planets; // Domain Entity organization pattern, Planets objects
 
-// TODO: Rename Planet and move to app/Models
+// TODO: move to app/Models
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
 use Tki\Models\Ship;
+use Tki\Models\Team;
+use Tki\Models\Universe;
 
-class PlanetsGateway extends Model
+/**
+ * @property int organics
+ * @property int $ore
+ * @property int $goods
+ * @property int $energy
+ * @property int $colonists
+ * @property int $torps
+ * @property int $fighters
+ * @property int $credits
+ * @property int|null $owner_id
+ * @property int|null $team_id
+ * @property-read Team|null $team
+ * @property-read Ship|null $owner
+ */
+class Planet extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'organics',
+        'ore',
+        'goods',
+        'energy',
+        'colonists',
+        'torps',
+        'fighters',
+        'credits',
+    ];
+
+    public function sector(): BelongsTo
+    {
+        return $this->belongsTo(Universe::class, 'sector_id');
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    // TODO: Need to move owner_id from relating to Ship to User
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(Ship::class, 'owner_id');
+    }
+
     public function setDefeated(int $planettorps): void
     {
         $this->torps -= $planettorps;
@@ -66,7 +114,7 @@ class PlanetsGateway extends Model
      */
     public function genesisAddPlanet(\PDO $pdo_db, \Tki\Registry $tkireg, array $playerinfo, string $planetname): void
     {
-        PlanetsGateway::create([
+        Planet::create([
             'sector_id' => $playerinfo['sector'],
             'name' => $planetname,
             'organics' => 0,
@@ -102,13 +150,13 @@ class PlanetsGateway extends Model
     }
 
     /**
-     * @todo refactor usage to be model aware
      * @param int $sector_id
-     * @return Collection<PlanetsGateway>
+     * @return Collection<Planet>
+     *@todo refactor usage to be model aware
      */
     public function selectPlanetInfo(int $sector_id): Collection
     {
-        return PlanetsGateway::where('sector_id', $sector_id)->get();
+        return Planet::where('sector_id', $sector_id)->get();
     }
 
     /**
@@ -123,23 +171,23 @@ class PlanetsGateway extends Model
     }
 
     /**
-     * @todo refactor usage to be model aware
      * @param int $planet_id
-     * @return PlanetsGateway|null
+     * @return Planet|null
+     *@todo refactor usage to be model aware
      */
-    public function selectPlanetInfoByPlanet(int $planet_id): ?PlanetsGateway
+    public function selectPlanetInfoByPlanet(int $planet_id): ?Planet
     {
-        return PlanetsGateway::find($planet_id);
+        return Planet::find($planet_id);
     }
 
     /**
-     * @todo refactor usage to use planet relationship on user/ship/whatever...
      * @param int $ship_id
-     * @return Collection<PlanetsGateway>
+     * @return Collection<Planet>
+     *@todo refactor usage to use planet relationship on user/ship/whatever...
      */
     public function selectAllPlanetInfoByOwner(int $ship_id): Collection
     {
-        return PlanetsGateway::where('owner_id', $ship_id)->get();
+        return Planet::where('owner_id', $ship_id)->get();
     }
 
     /**
@@ -149,6 +197,6 @@ class PlanetsGateway extends Model
      */
     public function selectSomePlanetInfoByOwner(int $ship_id): Collection
     {
-        return PlanetsGateway::where('owner_id', $ship_id)->orderBy('sector_id', 'ASC')->get();
+        return Planet::where('owner_id', $ship_id)->orderBy('sector_id', 'ASC')->get();
     }
 }
