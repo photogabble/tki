@@ -39,14 +39,14 @@ class TraderouteDistance
         if ($type1 == 'L')
         {
             // Get sectorinfo from database
-            $sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+            $sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
             $start_traderoute = $sectors_gateway->selectSectorInfo($start);
         }
 
         if ($type2 == 'L')
         {
             // Get sectorinfo from database
-            $sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+            $sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
             $dest_traderoute = $sectors_gateway->selectSectorInfo($dest);
         }
 

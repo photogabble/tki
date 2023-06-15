@@ -64,7 +64,7 @@ if ($stop_sector === 0)
 }
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 $current_sector = $playerinfo['sector'];
@@ -74,7 +74,7 @@ $search_result = null;
 $search_depth  = 0;
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($current_sector);
 
 if ($state == 0)

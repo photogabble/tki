@@ -41,11 +41,11 @@ $header = new Tki\Header();
 $header->display($pdo_db, $lang, $template, $title);
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 // Get planetinfo from database
@@ -98,7 +98,7 @@ elseif ($playerinfo['dev_genesis'] < 1)
 else
 {
     // Get zoneinfo from database
-    $zones_gateway = new \Tki\Zones\ZonesGateway($pdo_db);
+    $zones_gateway = new \Tki\Zones\Zone($pdo_db);
     $zoneinfo = $zones_gateway->selectZoneInfo($sectorinfo['zone_id']);
     if ($zoneinfo['allow_planet'] == 'N')
     {

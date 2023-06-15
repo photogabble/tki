@@ -43,11 +43,11 @@ echo "<body class=" . $body_class . ">";
 $zone = (int) filter_input(INPUT_GET, 'zone', FILTER_SANITIZE_NUMBER_INT);
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Get zoneinfo from database
-$zones_gateway = new \Tki\Zones\ZonesGateway($pdo_db);
+$zones_gateway = new \Tki\Zones\Zone($pdo_db);
 $zoneinfo = $zones_gateway->selectZoneInfoByZone($zone);
 $ownerinfo = array();
 
@@ -86,7 +86,7 @@ else
 
         if ($zoneinfo['team_zone'] == 'N')
         {
-            $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+            $players_gateway = new \Tki\Players\User($pdo_db);
             $ownerinfo = $players_gateway->selectPlayerInfoById($zoneinfo['owner']);
             $ownername = $ownerinfo['character_name'];
         }

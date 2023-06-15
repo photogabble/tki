@@ -56,7 +56,7 @@ $planet_id = (int) filter_input(INPUT_GET, 'planet_id', FILTER_SANITIZE_NUMBER_I
 echo '<h1>' . $title . '</h1>';
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Empty out Planet and Ship vars
@@ -74,7 +74,7 @@ if ($planet_id <= 0)
 }
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 // Get planetinfo from database
@@ -126,7 +126,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
         die();
     }
 
-    $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+    $players_gateway = new \Tki\Players\User($pdo_db);
     $ownerinfo = $players_gateway->selectPlayerInfoById($planetinfo['owner']);
 
     if (empty($command))
@@ -910,7 +910,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
 
             if ($planetinfo['owner'] != 0)
             {
-                $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+                $players_gateway = new \Tki\Players\User($pdo_db);
                 $planetowner = $players_gateway->selectPlayerInfoById($planetinfo['owner']);
             }
             else

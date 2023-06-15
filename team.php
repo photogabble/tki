@@ -36,7 +36,7 @@ $langvars = Tki\Translate::load($pdo_db, $lang, array('combat', 'common',
                                 'footer', 'insignias', 'news', 'teams',
                                 'universal'));
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 $planet_id = (int) preg_replace('/[^0-9]/', '', (string) $_GET['planet_id']);

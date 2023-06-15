@@ -86,7 +86,7 @@ class Score
         $stmt->execute();
         $ship_score = $stmt->fetch(\PDO::FETCH_COLUMN);
 
-        $ibank_gateway = new Ibank\IbankGateway($pdo_db);
+        $ibank_gateway = new Ibank\BankAccount($pdo_db);
         $bank_score = $ibank_gateway->selectIbankScore($playerinfo['ship_id']);
 
         $score = $ship_score + $planet_score + $bank_score;

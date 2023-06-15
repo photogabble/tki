@@ -79,7 +79,7 @@ if (strlen(trim((string) $amount)) === 0)
 }
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 $bounty_details = array();
 $bounties = array();
@@ -117,7 +117,7 @@ switch ($response) {
             $color = $tkireg->color_line1;
             for ($bount_details_count = 0; $bount_details_count < $num_details; $bount_details_count++)
             {
-                $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+                $players_gateway = new \Tki\Players\User($pdo_db);
                 $details = $players_gateway->selectPlayerInfoById($bounty_details[$bount_details_count]['placed_by']);
 
                 echo "<tr bgcolor=\"$color\">";
@@ -372,7 +372,7 @@ switch ($response) {
             $color = $tkireg->color_line1;
             for ($i = 0; $i < $num_bounties; $i++)
             {
-                $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+                $players_gateway = new \Tki\Players\User($pdo_db);
                 $tmp_return = $players_gateway->selectPlayerInfoById($bounties[$i]['bounty_on']);
                 $details = $tmp_return['character_name'];
 

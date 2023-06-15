@@ -90,7 +90,7 @@ class IbankTransferSpecific
                 \Tki\Ibank::ibankError($pdo_db, $lang, $langvars['l_ibank_mustwait'], "ibank.php?command=transfer", $tkireg, $tkitimer, $template);
             }
 
-            $ibank_gateway = new Ibank\IbankGateway($pdo_db);
+            $ibank_gateway = new Ibank\BankAccount($pdo_db);
             $bank_account = $ibank_gateway->selectIbankAccount($playerinfo['ship_id']);
 
             echo "<tr><td colspan=2 align=center valign=top>" . $langvars['l_ibank_shiptransfer'] . "<br>---------------------------------</td></tr>" .

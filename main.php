@@ -40,7 +40,7 @@ $stylefontsize = "12pt";
 $picsperrow = 7;
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 if (!array_key_exists('command', $_GET))
@@ -61,7 +61,7 @@ if ($playerinfo['cleared_defenses'] > ' ')
 }
 
 // Pull sector info from database
-$sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+$sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 if ($playerinfo['on_planet'] == "Y")
@@ -89,7 +89,7 @@ $i = 0;
 $links = array();
 
 // Get linksinfo from database
-$links_gateway = new \Tki\Links\LinksGateway($pdo_db);
+$links_gateway = new \Tki\Links\Link($pdo_db);
 $link_present = $links_gateway->selectAllLinkInfoByLinkStart($playerinfo['sector']);
 
 if (!empty($link_present))
@@ -520,7 +520,7 @@ if ($num_planets > 0)
         if ($planets[$i]['owner'] != 0)
         {
             // Get playerinfo from database
-            $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+            $players_gateway = new \Tki\Players\User($pdo_db);
             $planet_owner = $players_gateway->selectPlayerInfoById($planets[$i]['owner']);
 
             $planetavg = Tki\CalcLevels::avgTech($planet_owner, "planet");

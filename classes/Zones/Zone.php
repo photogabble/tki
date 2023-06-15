@@ -24,40 +24,53 @@
 
 namespace Tki\Zones; // Domain Entity organization pattern, zones objects
 
-// TODO: Rename Zone and move to app/Models
+// TODO: move to app/Models
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ZonesGateway extends Model
+/**
+ * @property-read Universe[]|Collection $sectors
+ */
+class Zone extends Model
 {
-    /**
-     * @todo refactor usages to be Model aware
-     * @param int $sector_id
-     * @return ZonesGateway|null
-     */
-    public function selectZoneInfo(int $sector_id): ?ZonesGateway
+    use HasFactory;
+
+    public function sectors(): HasMany
     {
-        return ZonesGateway::where('sector_id', $sector_id)->first();
+        return $this->hasMany(Universe::class);
     }
 
     /**
-     * @todo refactor usage to be Model aware
+     * @param int $sector_id
+     * @return Zone|null
+     *@todo refactor usages to be Model aware
+     */
+    public function selectZoneInfo(int $sector_id): ?Zone
+    {
+        return Zone::where('sector_id', $sector_id)->first();
+    }
+
+    /**
      * @param int $zone
-     * @return ZonesGateway|null
+     * @return Zone|null
+     *@todo refactor usage to be Model aware
      */
-    public function selectZoneInfoByZone(int $zone): ?ZonesGateway
+    public function selectZoneInfoByZone(int $zone): ?Zone
     {
-        return ZonesGateway::find($zone);
+        return Zone::find($zone);
     }
 
     /**
-     * @todo refactor usage to be Model aware
      * @param int $sector_id
-     * @return ZonesGateway|null
+     * @return Zone|null
+     *@todo refactor usage to be Model aware
      */
-    public function selectMatchingZoneInfo(int $sector_id): ?ZonesGateway
+    public function selectMatchingZoneInfo(int $sector_id): ?Zone
     {
-        return ZonesGateway::join('universe', 'universe.sector_id', '=', $sector_id)
+        return Zone::join('universe', 'universe.sector_id', '=', $sector_id)
             ->where('zones.zone_id', '=', 'universe.zone_id')
             ->first();
     }

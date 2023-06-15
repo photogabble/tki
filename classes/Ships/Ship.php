@@ -24,7 +24,7 @@
 
 namespace Tki\Ships; // Domain Entity organization pattern, Ships objects
 
-// TODO: Rename Ship and move to app/Models
+// TODO: move to app/Models
 
 use Tki\Models\Team;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -66,7 +66,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $dev_lssd
  * @property int $dev_minedeflector
  */
-class ShipsGateway extends Model
+class Ship extends Model
 {
     use HasFactory;
 

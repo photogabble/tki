@@ -42,7 +42,7 @@ echo "<h1>" . $title . "</h1>\n";
 echo "<body class ='" . $body_class . "'>";
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 // Pull the presets for the player from the db.

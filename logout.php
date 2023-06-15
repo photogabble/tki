@@ -34,7 +34,7 @@ if (array_key_exists('username', $_SESSION))
     $current_score = 0;
 
     // Get playerinfo from database
-    $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+    $players_gateway = new \Tki\Players\User($pdo_db);
     $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
     $current_score = Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);

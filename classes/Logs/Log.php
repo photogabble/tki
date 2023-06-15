@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Links/LinksGateway.php from The Kabal Invasion.
+ * classes/Logs/LogsGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,34 +22,25 @@
  *
  */
 
-namespace Tki\Links;
-// TODO: Rename Link and move to app/Models
+namespace Tki\Logs; // Domain Entity organization pattern, Logs objects
+
+// TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class LinksGateway extends Model
+class Log extends Model
 {
     /**
-     * @todo Refactor usage to be Collection aware
-     * @param int $sector_id
+     * @todo refactor usage to be Collection aware
+     * @param int $ship_id
+     * @param string $startdate
      * @return Collection
      */
-    public function selectAllLinkInfoByLinkStart(int $sector_id): Collection
+    public function selectLogsInfo(int $ship_id, string $startdate): Collection
     {
-        return LinksGateway::where('link_start', $sector_id)->orderBy('link_dest', 'ASC')->get();
-    }
-
-    /**
-     * @todo Refactor usage to be Model aware
-     * @param int $src
-     * @param int $dest
-     * @return LinksGateway|null
-     */
-    public function selectLinkId(int $src, int $dest): ?LinksGateway
-    {
-        return LinksGateway::where('link_start', $src)
-            ->where('link_dest', $dest)
-            ->first();
+        return Log::where('ship_id', $ship_id)
+            ->where('created_at', 'LIKE', "$startdate%")
+            ->get();
     }
 }

@@ -23,11 +23,11 @@
  */
 
 namespace Tki\Ibank;
-// TODO: Rename BankAccount and move to app/Models
+// TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Model;
 
-class IbankGateway extends Model
+class BankAccount extends Model
 {
     protected $casts = [
         'loaned_on' => 'datetime'
@@ -41,7 +41,7 @@ class IbankGateway extends Model
      */
     public function reduceIbankCredits(array $playerinfo, int $credits): void
     {
-        IbankGateway::where('ship_id', $playerinfo['ship_id'])->decrement('credits', $credits);
+        BankAccount::where('ship_id', $playerinfo['ship_id'])->decrement('credits', $credits);
     }
 
     /**
@@ -50,7 +50,7 @@ class IbankGateway extends Model
      */
     public function selectIbankScore(int $ship_id): int
     {
-        $account = IbankGateway::where('ship_id', $ship_id)->first();
+        $account = BankAccount::where('ship_id', $ship_id)->first();
         return is_null($account)
             ? 0
             : $account->balance - $account->loan;
@@ -61,9 +61,9 @@ class IbankGateway extends Model
      * @return array
      * @todo refactor usages to use Ship -> BankAccount relationship
      */
-    public function selectIbankAccount(int $ship_id): IbankGateway
+    public function selectIbankAccount(int $ship_id): BankAccount
     {
-        return IbankGateway::where('ship_id', $ship_id)->first();
+        return BankAccount::where('ship_id', $ship_id)->first();
     }
 
     /**
@@ -73,7 +73,7 @@ class IbankGateway extends Model
      */
     public function selectIbankLoanTime(int $ship_id): int
     {
-        $account = IbankGateway::where('ship_id', $ship_id)->first();
+        $account = BankAccount::where('ship_id', $ship_id)->first();
         return $account->loan_time->unix();
     }
 
@@ -84,7 +84,7 @@ class IbankGateway extends Model
      */
     public function selectIbankLoanandTime(int $ship_id): array
     {
-        $account = IbankGateway::where('ship_id', $ship_id)->first();
+        $account = BankAccount::where('ship_id', $ship_id)->first();
         return ['time' => $account->loan_time->unix(), 'loan' => $account->loan];
     }
 }

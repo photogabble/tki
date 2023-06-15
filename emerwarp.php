@@ -34,7 +34,7 @@ $variables = null;
 $langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'emerwarp',
                                 'footer', 'insignias', 'news', 'universal'));
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 if ($playerinfo['dev_emerwarp'] > 0)

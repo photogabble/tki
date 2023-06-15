@@ -36,10 +36,10 @@ $body_class = 'ibank';
 $header = new Tki\Header();
 $header->display($pdo_db, $lang, $template, $title, $body_class);
 
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
-$ibank_gateway = new Tki\Ibank\IbankGateway($pdo_db);
+$ibank_gateway = new Tki\Ibank\BankAccount($pdo_db);
 $bank_account = $ibank_gateway->selectIbankAccount($playerinfo['ship_id']);
 
 echo "<body class='" . $body_class . "'>";

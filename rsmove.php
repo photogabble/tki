@@ -40,7 +40,7 @@ $header = new Tki\Header();
 $header->display($pdo_db, $lang, $template, $title);
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 echo "<h1>" . $title . "</h1>\n";

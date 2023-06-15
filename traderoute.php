@@ -41,7 +41,7 @@ echo "<h1>" . $title . "</h1>\n";
 $portfull = null; // This fixes an error of undefined variables on 1518
 
 // Get playerinfo from database
-$players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+$players_gateway = new \Tki\Players\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
 $result = $old_db->Execute("SELECT * FROM {$old_db->prefix}traderoutes WHERE owner = ?;", array($playerinfo['ship_id']));
@@ -267,7 +267,7 @@ elseif ($engage !== null)
     while ($tr_repeat > 0)
     {
         // Get playerinfo from database
-        $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+        $players_gateway = new \Tki\Players\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
         \Tki\Traderoute::engage($pdo_db, $lang, $tr_repeat, $tkireg, $tkitimer, $playerinfo, $engage, $traderoutes, $portfull, $template);
         $tr_repeat--;
@@ -361,7 +361,7 @@ else
         if ($traderoutes[$i]['source_type'] == 'P')
         {
             // Get sectorinfo from database
-            $sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+            $sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
             $port1 = $sectors_gateway->selectSectorInfo($traderoutes[$i]['source_id']);
             echo "&nbsp;" . Tki\Ports::getType($pdo_db, $lang, $port1['port_type']) . "</font></td>";
         }
@@ -402,7 +402,7 @@ else
         if ($traderoutes[$i]['dest_type'] == 'P')
         {
             // Get sectorinfo from database
-            $sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+            $sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
             $port2 = $sectors_gateway->selectSectorInfo($traderoutes[$i]['dest_id']);
             echo "&nbsp;" . Tki\Ports::getType($pdo_db, $lang, $port2['port_type']) . "</font></td>";
         }

@@ -35,7 +35,7 @@ class Ship
             if ($playerinfo['dev_escapepod'] === 'Y')
             {
                 $rating = (int) round($playerinfo['rating'] / 2);
-                $ships_gateway = new \Tki\Ships\ShipsGateway($pdo_db);
+                $ships_gateway = new \Tki\Ships\Ship($pdo_db);
                 $ships_gateway->updateDestroyedShip($_SESSION['username'], $rating);
                 return true;
 

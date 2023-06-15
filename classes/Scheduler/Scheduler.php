@@ -24,9 +24,8 @@
 
 namespace Tki\Scheduler; // Domain Entity organization pattern, Scheduler objects
 
-// TODO: Rename Scheduler and move to app/Models
+// TODO: move to app/Models
 
-use Tki\Models\Scheduler;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $last_run_at
  * @property Carbon $next_run_after
  */
-class SchedulerGateway extends Model
+class Scheduler extends Model
 {
     use HasFactory;
 

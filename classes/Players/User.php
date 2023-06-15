@@ -24,7 +24,7 @@
 
 namespace Tki\Players; // Domain Entity organization pattern, Players objects
 
-// TODO: Rename User and move to app/Models
+// TODO: move to app/Models
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,7 +32,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class PlayersGateway extends Authenticatable
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -88,14 +88,14 @@ class PlayersGateway extends Authenticatable
     }
 
     /**
-     * @todo refactor all usages to use authenticated user as provided by Laravel!
-     * @todo also this used to use the ships table instead of users, things need to be aware of that
      * @param string|null $email
-     * @return PlayersGateway|null
+     * @return User|null
+     *@todo refactor all usages to use authenticated user as provided by Laravel!
+     * @todo also this used to use the ships table instead of users, things need to be aware of that
      */
-    public function selectPlayerInfo(?string $email): ?PlayersGateway
+    public function selectPlayerInfo(?string $email): ?User
     {
-        return PlayersGateway::where('email', $email)->first();
+        return User::where('email', $email)->first();
     }
 
     /**
@@ -105,6 +105,6 @@ class PlayersGateway extends Authenticatable
      */
     public function selectPlayerInfoById(?int $ship_id): array
     {
-        return PlayersGateway::find($ship_id);
+        return User::find($ship_id);
     }
 }

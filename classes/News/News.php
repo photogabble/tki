@@ -24,14 +24,21 @@
 
 namespace Tki\News; // Domain Entity organization pattern, News objects
 
-// TODO: Rename News and move to app/Models
+// TODO: move to app/Models
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class NewsGateway extends Model
+class News extends Model
 {
+    public static function alreadyPublished(int $user_id, string $type): bool
+    {
+        return News::where('user_id', $user_id)
+                ->where('news_type', $type)
+                ->count() > 0;
+    }
+
     /**
      * @todo make usage aware of Carbon requirement
      * @param Carbon $day
@@ -40,7 +47,7 @@ class NewsGateway extends Model
     public function selectNewsByDay(Carbon $day): Collection
     {
         // SQL call that selects all of the news items between the start date beginning of day, and the end of day.
-        return NewsGateway::query()
+        return News::query()
             ->whereBetween('created_at', [$day->startOfDay(), $day->endOfDay()])
             ->get();
     }

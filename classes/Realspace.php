@@ -30,17 +30,17 @@ class Realspace
     {
         $langvars = Translate::load($pdo_db, $lang, array('planet_report', 'regional', 'rsmove'));
         $energyscooped = 0;
-        $players_gateway = new Players\PlayersGateway($pdo_db);
+        $players_gateway = new Players\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
-        $sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+        $sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
         $start = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
         if (!is_array($start))
         {
             $start = array();
         }
 
-        $sectors_gateway = new \Tki\Sectors\SectorsGateway($pdo_db);
+        $sectors_gateway = new \Tki\Sectors\Universe($pdo_db);
         $finish = $sectors_gateway->selectSectorInfo($destination);
         if (!is_array($finish))
         {

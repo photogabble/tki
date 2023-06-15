@@ -23,7 +23,7 @@
  */
 
 namespace Tki\Defenses;
-// TODO: Rename SectorDefense and move to app/Models
+// TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,7 +31,7 @@ use Illuminate\Database\Eloquent\Model;
 use Tki\Models\Universe;
 use Tki\Models\Ship;
 
-class DefensesGateway extends Model
+class SectorDefense extends Model
 {
     protected $fillable = [
         'quantity'
@@ -49,13 +49,13 @@ class DefensesGateway extends Model
     }
 
     /**
-     * @todo refactor usages for new Collection return
      * @param int $sector_id
-     * @return Collection<DefensesGateway>
+     * @return Collection<SectorDefense>
+     *@todo refactor usages for new Collection return
      */
     public function selectFighterDefenses(int $sector_id): Collection
     {
-        return DefensesGateway::query()
+        return SectorDefense::query()
             ->where('sector_id', $sector_id)
             ->where('defense_type', 'F')
             ->orderBy('quantity', 'DESC')
@@ -63,13 +63,13 @@ class DefensesGateway extends Model
     }
 
     /**
-     * @todo refactor usages for new Collection return
      * @param int $sector_id
-     * @return Collection<DefensesGateway>
+     * @return Collection<SectorDefense>
+     *@todo refactor usages for new Collection return
      */
     public function selectMineDefenses(int $sector_id): Collection
     {
-        return DefensesGateway::query()
+        return SectorDefense::query()
             ->where('sector_id', $sector_id)
             ->where('defense_type', 'M')
             ->orderBy('quantity', 'DESC')
@@ -83,7 +83,7 @@ class DefensesGateway extends Model
      */
     public function selectDefenses(int $sector_id): Collection
     {
-        return DefensesGateway::query()
+        return SectorDefense::query()
             ->where('sector_id', $sector_id)
             ->get();
     }

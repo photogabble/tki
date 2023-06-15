@@ -29,10 +29,10 @@ class Loan
     public static function isPending(\PDO $pdo_db, Registry $tkireg): bool
     {
         // Get playerinfo from database
-        $players_gateway = new \Tki\Players\PlayersGateway($pdo_db);
+        $players_gateway = new \Tki\Players\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 
-        $ibank_gateway = new Ibank\IbankGateway($pdo_db);
+        $ibank_gateway = new Ibank\BankAccount($pdo_db);
         $loan_and_time = $ibank_gateway->selectIbankLoanandTime($playerinfo['ship_id']);
 
         if ($loan_and_time['loan'] > 0)
