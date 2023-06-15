@@ -22,14 +22,11 @@
  *
  */
 
-namespace Tki\Models; // Domain Entity organization pattern, Ships objects
+namespace Tki\Models;
 
-// TODO: move to app/Models
-
-use Tki\Models\Team;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $hull

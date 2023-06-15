@@ -22,18 +22,13 @@
  *
  */
 
-namespace Tki\Models; // Domain Entity organization pattern, Planets objects
-
-// TODO: move to app/Models
+namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
-use Tki\Models\Ship;
-use Tki\Models\Team;
-use Tki\Models\Universe;
 
 /**
  * @property int organics

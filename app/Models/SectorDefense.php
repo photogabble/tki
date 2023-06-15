@@ -23,13 +23,10 @@
  */
 
 namespace Tki\Models;
-// TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
-use Tki\Models\Universe;
-use Tki\Models\Ship;
 
 class SectorDefense extends Model
 {

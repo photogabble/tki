@@ -22,16 +22,14 @@
  *
  */
 
-namespace Tki\Models; // Domain Entity organization pattern, Sectors objects
+namespace Tki\Models;
 
-// TODO: move to app/Models then rename Sector and handle all the migration stuff
+// TODO: rename Sector and handle all the migration stuff
 
-use Tki\Models\Planet;
-use Tki\Models\Zone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
 
 class Universe extends Model

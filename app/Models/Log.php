@@ -22,9 +22,8 @@
  *
  */
 
-namespace Tki\Models; // Domain Entity organization pattern, Logs objects
+namespace Tki\Models;
 
-// TODO: move to app/Models
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
