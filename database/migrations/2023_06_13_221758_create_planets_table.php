@@ -28,8 +28,8 @@ return new class extends Migration
             $table->integer('fighters')->default(0);
             $table->integer('torps')->default(0);
 
-            $table->unsignedBigInteger('owner')->nullable()->default(null);
-            $table->unsignedBigInteger('team')->nullable()->default(null);
+            $table->unsignedBigInteger('owner_id')->nullable()->default(null);
+            $table->unsignedBigInteger('team_id')->nullable()->default(null);
 
             $table->boolean('base')->default(false);
             $table->boolean('sells')->default(false);

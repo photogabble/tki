@@ -15,13 +15,18 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->boolean('run_once')->default(false);
-            $table->unsignedInteger('ticks_left')->default(0);
-            $table->unsignedInteger('ticks_full')->default(0);
-            $table->unsignedInteger('spawn')->default(0);
-            $table->string('sched_file', 30);
-            $table->string('extra_info', 50);
-            $table->integer('last_run')->nullable()->default(null);
+            $table->string('class_name');
+            $table->timestamp('last_run_at')->nullable()->default(null);
+            $table->timestamp('next_run_after')->nullable()->default(null);
+            $table->float('multiplier')->default(0.00);
+
+//            $table->boolean('run_once')->default(false);
+//            $table->unsignedInteger('ticks_left')->default(0);
+//            $table->unsignedInteger('ticks_full')->default(0);
+//            $table->unsignedInteger('spawn')->default(0);
+//            $table->string('sched_file', 30);
+//            $table->string('extra_info', 50);
+//            $table->integer('last_run')->nullable()->default(null);
         });
     }
 

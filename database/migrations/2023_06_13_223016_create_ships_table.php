@@ -35,7 +35,7 @@ return new class extends Migration
             $table->unsignedInteger('armor_pts')->default(0);
             $table->unsignedInteger('cloak')->default(0);
             $table->unsignedInteger('credits')->default(0);
-            $table->unsignedInteger('sector')->default(0);
+            $table->unsignedBigInteger('sector_id')->default(0);
             $table->unsignedInteger('ship_ore')->default(0);
             $table->unsignedInteger('ship_organics')->default(0);
             $table->unsignedInteger('ship_goods')->default(0);
@@ -61,7 +61,7 @@ return new class extends Migration
             $table->unsignedInteger('rating')->default(0);
             $table->unsignedInteger('score')->default(0);
 
-            $table->unsignedBigInteger('team')->nullable();
+            $table->unsignedBigInteger('team_id')->nullable();
             $table->unsignedBigInteger('team_invite')->nullable();
             $table->unsignedBigInteger('planet_id')->nullable();
 
