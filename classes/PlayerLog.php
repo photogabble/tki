@@ -22,31 +22,24 @@
  *
  */
 
+// TODO change namespace to App\Models
+// TODO Move file to app\Models\Log.php (delete Log.php and move this there)
 namespace Tki;
 
-class PlayerLog
-{
-    public static function writeLog(\PDO $pdo_db, ?int $ship_id, ?int $log_type, ?string $data = null): void
-    {
-        if ($data !== null)
-        {
-            $data = addslashes($data);
-        }
+use Illuminate\Database\Eloquent\Model;
 
-        $cur_time_stamp = date('Y-m-d H:i:s'); // Now (as seen by PHP)
+class PlayerLog extends Model
+{
+    public static function writeLog(int $ship_id, int $log_type, ?string $data = null): void
+    {
+        if (!is_null($data)) $data = addslashes($data);
 
         // Write log_entry to the player's log - identified by player's ship_id.
-        if ($ship_id !== null && $log_type !== null)
-        {
-            $sql = "INSERT INTO ::prefix::logs (ship_id, type, time, data) " .
-                   "VALUES (:ship_id, :type, :time, :data)";
-            $stmt = $pdo_db->prepare($sql);
-            $stmt->bindParam(':ship_id', $ship_id, \PDO::PARAM_INT);
-            $stmt->bindParam(':type', $log_type, \PDO::PARAM_INT);
-            $stmt->bindParam(':time', $cur_time_stamp, \PDO::PARAM_STR);
-            $stmt->bindParam(':data', $data, \PDO::PARAM_STR);
-            $stmt->execute();
-            Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-        }
+        static::query()
+            ->create([
+                'ship_id' => $ship_id,
+                'type' => $log_type,
+                'data' => $data
+            ]);
     }
 }
