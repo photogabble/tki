@@ -1,3 +1,7 @@
+@import "./legacy/tki-prime.css";
+@import "./legacy/main.css";
+@import "./legacy/index.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
