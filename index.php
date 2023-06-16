@@ -22,33 +22,16 @@
  *
  */
 
-$index_page = true;
-require_once './common.php';
+// TODO: Move to controllers path, Rename as HomeController.php
 
-if (Tki\Db::isActive($pdo_db))
+namespace Tki\Http\Controllers;
+
+use Inertia\Inertia;
+
+class HomeController extends Controller
 {
-    // Database driven language entries
-    $langvars = Tki\Translate::load($pdo_db, $lang, array('footer', 'index',
-                                    'insignias', 'login', 'logout', 'main'));
-    $template->assign('lang', $lang);
-    $template->assign('title', $langvars['l_welcome_tki']);
-    $template->assign('link_forums', $tkireg->link_forums);
-    $template->assign('admin_mail', $tkireg->admin_mail);
-    $template->assign('body_class', 'index');
-    $template->assign('template', $tkireg->default_template);
-
-    // Temporarily set the template to the default template until we have a user option
-    $header = new Tki\Header();
-    $header->display($pdo_db, $lang, $template, $langvars['l_welcome_tki'], 'index');
-    $template->assign('langvars', $langvars);
-    $template->display('index.tpl');
-
-    $footer = new Tki\Footer();
-    $footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
-}
-else
-{
-    // If DB is not active, redirect to create universe to run install
-    header('Location: create_universe.php');
-    exit;
+    public function index()
+    {
+        return Inertia::render('Welcome');
+    }
 }
