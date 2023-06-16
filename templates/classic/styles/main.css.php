@@ -1,15 +1,3 @@
-<?php
-require_once '../../../vendor/autoload.php';           // Load the auto-loader
-ob_start (array('Tki\Compress', 'compress'));
-
-$etag = md5_file (__FILE__); // Generate an md5sum and use it as the etag for the file, ensuring that caches will revalidate if the code itself changes
-//header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 604800));
-header ("Vary: Accept-Encoding");
-header ("Content-type: text/css");
-header ("Connection: Keep-Alive");
-header ("Cache-Control: public");
-header ('ETag: "' . $etag . '"');
-?>
 .faderlines { margin-left:auto; margin-right:auto; border:#fff solid 1px; text-align:center; background-color:#400040; color:#fff; padding:0px; border-spacing:0px; width:600px}
 .footer, .push { clear: both}
 .footer, .push { height: 4em}

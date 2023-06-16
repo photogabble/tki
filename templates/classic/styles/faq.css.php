@@ -1,16 +1,3 @@
-<?php
-// This file is used for styling *both* the faq and the new player guide.
-require_once '../../../vendor/autoload.php';           // Load the auto-loader
-ob_start (array('Tki\Compress', 'compress'));
-
-$etag = md5_file (__FILE__); // Generate an md5sum and use it as the etag for the file, ensuring that caches will revalidate if the code itself changes
-//header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 604800));
-header ("Vary: Accept-Encoding");
-header ("Content-type: text/css");
-header ("Connection: Keep-Alive");
-header ("Cache-Control: public");
-header ('ETag: "' . $etag . '"');
-?>
 body.faq a { color:#ffffff; text-decoration: none}
 body.faq { color:#c0c0c0; font-size:14px; height:14px}
 body.faq table { border:0px; width:100%; border-spacing:0px}
