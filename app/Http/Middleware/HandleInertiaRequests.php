@@ -37,8 +37,9 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'stats' => [
-                'players_online' => User::loggedInCount(),
-                'scheduler_next_run' => Scheduler::nextRun()->unix(),
+                // TODO: include values from Footer.php here
+                'players_online' => 0, //User::loggedInCount(),
+                'scheduler_next_run' => 0, // Scheduler::nextRun()->unix(),
                 'sched_ticks' => config('scheduler.sched_ticks')
             ],
             'ziggy' => function () use ($request) {
