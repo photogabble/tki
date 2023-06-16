@@ -22,7 +22,7 @@
  *
  */
 
-// TODO: Move to controllers path, Rename as HomeController.php
+// TODO: Move to controllers path
 
 namespace Tki\Http\Controllers;
 
