@@ -2,6 +2,7 @@
 
 namespace Tki\Console\Commands;
 
+use Illuminate\Support\Facades\Log;
 use Tki\Helpers\ExecutionTimer;
 use Tki\Installer\CreateAdminAccount;
 use Tki\Installer\CreateNews;
@@ -67,7 +68,11 @@ class BigBang extends Command
         // Store Max Sectors Value
         // TODO: Write DB loaded config over-rides
 
-        /** @var InstallStep[] $stages */
+        $this->components->info('Running Install Stages');
+
+        $logger = Log::channel('install');
+
+        /** @var InstallStep[]|string[] $stages */
         $stages = [
             CreateZones::class,                 // 60
             CreateSystems::class,               // 65
@@ -79,7 +84,7 @@ class BigBang extends Command
         ];
 
         foreach($stages as $stage) {
-            (new $stage(new ExecutionTimer))->execute($this->output, $this->installConfig);
+            $this->components->task($stage, fn() => (new $stage(new ExecutionTimer, $logger))->execute($this->output, $this->installConfig));
         }
 
         $this->line(__('create_universe.l_cu_congrats_success'));

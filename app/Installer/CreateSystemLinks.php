@@ -34,7 +34,7 @@ class CreateSystemLinks extends Step implements InstallStep{
 
         DB::commit();
 
-        $output->writeln(__('create_universe.l_cu_loop_random_oneway', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_loop_random_oneway', ['elapsed' => $this->timer->sample()]));
 
         // Add (sector size * 2) amount of links to the links table
         DB::beginTransaction();
@@ -58,7 +58,7 @@ class CreateSystemLinks extends Step implements InstallStep{
 
         DB::commit();
 
-        $output->writeln(__('create_universe.l_cu_loop_random_twoway', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_loop_random_twoway', ['elapsed' => $this->timer->sample()]));
 
         // TODO: there is a chance that the start and dest is the same
         // TODO: trim links that are over a certain distance

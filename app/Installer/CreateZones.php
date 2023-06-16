@@ -25,7 +25,7 @@ class CreateZones extends Step implements InstallStep
         $zone->allow_defenses = true;
         $zone->save();
 
-        $output->writeln(__('create_universe.l_cu_setup_unchartered', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_unchartered', ['elapsed' => $this->timer->sample()]));
 
         // Insert Federation Zone
         $zone = new Zone();
@@ -41,7 +41,7 @@ class CreateZones extends Step implements InstallStep
         $zone->max_hull = config('game.max_fed_hull');
         $zone->save();
 
-        $output->writeln(__('create_universe.l_cu_setup_fedspace', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_fedspace', ['elapsed' => $this->timer->sample()]));
 
         // Insert Free Trade Zone
         $zone = new Zone();
@@ -56,7 +56,7 @@ class CreateZones extends Step implements InstallStep
         $zone->allow_defenses = false;
         $zone->save();
 
-        $output->writeln(__('create_universe.l_cu_setup_free', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_free', ['elapsed' => $this->timer->sample()]));
 
         // Insert War Zone
         $zone = new Zone();
@@ -71,7 +71,7 @@ class CreateZones extends Step implements InstallStep
         $zone->allow_defenses = true;
         $zone->save();
 
-        $output->writeln(__('create_universe.l_cu_setup_warzone', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_warzone', ['elapsed' => $this->timer->sample()]));
 
         return 0;
     }

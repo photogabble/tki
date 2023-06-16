@@ -71,8 +71,8 @@ class CreatePlanets extends Step implements InstallStep
         }
 
         DB::commit();
-
-        $output->writeln(__('create_universe.l_cu_setup_unowned_planets', ['elapsed' => $this->timer->sample(), 'nump' => $populatedSectors]));
+        
+        $this->logger->info(__('create_universe.l_cu_setup_unowned_planets', ['elapsed' => $this->timer->sample(), 'nump' => $populatedSectors]));
 
         return 0;
     }

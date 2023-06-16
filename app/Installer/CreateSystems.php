@@ -24,7 +24,7 @@ class CreateSystems extends Step implements InstallStep{
         $system->beacon = 'Sol: Hub of the Universe';
         $primeZone->sectors()->save($system);
 
-        $output->writeln(__('create_universe.l_cu_create_sol', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_create_sol', ['elapsed' => $this->timer->sample()]));
 
         // Create Alpha Centauri
         $this->timer->start();
@@ -35,7 +35,7 @@ class CreateSystems extends Step implements InstallStep{
         $system->distance = 1;
         $primeZone->sectors()->save($system);
 
-        $output->writeln(__('create_universe.l_cu_create_ac', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_create_ac', ['elapsed' => $this->timer->sample()]));
 
         // Create Remaining Sectors
 
@@ -64,7 +64,7 @@ class CreateSystems extends Step implements InstallStep{
             }
 
             $primeZone->sectors()->saveMany($sectors);
-            $output->writeln(__('create_universe.l_cu_insert_loop_sector_block', [
+            $this->logger->info(__('create_universe.l_cu_insert_loop_sector_block', [
                 'loop' => $i,
                 'loops' => $loops,
                 'start' =>$start,
