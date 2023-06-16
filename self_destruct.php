@@ -67,7 +67,7 @@ elseif ($sure == 2)
     echo $langvars['l_die_vapor'] . "<br><br>";
     $langvars['l_die_please'] = str_replace("[logout]", "<a href='logout.php'>" . $langvars['l_logout'] . "</a>", $langvars['l_die_please']);
     echo $langvars['l_die_please'] . "<br>";
-    $character_object = new Tki\Character();
+    $character_object = new \Tki\Actions\Character();
     $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
 
     // Delete planets - this used to be part of "kill", but that violated the single responsibility principle
@@ -76,12 +76,12 @@ elseif ($sure == 2)
     $stmt->bindParam(':owner', $playerinfo['ship_id'], \PDO::PARAM_INT);
     $stmt->execute();
 
-    $bounty = new Tki\Bounty();
+    $bounty = new \Tki\Actions\Bounty();
     $bounty->cancel($pdo_db, $playerinfo['ship_id']);
 
     $admin_log = new Tki\AdminLog();
-    $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_HARAKIRI, "$playerinfo[character_name]|" . $request->server->get('REMOTE_ADDR') . "");
-    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::HARAKIRI, $request->server->get('REMOTE_ADDR'));
+    $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_HARAKIRI, "$playerinfo[character_name]|" . $request->server->get('REMOTE_ADDR') . "");
+    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\Types\LogEnums::HARAKIRI, $request->server->get('REMOTE_ADDR'));
     echo $langvars['l_die_lost_planets'] . "<br>\n";
 }
 else

@@ -267,7 +267,7 @@ if ($sectorinfo['port_type'] != "none" && $sectorinfo['port_type'] != "special")
     }
     else
     {
-        $amount_ore = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_colonists'];
+        $amount_ore = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_colonists'];
     }
 
     if ($sb_organics == $langvars['l_buying'])
@@ -276,7 +276,7 @@ if ($sectorinfo['port_type'] != "none" && $sectorinfo['port_type'] != "special")
     }
     else
     {
-        $amount_organics = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_organics'] - $playerinfo['ship_colonists'];
+        $amount_organics = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_organics'] - $playerinfo['ship_colonists'];
     }
 
     if ($sb_goods == $langvars['l_buying'])
@@ -285,7 +285,7 @@ if ($sectorinfo['port_type'] != "none" && $sectorinfo['port_type'] != "special")
     }
     else
     {
-        $amount_goods = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
+        $amount_goods = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
     }
 
     if ($sb_energy == $langvars['l_buying'])
@@ -294,7 +294,7 @@ if ($sectorinfo['port_type'] != "none" && $sectorinfo['port_type'] != "special")
     }
     else
     {
-        $amount_energy = Tki\CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
+        $amount_energy = \Tki\Helpers\CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
     }
 
     // Limit amounts to port quantities
@@ -335,8 +335,8 @@ if ($sectorinfo['port_type'] != "none" && $sectorinfo['port_type'] != "special")
     echo "<input type=submit value=" . $langvars['l_trade'] . ">";
     echo "</form>";
 
-    $free_holds = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
-    $free_power = Tki\CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
+    $free_holds = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
+    $free_power = \Tki\Helpers\CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
 
     $langvars['l_trade_st_info'] = str_replace("[free_holds]", number_format($free_holds, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_trade_st_info']);
     $langvars['l_trade_st_info'] = str_replace("[free_power]", number_format($free_power, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_trade_st_info']);
@@ -351,7 +351,7 @@ elseif ($sectorinfo['port_type'] == "special")
     // Kami Multi-browser window upgrade fix
     $_SESSION['port_shopping'] = true;
 
-    if (Tki\Loan::isPending($pdo_db, $tkireg))
+    if (\Tki\Helpers\Loan::isPending($pdo_db, $tkireg))
     {
         echo $langvars['l_port_loannotrade'] . "<p>";
         echo "<a href=ibank.php>" . $langvars['l_ibank_term'] . "</a><p>";
@@ -499,13 +499,13 @@ elseif ($sectorinfo['port_type'] == "special")
     $beacon_free = $tkireg->max_beacons - $playerinfo['dev_beacon'];
     $emerwarp_free = $tkireg->max_emerwarp - $playerinfo['dev_emerwarp'];
     $warpedit_free = $tkireg->max_warpedit - $playerinfo['dev_warpedit'];
-    $fighter_max = Tki\CalcLevels::abstractLevels($playerinfo['computer'], $tkireg);
+    $fighter_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['computer'], $tkireg);
     $fighter_free = $fighter_max - $playerinfo['ship_fighters'];
-    $torpedo_max = Tki\CalcLevels::abstractLevels($playerinfo['torp_launchers'], $tkireg);
+    $torpedo_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['torp_launchers'], $tkireg);
     $torpedo_free = $torpedo_max - $playerinfo['torps'];
-    $armor_max = Tki\CalcLevels::abstractLevels($playerinfo['armor'], $tkireg);
+    $armor_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['armor'], $tkireg);
     $armor_free = $armor_max - $playerinfo['armor_pts'];
-    $colonist_max = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'];
+    $colonist_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'];
 
     if ($colonist_max < 0)
     {

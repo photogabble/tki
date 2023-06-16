@@ -319,7 +319,7 @@ else
             {
                 $row = $result4->fields;
                 // Display other ships in sector - unless they are successfully cloaked
-                $success = Tki\Scan::success($playerinfo['sensors'], $row['cloak']);
+                $success = \Tki\Helpers\Scan::success($playerinfo['sensors'], $row['cloak']);
                 if ($success < 5)
                 {
                     $success = 5;

@@ -58,39 +58,39 @@ while (!$result->EOF)
     $result->MoveNext();
 }
 
-$freeholds = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
-$maxholds = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg);
-$maxenergy = Tki\CalcLevels::energy($playerinfo['power'], $tkireg);
+$freeholds = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
+$maxholds = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg);
+$maxenergy = \Tki\Helpers\CalcLevels::energy($playerinfo['power'], $tkireg);
 $admin_log = new Tki\AdminLog();
 if ($playerinfo['ship_colonists'] < 0 || $playerinfo['ship_ore'] < 0 || $playerinfo['ship_organics'] < 0 || $playerinfo['ship_goods'] < 0 || $playerinfo['ship_energy'] < 0 || $freeholds < 0)
 {
     if ($playerinfo['ship_colonists'] < 0 || $playerinfo['ship_colonists'] > $maxholds)
     {
-        $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_colonists]|colonists|$maxholds");
+        $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_colonists]|colonists|$maxholds");
         $playerinfo['ship_colonists'] = 0;
     }
 
     if ($playerinfo['ship_ore'] < 0 || $playerinfo['ship_ore'] > $maxholds)
     {
-        $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_ore]|ore|$maxholds");
+        $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_ore]|ore|$maxholds");
         $playerinfo['ship_ore'] = 0;
     }
 
     if ($playerinfo['ship_organics'] < 0 || $playerinfo['ship_organics'] > $maxholds)
     {
-        $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_organics]|organics|$maxholds");
+        $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_organics]|organics|$maxholds");
         $playerinfo['ship_organics'] = 0;
     }
 
     if ($playerinfo['ship_goods'] < 0 || $playerinfo['ship_goods'] > $maxholds)
     {
-        $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_goods]|goods|$maxholds");
+        $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_goods]|goods|$maxholds");
         $playerinfo['ship_goods'] = 0;
     }
 
     if ($playerinfo['ship_energy'] < 0 || $playerinfo['ship_energy'] > $maxenergy)
     {
-        $admin_log->writeLog($pdo_db, \Tki\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_energy]|energy|$maxenergy");
+        $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_ILLEGVALUE, "$playerinfo[ship_name]|$playerinfo[ship_energy]|energy|$maxenergy");
         $playerinfo['ship_energy'] = 0;
     }
 
@@ -231,22 +231,22 @@ if (($confirm === null) || (strlen(trim($confirm)) === 0))
 if ($command == 'new')
 {
     // Displays new trade route form
-    \Tki\TraderouteBuildNew::new($pdo_db, $lang, $tkireg, $tkitimer, $template, $num_traderoutes, $playerinfo, null);
+    \Tki\Actions\TradeRoutes\TraderouteBuildNew::new($pdo_db, $lang, $tkireg, $tkitimer, $template, $num_traderoutes, $playerinfo, null);
 }
 elseif ($command == 'edit')
 {
     // Displays new trade route form, edit
-    \Tki\TraderouteBuildNew::new($pdo_db, $lang, $tkireg, $tkitimer, $template, $num_traderoutes, $playerinfo, $traderoute_id);
+    \Tki\Actions\TradeRoutes\TraderouteBuildNew::new($pdo_db, $lang, $tkireg, $tkitimer, $template, $num_traderoutes, $playerinfo, $traderoute_id);
 }
 elseif ($command == 'create')
 {
     // Enters new route in db
-    \Tki\TraderouteBuildCreate::create($pdo_db, $lang, $tkireg, $tkitimer, $template, $playerinfo, $num_traderoutes, $ptype1, $ptype2, $port_id1, $port_id2, $team_planet_id1, $team_planet_id2, $move_type, $circuit_type, $editing, $planet_id1, $planet_id2);
+    \Tki\Actions\TradeRoutes\TraderouteBuildCreate::create($pdo_db, $lang, $tkireg, $tkitimer, $template, $playerinfo, $num_traderoutes, $ptype1, $ptype2, $port_id1, $port_id2, $team_planet_id1, $team_planet_id2, $move_type, $circuit_type, $editing, $planet_id1, $planet_id2);
 }
 elseif ($command == 'delete')
 {
     // Displays delete info
-    \Tki\TraderouteDelete::prime($pdo_db, $lang, $langvars, $tkireg, $tkitimer, $template, $playerinfo, $confirm, $traderoute_id);
+    \Tki\Actions\TradeRoutes\TraderouteDelete::prime($pdo_db, $lang, $langvars, $tkireg, $tkitimer, $template, $playerinfo, $confirm, $traderoute_id);
 }
 elseif ($command == 'settings')
 {
@@ -269,7 +269,7 @@ elseif ($engage !== null)
         // Get playerinfo from database
         $players_gateway = new \Tki\Models\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-        \Tki\Traderoute::engage($pdo_db, $lang, $tr_repeat, $tkireg, $tkitimer, $playerinfo, $engage, $traderoutes, $portfull, $template);
+        \Tki\Actions\TradeRoutes\Traderoute::engage($pdo_db, $lang, $tr_repeat, $tkireg, $tkitimer, $playerinfo, $engage, $traderoutes, $portfull, $template);
         $tr_repeat--;
     }
 }

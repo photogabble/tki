@@ -24,8 +24,8 @@
 
 namespace Tki\Jobs;
 
-use Tki\Models\Planet;
 use Illuminate\Support\Facades\DB;
+use Tki\Models\Planet;
 
 class PlanetsScheduler extends ScheduledTask
 {
@@ -55,7 +55,7 @@ class PlanetsScheduler extends ScheduledTask
                 $starvation = floor($planet->colonists * config('game.starvation_death_rate'));
 
                 if (!is_null($planet->owner_id)) {
-                    \Tki\Models\PlayerLog::writeLog($planet->owner_id, \Tki\LogEnums::STARVATION, "$planet->sector_id|$starvation");
+                    \Tki\Models\PlayerLog::writeLog($planet->owner_id, \Tki\Types\LogEnums::STARVATION, "$planet->sector_id|$starvation");
                 }
             }
 

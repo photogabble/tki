@@ -50,7 +50,7 @@ class Ibank
             self::ibankError($pdo_db, $lang, $langvars['l_ibank_notwoloans'], "ibank.php?command=loans", $tkireg, $tkitimer, $template);
         }
 
-        $score = \Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
+        $score = Actions\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
         $maxtrans = $score * $score * $tkireg->ibank_loanlimit;
 
         if ($amount > $maxtrans)
@@ -159,7 +159,7 @@ class Ibank
         else
         {
             $percent = $tkireg->ibank_loanlimit * 100;
-            $score = \Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
+            $score = Actions\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
             $maxloan = $score * $score * $tkireg->ibank_loanlimit;
 
             $langvars['l_ibank_maxloanpercent'] = str_replace("[ibank_percent]", (string) $percent, $langvars['l_ibank_maxloanpercent']);

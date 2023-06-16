@@ -274,7 +274,7 @@ switch ($response) {
         {
             $percent = $tkireg->max_bountyvalue * 100;
 
-            $score = Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
+            $score = \Tki\Actions\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
             $maxtrans = $score * $score * $tkireg->max_bountyvalue;
             $previous_bounty = 0;
             $pb = $old_db->Execute("SELECT SUM(amount) AS totalbounty FROM {$old_db->prefix}bounty WHERE bounty_on = ? AND placed_by = ?;", array($bounty_on, $playerinfo['ship_id']));

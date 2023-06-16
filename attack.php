@@ -67,12 +67,12 @@ $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
 $players_gateway = new \Tki\Models\User($pdo_db);
 $targetinfo = $players_gateway->selectPlayerInfoById($ship_id);
 
-$playerscore = Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
-$targetscore = Tki\Score::updateScore($pdo_db, $targetinfo['ship_id'], $tkireg, $playerinfo);
+$playerscore = \Tki\Actions\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
+$targetscore = \Tki\Actions\Score::updateScore($pdo_db, $targetinfo['ship_id'], $tkireg, $playerinfo);
 $playerscore = $playerscore * $playerscore;
 $targetscore = $targetscore * $targetscore;
 
-$character_object = new \Tki\Character();
+$character_object = new \Tki\Actions\Character();
 
 // Check to ensure target is in the same sector as player
 if ($targetinfo['sector'] != $playerinfo['sector'] || $targetinfo['on_planet'] == 'Y')
@@ -83,7 +83,7 @@ elseif ($playerinfo['turns'] < 1)
 {
     echo $langvars['l_att_noturn'] . '<br><br>';
 }
-elseif (Tki\Team::isSameTeam($playerinfo['team'], $targetinfo['team']))
+elseif (\Tki\Helpers\Team::isSameTeam($playerinfo['team'], $targetinfo['team']))
 {
     echo "<div style='color:#ff0;'>" . $langvars['l_team_noattack_members'] . "</div>\n";
 }
@@ -136,7 +136,7 @@ else
             array($playerinfo['ship_id'])
         );
         Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-        Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_OUTMAN, "$playerinfo[character_name]");
+        Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_OUTMAN, "$playerinfo[character_name]");
     }
     elseif ($roll > $success)
     {
@@ -148,12 +148,12 @@ else
             array($playerinfo['ship_id'])
         );
         Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-        Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_OUTSCAN, "$playerinfo[character_name]");
+        Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_OUTSCAN, "$playerinfo[character_name]");
     }
     else
     {
         // If scan succeeds, show results and inform target
-        $shipavg = Tki\CalcLevels::avgTech($targetinfo, 'ship');
+        $shipavg = \Tki\Helpers\CalcLevels::avgTech($targetinfo, 'ship');
 
         if ($shipavg > $tkireg->max_ewdhullsize)
         {
@@ -178,7 +178,7 @@ else
                 array($rating_change, $playerinfo['ship_id'])
             );
             Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_EWD, "$playerinfo[character_name]");
+            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_EWD, "$playerinfo[character_name]");
             $result_warp = $old_db->Execute(
                 "UPDATE {$old_db->prefix}ships SET sector = $dest_sector, " .
                 "dev_emerwarp = dev_emerwarp - 1, cleared_defenses = ' ' " .
@@ -223,7 +223,7 @@ else
                         array($playerinfo['ship_id'], 0 ,$bounty)
                     );
                     Tki\Db::logDbErrors($pdo_db, $insert, __LINE__, __FILE__);
-                    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::BOUNTY_FEDBOUNTY, "$bounty");
+                    Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\Types\LogEnums::BOUNTY_FEDBOUNTY, "$bounty");
                     echo "<div style='color:#f00;'>" . $langvars['l_by_fedbounty2'] . "</div>\n";
                     echo "<br>\n";
                 }
@@ -231,7 +231,7 @@ else
 
             if ($targetinfo['dev_emerwarp'] > 0)
             {
-                Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_EWDFAIL, $playerinfo['character_name']);
+                Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_EWDFAIL, $playerinfo['character_name']);
             }
 
             // I added these two so we can have a value for debugging and
@@ -239,7 +239,7 @@ else
             // change the display of stats also
             $targetenergy = $targetinfo['ship_energy'];
             $playerenergy = $playerinfo['ship_energy'];
-            $targetbeams = Tki\CalcLevels::abstractLevels($targetinfo['beams'], $tkireg);
+            $targetbeams = \Tki\Helpers\CalcLevels::abstractLevels($targetinfo['beams'], $tkireg);
             if ($targetbeams > $targetinfo['ship_energy'])
             {
                 $targetbeams = $targetinfo['ship_energy'];
@@ -247,21 +247,21 @@ else
 
             $targetinfo['ship_energy'] = $targetinfo['ship_energy'] - $targetbeams;
             // Why dont we set targetinfo[ship_energy] to a variable instead?
-            $playerbeams = Tki\CalcLevels::abstractLevels($playerinfo['beams'], $tkireg);
+            $playerbeams = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['beams'], $tkireg);
             if ($playerbeams > $playerinfo['ship_energy'])
             {
                 $playerbeams = $playerinfo['ship_energy'];
             }
 
             $playerinfo['ship_energy'] = $playerinfo['ship_energy'] - $playerbeams;
-            $playershields = Tki\CalcLevels::abstractLevels($playerinfo['shields'], $tkireg);
+            $playershields = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['shields'], $tkireg);
             if ($playershields > $playerinfo['ship_energy'])
             {
                 $playershields = $playerinfo['ship_energy'];
             }
 
             $playerinfo['ship_energy'] = $playerinfo['ship_energy'] - $playershields;
-            $targetshields = Tki\CalcLevels::abstractLevels($targetinfo['shields'], $tkireg);
+            $targetshields = \Tki\Helpers\CalcLevels::abstractLevels($targetinfo['shields'], $tkireg);
             if ($targetshields > $targetinfo['ship_energy'])
             {
                 $targetshields = $targetinfo['ship_energy'];
@@ -629,18 +629,18 @@ else
                     );
 
                     Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-                    Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_LOSE, "$playerinfo[character_name]|Y");
-                    Tki\Bounty::collect($pdo_db, $lang, $playerinfo['ship_id'], $targetinfo['ship_id']);
+                    Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_LOSE, "$playerinfo[character_name]|Y");
+                    \Tki\Actions\Bounty::collect($pdo_db, $lang, $playerinfo['ship_id'], $targetinfo['ship_id']);
                     $admin_log = new Tki\AdminLog();
-                    $admin_log->writeLog($pdo_db, \Tki\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Just lost the Escape Pod.");
+                    $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Just lost the Escape Pod.");
                 }
                 else
                 {
-                    Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_LOSE, "$playerinfo[character_name]|N");
+                    Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_LOSE, "$playerinfo[character_name]|N");
                     $character_object->kill($pdo_db, $lang, $targetinfo['ship_id'], $tkireg);
-                    Tki\Bounty::collect($pdo_db, $lang, $playerinfo['ship_id'], $targetinfo['ship_id']);
+                    \Tki\Actions\Bounty::collect($pdo_db, $lang, $playerinfo['ship_id'], $targetinfo['ship_id']);
                     $admin_log = new Tki\AdminLog();
-                    $admin_log->writeLog($pdo_db, \Tki\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Didn't have the Escape Pod.");
+                    $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Didn't have the Escape Pod.");
                 }
 
                 if ($playerarmor > 0)
@@ -658,16 +658,16 @@ else
                         $resx = $old_db->Execute("UPDATE {$old_db->prefix}kabal SET active= N WHERE kabal_id = ?;", array($targetinfo['email']));
                         Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
                         $admin_log = new Tki\AdminLog();
-                        $admin_log->writeLog($pdo_db, \Tki\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Detected as AI.");
+                        $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Detected as AI.");
 
                         if ($rating_change > 0)
                         {
                             $rating_change = 0 - $rating_change;
-                            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACK_LOSE, "$playerinfo[character_name]|N");
-                            Tki\Bounty::collect($pdo_db, $lang, $playerinfo['ship_id'], $targetinfo['ship_id']);
+                            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACK_LOSE, "$playerinfo[character_name]|N");
+                            \Tki\Actions\Bounty::collect($pdo_db, $lang, $playerinfo['ship_id'], $targetinfo['ship_id']);
                             $character_object->kill($pdo_db, $lang, $targetinfo['ship_id'], $tkireg);
                             $admin_log = new Tki\AdminLog();
-                            $admin_log->writeLog($pdo_db, \Tki\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Hope fully we only killed off the AI.");
+                            $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ATTACK_DEBUG, "*|{$playerinfo['ship_id']}|{$targetinfo['ship_id']}|Hope fully we only killed off the AI.");
                         }
 
                         $salv_credits = $targetinfo['credits'];
@@ -676,7 +676,7 @@ else
                     $free_ore = round($targetinfo['ship_ore'] / 2);
                     $free_organics = round($targetinfo['ship_organics'] / 2);
                     $free_goods = round($targetinfo['ship_goods'] / 2);
-                    $free_holds = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
+                    $free_holds = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
                     if ($free_holds > $free_goods)
                     {
                         $salv_goods = $free_goods;
@@ -763,7 +763,7 @@ else
                 $fighters_lost = $targetinfo['ship_fighters'] - $targetfighters;
                 $energy = $targetinfo['ship_energy'];
 
-                Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::ATTACKED_WIN, "$playerinfo[character_name]|$armor_lost|$fighters_lost");
+                Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::ATTACKED_WIN, "$playerinfo[character_name]|$armor_lost|$fighters_lost");
                 $update4 = $old_db->Execute(
                     "UPDATE {$old_db->prefix}ships SET ship_energy = ?, ship_fighters = ship_fighters - ?, armor_pts = armor_pts - ?, " .
                     "torps = torps - ? WHERE ship_id = ?;",
@@ -801,13 +801,13 @@ else
                         array(100, $rating, $playerinfo['ship_id'])
                     );
                     Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-                    Tki\Bounty::collect($pdo_db, $lang, $targetinfo['ship_id'], $playerinfo['ship_id']);
+                    \Tki\Actions\Bounty::collect($pdo_db, $lang, $targetinfo['ship_id'], $playerinfo['ship_id']);
                 }
                 else
                 {
                     echo "Didnt have pod?! $playerinfo[dev_escapepod]<br>";
                     $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
-                    Tki\Bounty::collect($pdo_db, $lang, $targetinfo['ship_id'], $playerinfo['ship_id']);
+                    \Tki\Actions\Bounty::collect($pdo_db, $lang, $targetinfo['ship_id'], $playerinfo['ship_id']);
                 }
 
                 if ($targetarmor > 0)
@@ -817,7 +817,7 @@ else
                     $free_ore = round($playerinfo['ship_ore'] / 2);
                     $free_organics = round($playerinfo['ship_organics'] / 2);
                     $free_goods = round($playerinfo['ship_goods'] / 2);
-                    $free_holds = Tki\CalcLevels::abstractLevels($targetinfo['hull'], $tkireg) - $targetinfo['ship_ore'] - $targetinfo['ship_organics'] - $targetinfo['ship_goods'] - $targetinfo['ship_colonists'];
+                    $free_holds = \Tki\Helpers\CalcLevels::abstractLevels($targetinfo['hull'], $tkireg) - $targetinfo['ship_ore'] - $targetinfo['ship_organics'] - $targetinfo['ship_goods'] - $targetinfo['ship_colonists'];
                     if ($free_holds > $free_goods)
                     {
                         $salv_goods = $free_goods;

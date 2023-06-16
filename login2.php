@@ -109,7 +109,7 @@ if ($playerfound)
             if ($playerinfo['ship_destroyed'] == 'N')
             {
                 // Player's ship has not been destroyed
-                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::LOGIN, $request->server->get('REMOTE_ADDR'));
+                Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\Types\LogEnums::LOGIN, $request->server->get('REMOTE_ADDR'));
                 $cur_time_stamp = date("Y-m-d H:i:s");
                 $remote_addr = $request->server->get('REMOTE_ADDR');
 
@@ -219,9 +219,9 @@ if ($playerfound)
     {
         // password is incorrect
         echo $langvars['l_login_4gotpw1a'] . "<br><br>" . $langvars['l_login_4gotpw1b'] . " <a href='mail.php?mail=" . $email . "'>" . $langvars['l_clickme'] . "</a> " . $langvars['l_login_4gotpw2a'] . "<br><br>" . $langvars['l_login_4gotpw2b'] . " <a href='index.php'>" . $langvars['l_clickme'] . "</a> " . $langvars['l_login_4gotpw3'] . " " . $request->server->get('REMOTE_ADDR') . "...";
-        Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::BADLOGIN, $request->server->get('REMOTE_ADDR'));
+        Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\Types\LogEnums::BADLOGIN, $request->server->get('REMOTE_ADDR'));
         $admin_log = new Tki\AdminLog();
-        $admin_log->writeLog($pdo_db, (1000 + \Tki\LogEnums::BADLOGIN), "{$request->server->get('REMOTE_ADDR')}|{$email}|{$filtered_post_password}");
+        $admin_log->writeLog($pdo_db, (1000 + \Tki\Types\LogEnums::BADLOGIN), "{$request->server->get('REMOTE_ADDR')}|{$email}|{$filtered_post_password}");
     }
 }
 else

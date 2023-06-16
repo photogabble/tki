@@ -98,7 +98,7 @@ class TraderouteDistance
             $energyscooped = 100;
         }
 
-        $free_power = (int) \Tki\CalcLevels::energy((int) $playerinfo['power'], $tkireg) - (int) $playerinfo['ship_energy'];
+        $free_power = (int) Helpers\CalcLevels::energy((int) $playerinfo['power'], $tkireg) - (int) $playerinfo['ship_energy'];
 
         if ($free_power < $energyscooped)
         {
@@ -117,7 +117,7 @@ class TraderouteDistance
             if ($sells == 'Y' && $playerinfo['dev_fuelscoop'] == 'Y' && $type2 == 'P' && $dest_traderoute['port_type'] != 'energy')
             {
                 $energyscooped = $distance * 100;
-                $free_power = \Tki\CalcLevels::energy($playerinfo['power'], $tkireg);
+                $free_power = Helpers\CalcLevels::energy($playerinfo['power'], $tkireg);
 
                 if ($free_power < $energyscooped)
                 {
@@ -129,7 +129,7 @@ class TraderouteDistance
             elseif ($playerinfo['dev_fuelscoop'] == 'Y')
             {
                 $energyscooped = $distance * 100;
-                $free_power = \Tki\CalcLevels::energy($playerinfo['power'], $tkireg) - $retvalue['scooped1'] - $playerinfo['ship_energy'];
+                $free_power = Helpers\CalcLevels::energy($playerinfo['power'], $tkireg) - $retvalue['scooped1'] - $playerinfo['ship_energy'];
 
                 if ($free_power < $energyscooped)
                 {

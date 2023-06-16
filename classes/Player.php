@@ -28,6 +28,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 // TODO: check file is required, functionality implemented via Laravel
 
+/**
+ * @deprecated
+ */
 class Player
 {
     /**

@@ -149,7 +149,7 @@ switch ($response)
             $countres = $old_db->Execute("SELECT SUM(quantity) AS totalmines FROM {$old_db->prefix}sector_defense WHERE sector_id = ? AND defense_type = 'M';", array($sector));
             $ttl = $countres->fields;
             $total_sector_mines = $ttl['totalmines'];
-            $playerbeams = Tki\CalcLevels::abstractLevels($playerinfo['beams'], $tkireg);
+            $playerbeams = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['beams'], $tkireg);
             if ($playerbeams > $playerinfo['ship_energy'])
             {
                 $playerbeams = $playerinfo['ship_energy'];
@@ -162,12 +162,12 @@ switch ($response)
 
             echo $langvars['l_md_bmines'] . " " . $playerbeams . " " . $langvars['l_mines'] . "<br>";
             $update4b = $old_db->Execute("UPDATE {$old_db->prefix}ships SET ship_energy = ship_energy - ? WHERE ship_id = ?;", array($playerbeams, $playerinfo['ship_id']));
-            Tki\Mines::explode($pdo_db, $sector, $playerbeams);
+            \Tki\Actions\Mines::explode($pdo_db, $sector, $playerbeams);
             $char_name = $playerinfo['character_name'];
             $langvars['l_md_msgdownerb'] = str_replace("[sector]", $sector, $langvars['l_md_msgdownerb']);
             $langvars['l_md_msgdownerb'] = str_replace("[mines]", $playerbeams, $langvars['l_md_msgdownerb']);
             $langvars['l_md_msgdownerb'] = str_replace("[name]", $char_name, $langvars['l_md_msgdownerb']);
-            Tki\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_md_msgdownerb']);
+            \Tki\Actions\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_md_msgdownerb']);
             Tki\Text::gotoMain($pdo_db, $lang);
             die();
         }
@@ -195,8 +195,8 @@ switch ($response)
             $quantity = $defenseinfo['quantity'];
         }
 
-        $torpedo_max = Tki\CalcLevels::abstractLevels($playerinfo['torp_launchers'], $tkireg) - $playerinfo['torps'];
-        $fighter_max = Tki\CalcLevels::abstractLevels($playerinfo['computer'], $tkireg) - $playerinfo['ship_fighters'];
+        $torpedo_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['torp_launchers'], $tkireg) - $playerinfo['torps'];
+        $fighter_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['computer'], $tkireg) - $playerinfo['ship_fighters'];
         if ($defenseinfo['defense_type'] == 'F')
         {
             if ($quantity > $fighter_max)

@@ -56,8 +56,8 @@ $targetinfo = $result2->fields;
 $targetinfo['ship_id'] = (int) $targetinfo['ship_id'];
 $targetinfo['cloak'] = (int) $targetinfo['cloak'];
 
-$playerscore = Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
-$targetscore = Tki\Score::updateScore($pdo_db, $targetinfo['ship_id'], $tkireg, $playerinfo);
+$playerscore = \Tki\Actions\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
+$targetscore = \Tki\Actions\Score::updateScore($pdo_db, $targetinfo['ship_id'], $tkireg, $playerinfo);
 
 $playerscore = $playerscore * $playerscore;
 $targetscore = $targetscore * $targetscore;
@@ -91,7 +91,7 @@ else
     else
     {
         // Determine per cent chance of success in scanning target ship - based on player's sensors and opponent's cloak
-        $success = Tki\Scan::success($playerinfo['sensors'], $targetinfo['cloak']);
+        $success = \Tki\Helpers\Scan::success($playerinfo['sensors'], $targetinfo['cloak']);
         if ($success < 5)
         {
             $success = 5;
@@ -107,7 +107,7 @@ else
         {
             // If scan fails - inform both player and target.
             echo $langvars['l_planet_noscan'];
-            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::SHIP_SCAN_FAIL, $playerinfo['character_name']);
+            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::SHIP_SCAN_FAIL, $playerinfo['character_name']);
         }
         else
         {
@@ -154,7 +154,7 @@ else
                 echo $langvars['l_by_nofedbounty'] . "<br><br>";
             }
 
-            $sc_error = Tki\Scan::error($playerinfo['sensors'], $targetinfo['cloak'], $tkireg->scan_error_factor);
+            $sc_error = \Tki\Helpers\Scan::error($playerinfo['sensors'], $targetinfo['cloak'], $tkireg->scan_error_factor);
             echo $langvars['l_scan_ron'] . " " . $targetinfo['ship_name'] . ", " . $langvars['l_scan_capt'] . " " . $targetinfo['character_name'] . "<br><br>";
             echo "<strong>" . $langvars['l_ship_levels'] . ":</strong><br><br>";
             echo "<table  width=\"\" border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
@@ -466,7 +466,7 @@ else
             }
 
             echo "</table><br>";
-            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\LogEnums::SHIP_SCAN, "$playerinfo[character_name]");
+            Tki\Models\PlayerLog::writeLog($pdo_db, $targetinfo['ship_id'], \Tki\Types\LogEnums::SHIP_SCAN, "$playerinfo[character_name]");
         }
 
         $sql = "UPDATE ::prefix::ships SET turns = turns - 1, turns_used = turns_used + 1 WHERE ship_id = :ship_id";

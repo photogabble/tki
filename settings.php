@@ -92,7 +92,7 @@ $variables['cols_needed_ene'] = number_format((1 / $tkireg->colonist_production_
 $variables['cols_needed_cred'] = number_format((1 / $tkireg->colonist_production_rate) / $tkireg->credits_prate, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']);
 
 // Get list of available languages
-$variables['list_of_langs'] = Tki\Languages::listAvailable($pdo_db, $lang);
+$variables['list_of_langs'] = \Tki\Helpers\Languages::listAvailable($pdo_db, $lang);
 
 // Temporarily set the template to the default template until we have a user option
 $variables['template'] = $tkireg->default_template;

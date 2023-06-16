@@ -26,6 +26,8 @@ namespace Tki;
 
 // TODO: this needs refactoring into the Vue frontend
 
+use Tki\Types\LogEnums;
+
 class TraderouteCheck
 {
     public static function isCompatible(\PDO $pdo_db, string $lang, string $type1, string $type2, string $move, int $circuit, array $src, array $dest, array $playerinfo, Registry $tkireg, Timer $tkitimer, Smarty $template): void

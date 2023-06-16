@@ -56,7 +56,7 @@ class Login
             return false;
         }
 
-        $is_ship_destroyed = !\Tki\Ship::isDestroyed($pdo_db, $lang, $tkireg, $tkitimer, $template, $playerinfo);
+        $is_ship_destroyed = !Actions\Ship::isDestroyed($pdo_db, $lang, $tkireg, $tkitimer, $template, $playerinfo);
         return $is_ship_destroyed;
     }
 }

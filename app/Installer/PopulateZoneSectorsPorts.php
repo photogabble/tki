@@ -32,7 +32,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
                 'zone_id' => 2
             ]);
 
-        $output->writeln(__('create_universe.l_cu_setup_fed_sectors', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_fed_sectors', ['elapsed' => $this->timer->sample()]));
 
         // Insert special ports
         Universe::query()
@@ -45,7 +45,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
                 'port_type' => 'special'
             ]);
 
-        $output->writeln(__('create_universe.l_cu_setup_special_ports', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_special_ports', ['elapsed' => $this->timer->sample()]));
 
         // Insert Ore Ports
         Universe::query()
@@ -61,7 +61,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
                 'port_energy' => $initbenergy,
             ]);
 
-        $output->writeln(__('create_universe.l_cu_setup_ore_ports', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_ore_ports', ['elapsed' => $this->timer->sample()]));
 
         // Insert organics ports
         Universe::query()
@@ -77,7 +77,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
                 'port_energy' => $initbenergy,
             ]);
 
-        $output->writeln(__('create_universe.l_cu_setup_organics_ports', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_organics_ports', ['elapsed' => $this->timer->sample()]));
 
 
         // Insert goods ports
@@ -94,7 +94,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
                 'port_energy' => $initbenergy,
             ]);
 
-        $output->writeln(__('create_universe.l_cu_setup_goods_ports', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_goods_ports', ['elapsed' => $this->timer->sample()]));
 
         // Insert energy ports
         Universe::query()
@@ -110,7 +110,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
                 'port_energy' => $initsenergy,
             ]);
 
-        $output->writeln(__('create_universe.l_cu_setup_energy_ports', ['elapsed' => $this->timer->sample()]));
+        $this->logger->info(__('create_universe.l_cu_setup_energy_ports', ['elapsed' => $this->timer->sample()]));
 
         return 0;
     }

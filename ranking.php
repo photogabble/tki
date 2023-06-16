@@ -131,7 +131,7 @@ if ($rankings !== null && ($variables['num_players'] > 0))
         }
 
         // Set the characters Insignia.
-        $insignia = new Tki\Character();
+        $insignia = new \Tki\Actions\Character();
         $row['insignia'] = $insignia->getInsignia($pdo_db, $lang, $row['email']);
 
         // This is just to show that we can set the type of player.

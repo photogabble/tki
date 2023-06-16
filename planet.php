@@ -164,7 +164,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                     Tki\Db::logDbErrors($pdo_db, $update2, __LINE__, __FILE__);
                     $update3 = $old_db->Execute("UPDATE {$old_db->prefix}ships SET on_planet='N' WHERE planet_id = ?;", array($planet_id));
                     Tki\Db::logDbErrors($pdo_db, $update3, __LINE__, __FILE__);
-                    Tki\Ownership::calc($pdo_db, $lang, $playerinfo['sector'], $tkireg);
+                    \Tki\Helpers\Ownership::calc($pdo_db, $lang, $playerinfo['sector'], $tkireg);
                     header("Location: main.php");
                 }
                 else
@@ -306,7 +306,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
 
             $retOwnerInfo = null;
 
-            $owner_found = Tki\Planet::getOwner($pdo_db, $planetinfo['planet_id'], $retOwnerInfo);
+            $owner_found = \Tki\Actions\Planets\Planet::getOwner($pdo_db, $planetinfo['planet_id'], $retOwnerInfo);
             if ($owner_found === true && $retOwnerInfo !== null)
             {
                 if ($retOwnerInfo['team'] == $playerinfo['team'] && ($playerinfo['team'] != 0 || $retOwnerInfo['team'] != 0))
@@ -382,8 +382,8 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
         elseif ($command == "transfer")
         {
             // Transfer menu
-            $free_holds = Tki\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
-            $free_power = Tki\CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
+            $free_holds = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg) - $playerinfo['ship_ore'] - $playerinfo['ship_organics'] - $playerinfo['ship_goods'] - $playerinfo['ship_colonists'];
+            $free_power = \Tki\Helpers\CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
             $langvars['l_planet_cinfo'] = str_replace("[cargo]", number_format($free_holds, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_planet_cinfo']);
             $langvars['l_planet_cinfo'] = str_replace("[energy]", number_format($free_power, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_planet_cinfo']);
             echo $langvars['l_planet_cinfo'] . "<br><br>";
@@ -448,7 +448,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                     echo $langvars['l_planet_bbuild'] . "<br><br>";
 
                     // Calc Ownership and Notify User Of Results
-                    $ownership = Tki\Ownership::calc($pdo_db, $lang, $playerinfo['sector'], $tkireg);
+                    $ownership = \Tki\Helpers\Ownership::calc($pdo_db, $lang, $playerinfo['sector'], $tkireg);
                     echo $ownership . '<p>';
                 }
             }
@@ -562,7 +562,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
             }
 
             $retOwnerInfo = null;
-            $owner_found = Tki\Planet::getOwner($pdo_db, $planetinfo['planet_id'], $retOwnerInfo);
+            $owner_found = \Tki\Actions\Planets\Planet::getOwner($pdo_db, $planetinfo['planet_id'], $retOwnerInfo);
             if ($owner_found === true && $retOwnerInfo !== null)
             {
                 if ($retOwnerInfo['team'] == $playerinfo['team'] && ($playerinfo['team'] != 0 || $retOwnerInfo['team'] != 0))
@@ -599,7 +599,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
 
             unset($_SESSION['planet_selected']);
             $retOwnerInfo = null;
-            $owner_found = Tki\Planet::getOwner($pdo_db, $planetinfo['planet_id'], $retOwnerInfo);
+            $owner_found = \Tki\Actions\Planets\Planet::getOwner($pdo_db, $planetinfo['planet_id'], $retOwnerInfo);
             if ($owner_found === true && $retOwnerInfo !== null)
             {
                 if ($retOwnerInfo['team'] == $playerinfo['team'] && ($playerinfo['team'] != 0 || $retOwnerInfo['team'] != 0))
@@ -608,7 +608,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                 }
                 else
                 {
-                    if (\Tki\PlanetCombat::prime($pdo_db, $lang, $tkireg, $tkitimer, $template, $playerinfo, $ownerinfo, $planetinfo))
+                    if (\Tki\Actions\Planets\PlanetCombat::prime($pdo_db, $lang, $tkireg, $tkitimer, $template, $playerinfo, $ownerinfo, $planetinfo))
                     {
                         die();
                     }
@@ -641,7 +641,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
         {
             try
             {
-                \Tki\Planet::bombing($pdo_db, $lang, $langvars, $tkireg, $tkitimer, $playerinfo, $ownerinfo, $planetinfo, $template);
+                \Tki\Actions\Planets\Planet::bombing($pdo_db, $lang, $langvars, $tkireg, $tkitimer, $playerinfo, $ownerinfo, $planetinfo, $template);
             }
             catch (Exception $e)
             {
@@ -691,7 +691,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                 // If scan fails - inform both player and target.
                 echo $langvars['l_planet_noscan'] . "<br><br>";
                 Tki\Text::gotoMain($pdo_db, $lang);
-                Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\LogEnums::PLANET_SCAN_FAIL, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\Types\LogEnums::PLANET_SCAN_FAIL, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
 
                 $footer = new Tki\Footer();
                 $footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
@@ -699,9 +699,9 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
             }
             else
             {
-                Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\LogEnums::PLANET_SCAN, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
+                Tki\Models\PlayerLog::writeLog($pdo_db, $ownerinfo['ship_id'], \Tki\Types\LogEnums::PLANET_SCAN, "$planetinfo[name]|$playerinfo[sector]|$playerinfo[character_name]");
                 // Scramble results by scan error factor.
-                $sc_error = Tki\Scan::error($playerinfo['sensors'], $ownerinfo['cloak'], $scan_error_factor);
+                $sc_error = \Tki\Helpers\Scan::error($playerinfo['sensors'], $ownerinfo['cloak'], $scan_error_factor);
                 if (empty($planetinfo['name']))
                 {
                     $planetinfo['name'] = $langvars['l_unnamed'];
@@ -870,7 +870,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                 while (!$res->EOF)
                 {
                     $row = $res->fields;
-                    $success = Tki\Scan::success($playerinfo['sensors'], $row['cloak']);
+                    $success = \Tki\Helpers\Scan::success($playerinfo['sensors'], $row['cloak']);
                     if ($success < 5)
                     {
                         $success = 5;
@@ -900,12 +900,12 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
             echo $langvars['l_planet_captured'] . "<br>";
             $update = $old_db->Execute("UPDATE {$old_db->prefix}planets SET team = 0, owner = ?, base = 'N', defeated = 'N' WHERE planet_id = ?;", array($playerinfo['ship_id'], $planet_id));
             Tki\Db::logDbErrors($pdo_db, $update, __LINE__, __FILE__);
-            $ownership = Tki\Ownership::calc($pdo_db, $lang, $playerinfo['sector'], $tkireg);
+            $ownership = \Tki\Helpers\Ownership::calc($pdo_db, $lang, $playerinfo['sector'], $tkireg);
             echo $ownership . '<p>';
 
             if ($planetinfo['owner'] != 0)
             {
-                Tki\Score::updateScore($pdo_db, $planetinfo['owner'], $tkireg, $playerinfo);
+                \Tki\Actions\Score::updateScore($pdo_db, $planetinfo['owner'], $tkireg, $playerinfo);
             }
 
             if ($planetinfo['owner'] != 0)
@@ -918,7 +918,7 @@ if (!empty($planetinfo))  // If there is a planet in the sector show appropriate
                 $planetowner = $langvars['l_planet_noone'];
             }
 
-            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\LogEnums::PLANET_CAPTURED, "$planetinfo[colonists]|$planetinfo[credits]|$planetowner");
+            Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], \Tki\Types\LogEnums::PLANET_CAPTURED, "$planetinfo[colonists]|$planetinfo[credits]|$planetowner");
         }
         elseif ($command == "capture" && ($planetinfo['owner'] == 0 || $planetinfo['defeated'] == 'Y'))
         {

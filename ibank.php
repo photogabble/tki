@@ -100,31 +100,31 @@ if ($command == 'login') // Main menu
 }
 elseif ($command == 'withdraw') // Withdraw menu
 {
-    Tki\IbankWithdraw::before($pdo_db, $lang, $bank_account);
+    \Tki\Actions\Banking\IbankWithdraw::before($pdo_db, $lang, $bank_account);
 }
 elseif ($command == 'withdraw2') // Withdraw operation
 {
-    Tki\IbankWithdraw::after($pdo_db, $lang, $playerinfo, $amount, $bank_account, $tkireg, $tkitimer, $template);
+    \Tki\Actions\Banking\IbankWithdraw::after($pdo_db, $lang, $playerinfo, $amount, $bank_account, $tkireg, $tkitimer, $template);
 }
 elseif ($command == 'deposit') // Deposit menu
 {
-    Tki\IbankDeposit::before($pdo_db, $lang, $bank_account, $playerinfo);
+    \Tki\Actions\Banking\IbankDeposit::before($pdo_db, $lang, $bank_account, $playerinfo);
 }
 elseif ($command == 'deposit2') // Deposit operation
 {
-    Tki\IbankDeposit::after($pdo_db, $lang, $playerinfo, $amount, $bank_account, $tkireg, $tkitimer, $template);
+    \Tki\Actions\Banking\IbankDeposit::after($pdo_db, $lang, $playerinfo, $amount, $bank_account, $tkireg, $tkitimer, $template);
 }
 elseif ($command == 'transfer') // Main transfer menu
 {
-    Tki\IbankTransferMain::main($pdo_db, $lang, $playerinfo, $tkireg);
+    \Tki\Actions\Banking\IbankTransferMain::main($pdo_db, $lang, $playerinfo, $tkireg);
 }
 elseif ($command == 'transfer2') // Specific transfer menu (ship or planet)
 {
-    Tki\IbankTransferSpecific::specific($pdo_db, $lang, $langvars, $tkireg, $tkitimer, $playerinfo, $ship_id, $splanet_id, $dplanet_id, $template);
+    \Tki\Actions\Banking\IbankTransferSpecific::specific($pdo_db, $lang, $langvars, $tkireg, $tkitimer, $playerinfo, $ship_id, $splanet_id, $dplanet_id, $template);
 }
 elseif ($command == 'transfer3') // Transfer operation
 {
-    Tki\IbankTransferFinal::final($pdo_db, $lang, $playerinfo, $ship_id, $splanet_id, $dplanet_id, $amount, $tkireg, $tkitimer, $template);
+    \Tki\Actions\Banking\IbankTransferFinal::final($pdo_db, $lang, $playerinfo, $ship_id, $splanet_id, $dplanet_id, $amount, $tkireg, $tkitimer, $template);
 }
 elseif ($command == 'loans') // Loans menu
 {
@@ -140,15 +140,15 @@ elseif ($command == 'repay') // Repay operation
 }
 elseif ($command == 'consolidate') // Consolidate menu
 {
-    Tki\IbankConsolidate::before($pdo_db, $lang, $tkireg, $dplanet_id);
+    \Tki\Actions\Banking\IbankConsolidate::before($pdo_db, $lang, $tkireg, $dplanet_id);
 }
 elseif ($command == 'consolidate2') // Consolidate compute
 {
-    Tki\IbankConsolidate::after($pdo_db, $lang, $playerinfo, $tkireg, $tkitimer, $dplanet_id, $minimum, $maximum, $template);
+    \Tki\Actions\Banking\IbankConsolidate::after($pdo_db, $lang, $playerinfo, $tkireg, $tkitimer, $dplanet_id, $minimum, $maximum, $template);
 }
 elseif ($command == 'consolidate3') // Consolidate operation
 {
-    Tki\IbankConsolidate::third($pdo_db, $lang, $playerinfo, $tkireg, $tkitimer, $dplanet_id, $minimum, $maximum, $template);
+    \Tki\Actions\Banking\IbankConsolidate::third($pdo_db, $lang, $playerinfo, $tkireg, $tkitimer, $dplanet_id, $minimum, $maximum, $template);
 }
 else
 {

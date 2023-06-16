@@ -51,16 +51,16 @@ if (strlen(trim($tpcreds)) === 0)
 
 if ($tpcreds !== null && $tpcreds !== false)
 {
-    Tki\PlanetReportCE::collectCredits($pdo_db, $lang, $tpcreds, $tkireg);
+    \Tki\Actions\Planets\PlanetReportCE::collectCredits($pdo_db, $lang, $tpcreds, $tkireg);
 }
 elseif ($buildp !== null && $builds !== null)
 {
-    $build_bases = new Tki\Bases();
+    $build_bases = new \Tki\Actions\Bases();
     $build_bases->buildBase($pdo_db, $lang, $buildp, $builds, $tkireg);
 }
 else
 {
-    Tki\PlanetProduction::productionChange($pdo_db, $lang, $_POST, $tkireg);
+    \Tki\Actions\Planets\PlanetProduction::productionChange($pdo_db, $lang, $_POST, $tkireg);
 }
 
 echo '<br><br>';

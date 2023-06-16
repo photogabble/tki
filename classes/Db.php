@@ -28,6 +28,7 @@ namespace Tki;
 
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
+use Tki\Types\LogEnums;
 
 /**
  * @todo delete this file

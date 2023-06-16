@@ -24,8 +24,8 @@
 
 namespace Tki\Jobs;
 
-use Tki\Models\Ship;
 use Illuminate\Support\Facades\DB;
+use Tki\Models\Ship;
 
 class GovenorScheduler extends ScheduledTask
 {
@@ -65,9 +65,9 @@ class GovenorScheduler extends ScheduledTask
         DB::beginTransaction();
 
         foreach ($ships as $ship) {
-            $ship_fighters_max = \Tki\CalcLevels::abstractLevels($ship->computer, $tkireg);
-            $torps_max = \Tki\CalcLevels::abstractLevels($ship->torp_launchers, $tkireg);
-            $armor_pts_max = \Tki\CalcLevels::abstractLevels($ship->armor, $tkireg);
+            $ship_fighters_max = \Tki\Helpers\CalcLevels::abstractLevels($ship->computer, $tkireg);
+            $torps_max = \Tki\Helpers\CalcLevels::abstractLevels($ship->torp_launchers, $tkireg);
+            $armor_pts_max = \Tki\Helpers\CalcLevels::abstractLevels($ship->armor, $tkireg);
 
             // Checking Fighters
             if ($ship->ship_fighters > $ship_fighters_max) {

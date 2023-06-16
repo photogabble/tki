@@ -133,7 +133,7 @@ else
         if (($engage === null) || ($triptime > 100 && $engage == 1))
         {
             // Calculate the amount of fuel that was scooped during transit
-            $energyscooped = Tki\Move::calcFuelScooped($playerinfo, $distance, $triptime, $tkireg);
+            $energyscooped = \Tki\Actions\Move::calcFuelScooped($playerinfo, $distance, $triptime, $tkireg);
 
             // Output:
             // With your engines, it will take X turns to complete the journey.
@@ -164,7 +164,7 @@ else
         elseif ($engage > 0)
         {
             // Calculate the amount of fuel that was scooped during transit
-            $energyscooped = Tki\Move::calcFuelScooped($playerinfo, $distance, $triptime, $tkireg);
+            $energyscooped = \Tki\Actions\Move::calcFuelScooped($playerinfo, $distance, $triptime, $tkireg);
 
             if ($triptime > $playerinfo['turns'])
             {

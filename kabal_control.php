@@ -320,13 +320,13 @@ else
                         $logtype = null;
                         switch ($logrow['type'])
                         {
-                            case \Tki\LogEnums::KABAL_ATTACK:
+                            case \Tki\Types\LogEnums::KABAL_ATTACK:
                                 $logtype = "Launching an attack on ";
                                 break;
-                            case \Tki\LogEnums::ATTACK_LOSE:
+                            case \Tki\Types\LogEnums::ATTACK_LOSE:
                                 $logtype = "We were attacked and lost against ";
                                 break;
-                            case \Tki\LogEnums::ATTACK_WIN:
+                            case \Tki\Types\LogEnums::ATTACK_WIN:
                                 $logtype = "We were attacked and won against ";
                                 break;
                             default: // Defensive programming - FUTURE: Find a routine for this.
@@ -603,10 +603,10 @@ else
                         $kaballevel = 0;
                     }
 
-                    $maxenergy = Tki\CalcLevels::energy($kaballevel, $tkireg);
-                    $maxarmor = Tki\CalcLevels::abstractLevels($kaballevel, $tkireg);
-                    $maxfighters = Tki\CalcLevels::abstractLevels($kaballevel, $tkireg);
-                    $maxtorps = Tki\CalcLevels::abstractLevels($kaballevel, $tkireg);
+                    $maxenergy = \Tki\Helpers\CalcLevels::energy($kaballevel, $tkireg);
+                    $maxarmor = \Tki\Helpers\CalcLevels::abstractLevels($kaballevel, $tkireg);
+                    $maxfighters = \Tki\Helpers\CalcLevels::abstractLevels($kaballevel, $tkireg);
+                    $maxtorps = \Tki\Helpers\CalcLevels::abstractLevels($kaballevel, $tkireg);
                     $cur_time_stamp = date("Y-m-d H:i:s");
 
                     // Add kabal record to ships table ... modify if the ships schema changes

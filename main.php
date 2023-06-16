@@ -50,7 +50,7 @@ if (!array_key_exists('command', $_GET))
 
 if ($_GET['command'] == "score")
 {
-    $playerinfo['score'] = Tki\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
+    $playerinfo['score'] = \Tki\Actions\Score::updateScore($pdo_db, $playerinfo['ship_id'], $tkireg, $playerinfo);
 }
 
 if ($playerinfo['cleared_defenses'] > ' ')
@@ -158,7 +158,7 @@ $planettypes[2] = "mediumplanet.png";
 $planettypes[3] = "largeplanet.png";
 $planettypes[4] = "hugeplanet.png";
 
-$insignia = new Tki\Character();
+$insignia = new \Tki\Actions\Character();
 $signame = $insignia->getInsignia($pdo_db, $lang, $_SESSION['username']);
 echo "<div style='width:90%; margin:auto; background-color:#400040; color:#C0C0C0; text-align:center; border:#fff 1px solid; padding:4px;'>\n";
 echo "{$signame} <span style='color:#fff; font-weight:bold;'>{$playerinfo['character_name']}</span>{$langvars['l_aboard']} <span style='color:#fff; font-weight:bold;'><a class='new_link' style='font-size:14px;' href='report.php'>{$playerinfo['ship_name']}</a></span>\n";
@@ -523,7 +523,7 @@ if ($num_planets > 0)
             $players_gateway = new \Tki\Models\User($pdo_db);
             $planet_owner = $players_gateway->selectPlayerInfoById($planets[$i]['owner']);
 
-            $planetavg = Tki\CalcLevels::avgTech($planet_owner, "planet");
+            $planetavg = \Tki\Helpers\CalcLevels::avgTech($planet_owner, "planet");
 
             if ($planetavg < 8)
             {
@@ -634,7 +634,7 @@ if ($playerinfo['sector'] !== 1)
         $ship_detected = [];
         foreach ($result4 as $row)
         {
-            $success = Tki\Scan::success($playerinfo['sensors'], $row['cloak']);
+            $success = \Tki\Helpers\Scan::success($playerinfo['sensors'], $row['cloak']);
             if ($success < 5)
             {
                 $success = 5;
@@ -649,7 +649,7 @@ if ($playerinfo['sector'] !== 1)
 
             if ($roll < $success)
             {
-                $shipavg = Tki\CalcLevels::avgTech($row, "ship");
+                $shipavg = \Tki\Helpers\CalcLevels::avgTech($row, "ship");
 
                 if ($shipavg < 8)
                 {

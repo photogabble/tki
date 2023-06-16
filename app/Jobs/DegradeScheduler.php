@@ -24,10 +24,10 @@
 
 namespace Tki\Jobs;
 
-use Tki\Models\Planet;
-use Tki\Models\SectorDefense;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Tki\Models\Planet;
+use Tki\Models\SectorDefense;
 
 class DegradeScheduler extends ScheduledTask
 {
@@ -69,7 +69,7 @@ class DegradeScheduler extends ScheduledTask
                     $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
                     $sectorDefense->decrement('quantity', $degradeAmount);
 
-                    \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
+                    \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\Types\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
                 }
                 continue;
             }
@@ -95,7 +95,7 @@ class DegradeScheduler extends ScheduledTask
             $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
             $sectorDefense->decrement('quantity', $degradeAmount);
 
-            \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
+            \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\Types\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
         }
 
         // Clean up any expired defense
