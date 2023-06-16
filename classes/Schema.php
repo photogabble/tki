@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo delete this file, laravel handles migrations
+ * @deprecated
+ */
 class Schema
 {
     private const PDO_SUCCESS = '00000'; // PDO gives an error code of string 00000 if successful. Not extremely helpful.

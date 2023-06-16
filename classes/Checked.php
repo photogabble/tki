@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo remove file unless you want to make a Vue component out of it...
+ * @deprecated
+ */
 class Checked
 {
     public static function check(string $yesno): ?string

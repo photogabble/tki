@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo delete this file, we are now using Vue with Laravel
+ * @deprecated
+ */
 class Smarty
 {
     protected \Smarty $smarty;

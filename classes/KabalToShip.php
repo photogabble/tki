@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions\Kabal
+
 class KabalToShip
 {
     public static function ship(\PDO $pdo_db, string $lang, int $ship_id, Registry $tkireg, array $playerinfo): void

@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Helpers
+
 class Move
 {
     public static function calcFuelScooped(array $playerinfo, int $distance, int $triptime, Registry $tkireg): int

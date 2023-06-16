@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo delete or turn into Vue Component
+ * @deprecated
+ */
 class Game
 {
     public function isGameClosed(

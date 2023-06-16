@@ -26,6 +26,10 @@ namespace Tki;
 
 use PDO;
 
+/**
+ * @todo delete this file, translations handled via laravel __()
+ * @deprecated
+ */
 class Translate
 {
     protected array $langvars = array();

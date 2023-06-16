@@ -26,8 +26,19 @@ namespace Tki;
 
 use Symfony\Component\HttpFoundation\Request;
 
+// TODO: check file is required, functionality implemented via Laravel
+
 class Player
 {
+    /**
+     * @deprecated now using laravel auth
+     * @param \PDO $pdo_db
+     * @param string $lang
+     * @param Registry $tkireg
+     * @param Timer $tkitimer
+     * @param Smarty $template
+     * @return array|bool
+     */
     public static function auth(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template): array | bool
     {
         $request = Request::createFromGlobals();

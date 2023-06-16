@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions
+
 class Realspace
 {
     public function realSpaceMove(\PDO $pdo_db, string $lang, int $destination, Registry $tkireg): string

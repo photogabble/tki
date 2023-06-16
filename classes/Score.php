@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to /app/Actions
+
 class Score
 {
     public static function updateScore(\PDO $pdo_db, int $ship_id, Registry $tkireg, array $playerinfo): int

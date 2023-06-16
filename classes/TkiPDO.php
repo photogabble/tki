@@ -26,6 +26,10 @@
 
 namespace Tki;
 
+/**
+ * @todo: remove file, Laravel Eloquent is being used
+ * @deprecated
+ */
 class TkiPDO extends \PDO
 {
     private ?string $tablePrefix;

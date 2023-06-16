@@ -24,6 +24,9 @@
 
 namespace Tki;
 
+// TODO: Move isDestroyed method to Ship Model
+// TODO: Move file to app/Actions
+
 class Ship
 {
     public static function isDestroyed(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template, array $playerinfo): bool

@@ -26,6 +26,10 @@ namespace Tki;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @todo delete this file
+ * @deprecated
+ */
 class Compress
 {
     public function __construct()

@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions
+
 class Bases
 {
     public function buildBase(\PDO $pdo_db, string $lang, int $planet_id, int $sector_id, Registry $tkireg): void

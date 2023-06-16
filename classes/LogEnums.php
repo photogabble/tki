@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: turn into enum and move to app/Types
+
 // Log constants
 class LogEnums
 {

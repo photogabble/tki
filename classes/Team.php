@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Helpers
+
 class Team
 {
     public static function isSameTeam(int $attacker_team = 0, int $attackie_team = 0): bool

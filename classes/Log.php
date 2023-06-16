@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app\Helpers
+
 class Log
 {
     public static function logParse(\PDO $pdo_db, string $lang, array $entry): array

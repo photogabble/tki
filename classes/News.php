@@ -26,6 +26,10 @@
 
 namespace Tki;
 
+/**
+ * @todo unsure if needed anymore, delete if not.
+ * @deprecated  ???
+ */
 class News
 {
     public static function previousDay(string $day): string

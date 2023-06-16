@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo maybe squash this into the abstract Step class so to preserve file history?
+ * @deprecated
+ */
 class BigBang
 {
     public function findStep(string $current_file): array

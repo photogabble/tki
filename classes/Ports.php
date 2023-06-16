@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+// TODO: this class itself could be turned into an Enum from getType the rest of the functions
+//       look to be front end code that will be ported to Vue or helpers that can live in a new
+//       file within app\Helpers
+
 class Ports
 {
     public static function getType(\PDO $pdo_db, string $lang, string $ptype): string

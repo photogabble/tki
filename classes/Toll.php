@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// Move to app/actions
+
 class Toll
 {
     public static function distribute(\PDO $pdo_db, int $sector, int $toll, int $total_fighters): void

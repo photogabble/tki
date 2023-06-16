@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: I don't really know what to do with this, its frontend error page so maybe Vue component?
+
 class TraderouteDie
 {
     public static function die(

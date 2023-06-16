@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: merge this with ExecutionTimer
+
 class Timer
 {
     private float $t_start = 0.0;

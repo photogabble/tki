@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions\Kabal
+
 class KabalToPlanet
 {
     public static function planet(\PDO $pdo_db, string $lang, int $planet_id, Registry $tkireg, array $playerinfo): void

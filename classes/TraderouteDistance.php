@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: this is a helper, or maybe these methods should exist on a Model somewhere?
+
 class TraderouteDistance
 {
     public static function calc(\PDO $pdo_db, string $type1, string $type2, int $start, int $dest, int $circuit, array $playerinfo, Registry $tkireg, string $sells = 'N'): array

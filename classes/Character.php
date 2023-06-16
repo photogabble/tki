@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions
+
 class Character
 {
     public function kill(\PDO $pdo_db, string $lang, int $ship_id, Registry $tkireg): void

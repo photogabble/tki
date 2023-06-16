@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Helpers
+
 class Loan
 {
     public static function isPending(\PDO $pdo_db, Registry $tkireg): bool

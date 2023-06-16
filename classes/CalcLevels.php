@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move into app/Helpers
+
 class CalcLevels
 {
     // This method can be used for armor, holds, shields, torps, beams, and fighters

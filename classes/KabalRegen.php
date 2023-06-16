@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions\Kabal
+
 class KabalRegen
 {
     public static function regen(\PDO $pdo_db, array $playerinfo, int $kabal_unemployment, Registry $tkireg): void

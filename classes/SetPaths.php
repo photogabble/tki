@@ -30,6 +30,10 @@ namespace Tki;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @todo remove, handled by laravel
+ * @deprecated
+ */
 class SetPaths
 {
     public static function setGamepath(): string

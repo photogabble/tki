@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions\Kabal
+
 class KabalTrade
 {
     public static function trade(\PDO $pdo_db, array $playerinfo, Registry $tkireg): void

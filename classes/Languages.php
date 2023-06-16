@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Helpers
+
 class Languages
 {
     public static function listAvailable(\PDO $pdo_db, string $lang): array

@@ -24,8 +24,17 @@
 
 namespace Tki;
 
+// TODO: Rename as PlanetBombing.php and move to app/Actions/Planets
+
 class Planet
 {
+    /**
+     * @deprecated use owner relationship on Planet model
+     * @param \PDO $pdo_db
+     * @param int $planet_id
+     * @param array $owner_info
+     * @return array|null
+     */
     public static function getOwner(\PDO $pdo_db, int $planet_id, array $owner_info): ?array
     {
         $owner_info = null;

@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions
+
 class SectorDefense
 {
     public static function messageDefenseOwner(\PDO $pdo_db, int $sector, string $message): void

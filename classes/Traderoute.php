@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/TradeRoutes
+
 class Traderoute
 {
     public static function engage(\PDO $pdo_db, string $lang, int $tr_repeat, Registry $tkireg, Timer $tkitimer, array $playerinfo, int $engage, array $traderoutes, ?int $portfull, Smarty $template): void

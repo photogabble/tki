@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/Planets
+
 class PlanetCombat
 {
     public static function prime(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template, array $playerinfo, array $ownerinfo, array $planetinfo): bool

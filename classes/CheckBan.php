@@ -30,6 +30,8 @@ namespace Tki;
 
 use Symfony\Component\HttpFoundation\Request;
 
+// TODO: if kept this is to be moved to app/Helpers although it feels like it should be a method on User
+
 class CheckBan
 {
     public static function isBanned(\PDO $pdo_db, array $playerinfo): ?array

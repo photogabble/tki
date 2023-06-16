@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions
+
 class Combat
 {
     public static function shipToShip(\PDO $pdo_db, string $lang, int $ship_id, Registry $tkireg, array $playerinfo, int $attackerbeams, int $attackerfighters, int $attackershields, int $attackertorps, int $attackerarmor, int $attackertorpdamage): void

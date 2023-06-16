@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo remove this is handled by Laravel
+ * @deprecated
+ */
 class Sessions
 {
     private int $maxlifetime = 1800; // 30 mins

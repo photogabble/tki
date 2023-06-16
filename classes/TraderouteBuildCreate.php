@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/TradeRoutes
+
 class TraderouteBuildCreate
 {
     public static function create(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template, array $playerinfo, int $num_traderoutes, string $ptype1, string $ptype2, int $port_id1, int $port_id2, int $team_planet_id1, int $team_planet_id2, string $move_type, int $circuit_type, int $editing, ?int $planet_id1 = null, ?int $planet_id2 = null): void

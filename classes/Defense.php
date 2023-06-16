@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions
+
 class Defense
 {
     public static function defenseVsDefense(\PDO $pdo_db, string $lang, int $ship_id): void

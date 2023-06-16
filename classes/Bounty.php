@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move into app/Actions
+
 class Bounty
 {
     public function cancel(\PDO $pdo_db, int $bounty_on): void

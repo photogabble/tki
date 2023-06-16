@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions\Kabal
+
 class KabalHunt
 {
     public static function hunt(\PDO $pdo_db, string $lang, array $playerinfo, int $kabalisdead, Registry $tkireg): void

@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions\Kabal
+
 class KabalToSecDef
 {
     public static function secDef(\PDO $pdo_db, string $lang, array $playerinfo, int $targetlink, Registry $tkireg): void

@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/Planets
+
 class PlanetReport
 {
     public static function baseBuildCheck(\PDO $pdo_db, string $lang, Registry $tkireg, array $planet, int $num): string

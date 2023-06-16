@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: this is a helper, move to app/Helpers
+
 class Scan
 {
     public static function success(int $level_scan, int $level_cloak): int

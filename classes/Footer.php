@@ -29,6 +29,10 @@ namespace Tki;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @todo delete or turn into Vue component
+ * @deprecated
+ */
 class Footer
 {
     public function display(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template): void

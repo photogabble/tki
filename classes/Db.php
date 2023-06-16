@@ -29,6 +29,10 @@ namespace Tki;
 use PDO;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @todo delete this file
+ * @deprecated
+ */
 class Db
 {
     public static function isActive(\PDO $pdo_db): bool

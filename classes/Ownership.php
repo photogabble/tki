@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app\Helpers
+
 class Ownership
 {
     public static function calc(\PDO $pdo_db, string $lang, int $sector, Registry $tkireg): string

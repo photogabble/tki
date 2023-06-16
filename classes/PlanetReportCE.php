@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/Planets
+
 class PlanetReportCE
 {
     public static function collectCredits(\PDO $pdo_db, string $lang, array $planetarray, Registry $tkireg): void

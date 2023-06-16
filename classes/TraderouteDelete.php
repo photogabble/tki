@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/TradeRoutes
+
 class TraderouteDelete
 {
     public static function prime(

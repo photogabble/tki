@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: convert into Vue component
+
 class TraderouteSettings
 {
     public static function before(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template, array $playerinfo): void

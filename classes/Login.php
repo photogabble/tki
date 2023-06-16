@@ -24,6 +24,10 @@
 
 namespace Tki;
 
+/**
+ * @todo remove file
+ * @deprecated
+ */
 class Login
 {
     public function checkLogin(\PDO $pdo_db, string $lang, Registry $tkireg, Timer $tkitimer, Smarty $template): bool

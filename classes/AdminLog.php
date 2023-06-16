@@ -29,6 +29,10 @@ namespace Tki;
 
 use PDO;
 
+/**
+ * @todo replace usage with laravels Log facade then delete this file
+ * @deprecated
+ */
 class AdminLog
 {
     public function writeLog(\PDO $pdo_db, int $log_type, string $data): void

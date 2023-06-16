@@ -27,6 +27,10 @@
 
 namespace Tki;
 
+/**
+ * @todo remove file, functionality not required in laravel port
+ * @deprecated
+ */
 class File
 {
     public static function iniToDb(\PDO $pdo_db, string $ini_file, string $ini_table, string $section, Registry $tkireg): bool

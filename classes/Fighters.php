@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app/Actions
+
 class Fighters
 {
     public static function destroy(\PDO $pdo_db, int $sector, int $num_fighters): void

@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: unsure if this is an action class or a helper class, or if these methods belong on a Model
+
 class CheckDefenses
 {
     public static function sectorFighters(\PDO $pdo_db, string $lang, int $sector, string $calledfrom, int $energyscooped, array $playerinfo, Registry $tkireg): void

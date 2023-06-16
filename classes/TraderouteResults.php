@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: convert into a Vue component
+
 class TraderouteResults
 {
     public static function tableTop(\PDO $pdo_db, string $lang, Registry $tkireg): void

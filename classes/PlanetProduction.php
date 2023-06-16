@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: move to app/Actions/Planets
+
 class PlanetProduction
 {
     public static function productionChange(\PDO $pdo_db, string $lang, array $prodpercentarray, Registry $tkireg): void

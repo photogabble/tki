@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: either remove this entirely or turn this file into a Vue component
+
 class Text
 {
     public static function gotoMain(\PDO $pdo_db, string $lang): void

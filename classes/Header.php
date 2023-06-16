@@ -27,6 +27,10 @@
 
 namespace Tki;
 
+/**
+ * @todo remove or turn into a Vue component..
+ * @deprecated
+ */
 class Header
 {
     public function display(

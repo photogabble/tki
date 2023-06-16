@@ -24,6 +24,8 @@
 
 namespace Tki;
 
+// TODO: Move to app\Actions
+
 class Mines
 {
     public static function explode(\PDO $pdo_db, int $sector, int $num_mines): void
