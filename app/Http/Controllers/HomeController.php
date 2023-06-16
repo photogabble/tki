@@ -22,8 +22,6 @@
  *
  */
 
-// TODO: Move to controllers path
-
 namespace Tki\Http\Controllers;
 
 use Inertia\Inertia;
