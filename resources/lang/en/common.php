@@ -2,6 +2,7 @@
     "l_lang_attribute" => "en",
     "l_yes" => "Yes",
     "l_no" => "No",
+    "l_cancel" => "Cancel",
     "l_here" => "here",
     "l_submit" => "Submit",
     "l_reset" => "Reset",

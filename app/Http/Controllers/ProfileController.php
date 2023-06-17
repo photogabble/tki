@@ -37,7 +37,9 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        // TODO: Add to player log
+
+        return Redirect::back();
     }
 
     /**

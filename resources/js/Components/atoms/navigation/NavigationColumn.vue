@@ -28,7 +28,7 @@
     <div class="space-y-1 text-2xl">
       <NavLink @click="openProfilePanel" title="View and modify your profile" :disabled="!isLoggedIn"><UserProfileIcon/></NavLink> <!-- Player Profile -->
       <NavLink @click="openHelpPanel" :active="isHelpPage" title="How to play"><HelpIcon/></NavLink> <!-- Player Feedback & Help -->
-      <NavLink :href="route('logout')" method="post" as="button" title="Logout" :disabled="!isLoggedIn"><LogoutIcon/></NavLink> <!-- Logout -->
+      <NavLink :href="route('logout')" method="post"  title="Logout" :disabled="!isLoggedIn"><LogoutIcon/></NavLink> <!-- Logout -->
     </div>
   </div>
 </template>

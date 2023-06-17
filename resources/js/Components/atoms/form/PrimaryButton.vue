@@ -35,7 +35,7 @@ const innerClass = computed(() => {
 </script>
 
 <template>
-    <button :is="type" :class="outerClass" :disabled="disabled">
+    <button :is="type" :class="outerClass" :disabled="disabled" :aria-disabled="disabled">
         <span :class="innerClass">
             <slot/>
         </span>

@@ -49,6 +49,8 @@ class Character
         $stmt->bindParam(':owner', $ship_id, \PDO::PARAM_INT);
         $stmt->execute();
 
+        // There is a bug here, if we set owner to zero before this select then we will always get zero results!
+
         $sql = "SELECT DISTINCT sector_id FROM ::prefix::planets WHERE owner = :owner AND base = 'Y'";
         $stmt = $pdo_db->prepare($sql);
         $stmt->bindParam(':owner', $ship_id, \PDO::PARAM_INT);

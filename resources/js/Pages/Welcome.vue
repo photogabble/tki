@@ -74,7 +74,7 @@ defineProps<{
       <terminal class="absolute top-2 left-2 z-0"/>
 
       <div class="z-20 border border-ui-orange-500 p-2 border-x-8">
-          &rarr;&nbsp;<Link :href="route('login')" class="text-white hover:underline">Login</Link>&nbsp;// <Link :href="route('register')" class="text-white hover:underline">Register</Link> &larr;
+          &rarr;&nbsp;<Link :href="route('login')" class="text-white hover:underline">{{ __('login.l_login_title')}}</Link>&nbsp;// <Link :href="route('register')" class="text-white hover:underline">{{ __('index.l_new_player') }}</Link> &larr;
       </div>
 
     </div>
