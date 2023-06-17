@@ -10,10 +10,20 @@ export default {
         './resources/js/**/*.vue',
     ],
 
+    safelist: [
+        'carat'
+    ],
+
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                'mono': ['Source Code Pro', ...defaultTheme.fontFamily.mono],
+            },
+            colors: {
+                'ui-orange-500': '#fc8437',
+                'ui-grey-900': '#262626',
+                'ui-yellow': '#ffcd4b',
+                'ui-salmon': '#ff7b55',
             },
         },
     },

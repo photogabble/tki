@@ -16,7 +16,9 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
+Route::middleware('guest')->group(function () {
+    Route::get('/', [HomeController::class, 'index']);
+});
 
 Route::get('/dashboard', function () {
     // This is akin to main.php

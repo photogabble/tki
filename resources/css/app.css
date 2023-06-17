@@ -1,7 +1,118 @@
-@import "./legacy/tki-prime.css";
-@import "./legacy/main.css";
-@import "./legacy/index.css";
+@font-face {
+    font-family: 'Major Mono Display';
+    src: url('../fonts/MajorMonoDisplay-Regular.woff2') format('woff2'),
+    url('../fonts/MajorMonoDisplay-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Source Code Pro';
+    src: url('../fonts/SourceCodePro-Light.woff2') format('woff2'),
+    url('../fonts/SourceCodePro-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    src: url('../fonts/SourceCodePro-Regular.woff2') format('woff2'),
+    url('../fonts/SourceCodePro-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Source Code Pro';
+    src: url('../fonts/SourceCodePro-ExtraLight.woff2') format('woff2'),
+    url('../fonts/SourceCodePro-ExtraLight.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background-image: url('../images/bgoutspace1.png');
+}
+
+#app {
+    height: 100%;
+    background-image: url('../images/background-dots.svg');
+    background-size: 400px;
+}
+
+.bg-diagonal-transparent{
+    background-image: url('../images/diag-line-thick-transparent.svg');
+}
+
+.bg-dots{
+    background-color: #262626;
+    background-image: url('../images/background-dots.svg');
+    background-size: 400px;
+}
+
+small{
+    font-size: .5rem;
+}
+
+.border-partway-t,.border-partway-b, .border-partway-y, .border-partway-tl, .border-partway-br, .border-partway-r{
+    position: relative;
+    --border-part-t-height: 12.5%;
+    --border-part-b-height: 12.5%;
+    --border-part-b-opacity: 1;
+}
+
+.border-partway-t::before,
+.border-partway-tl::before,
+.border-partway-y::before,
+.border-partway-r::before {
+    content: '';
+    height: var(--border-part-t-height);
+    width: 100%;
+    position: absolute;
+    top:0;
+    left: 0;
+    z-index: -1;
+}
+
+.border-partway-t::before,
+.border-partway-tl::before,
+.border-partway-y::before{
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
+}
+
+.border-partway-r::before {
+    border-right: 1px solid;
+}
+
+.border-partway-b::after,
+.border-partway-br::after,
+.border-partway-y::after{
+    content: '';
+    height: var(--border-part-b-height);
+    width: 100%;
+    position: absolute;
+    bottom:0;
+    left: 0;
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    opacity: var(--border-part-b-opacity);
+    z-index: -1;
+}
+
+.border-partway-tl::before{
+    border-right:none;
+}
+
+.border-partway-br::after{
+    border-left: none;
+}

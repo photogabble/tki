@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $request->user(),
+                'online' => !is_null($request->user()),
             ],
             'stats' => [
                 // TODO: include values from Footer.php here

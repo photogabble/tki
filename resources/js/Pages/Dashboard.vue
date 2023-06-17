@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import GameUI from "@/Layouts/GameUI.vue";
+import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
+import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
 </script>
 
 <template>
     <Head title="Dashboard" />
 
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">{{ __('admin.l_admin_welcome') }}</h2>
-        </template>
+    <GameUI>
+      <template #sidebar>
+        <sidebar-panel>
+          <template #heading>
+            <span class="text-white">XX.501 &middot;</span> XXXX.XXXXXX
+          </template>
+        </sidebar-panel>
+      </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">You're logged in!</div>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
+      <main-panel centered>
+        &rarr;&nbsp;<span class="text-white">XXX.501</span>&nbsp;&mdash; Implement Layout &larr;
+      </main-panel>
+    </GameUI>
 </template>
