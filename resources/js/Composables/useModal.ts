@@ -1,8 +1,8 @@
 import {computed, ref} from "vue";
 
-export function useModal(name?: 'help' | 'profile') {
-    const openStates = ref<Array<'help' | 'profile'>>([]);
+const openStates = ref<Array<'help' | 'profile'>>([]);
 
+export function useModal(name?: 'help' | 'profile') {
     const openModal = () => {
         if (name) openStates.value.push(name);
     }
@@ -13,7 +13,9 @@ export function useModal(name?: 'help' | 'profile') {
             openStates.value.pop();
         }
     }
-    const isOpen = computed(() => (name) ? openStates.value.includes(name) : openStates.value.length > 0);
+    const isOpen = computed(() => {
+        return (name) ? openStates.value.includes(name) : openStates.value.length > 0;
+    });
 
     return {isOpen, openModal, closeModal};
 }
