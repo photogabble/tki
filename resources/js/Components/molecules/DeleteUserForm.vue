@@ -42,14 +42,14 @@ const deleteUser = () => {
     <bordered-heading>
       <span class="text-white">{{__('self_destruct.l_die_title')}}</span>
     </bordered-heading>
-    <p class="mt-1 text-sm text-red-600 dark:text-gray-400">
+    <p class="mt-1 mb-5 text-sm text-red-600">
       {{__('self_destruct.l_die_rusure')}}
     </p>
 
     <danger-button @click="confirmUserDeletion" class="w-full">{{__('self_destruct.l_die_goodbye')}}</danger-button>
 
     <pop-up :show="confirmingUserDeletion" @close="closeModal">
-      <div class="p-6 w-2/3 border border-ui-orange-500 border-x-4">
+      <div class="p-6 w-2/3 border border-ui-orange-500 bg-ui-grey-900/90 border-x-4">
         <h2 class="text-lg font-medium text-ui-yellow">
           {{__('self_destruct.l_die_check')}}
         </h2>
@@ -65,9 +65,9 @@ const deleteUser = () => {
           <text-input id="password" ref="passwordInput" type="password" v-model="form.password" @keyup.enter="deleteUser"/>
           <input-error class="mt-2" :message="form.errors.password" />
 
-          <div class="flex w-full space-x-2 mt-6">
-            <primary-button @click="closeModal">{{__('common.l_cancel') }} [ESC]</primary-button>
-            <danger-button @click="deleteUser" :disabled="form.processing" :aria-disabled="disabled">{{__('common.l_confirm') }}</danger-button>
+          <div class="flex w-full space-x-2 mt-6 justify-end">
+            <primary-button class="h-8" @click="closeModal">{{__('common.l_cancel') }} [ESC]</primary-button>
+            <danger-button class="h-8" @click="deleteUser" :disabled="form.processing" :aria-disabled="disabled">{{__('common.l_confirm') }}</danger-button>
           </div>
         </div>
       </div>
