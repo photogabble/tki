@@ -25,9 +25,10 @@ class UserObserver
     }
 
     /**
-     * Handle the User "deleted" event.
+     * Before the User record is deleted, remove them from the
+     * universe.
      */
-    public function deleted(User $user): void
+    public function deleting(User $user): void
     {
         // TODO: Kill Character
         //(new Character)->kill();
@@ -37,21 +38,5 @@ class UserObserver
 
         // KBI has the planet records be deleted, while BN has the
         // user association removed.
-    }
-
-    /**
-     * Handle the User "restored" event.
-     */
-    public function restored(User $user): void
-    {
-        //
-    }
-
-    /**
-     * Handle the User "force deleted" event.
-     */
-    public function forceDeleted(User $user): void
-    {
-        //
     }
 }
