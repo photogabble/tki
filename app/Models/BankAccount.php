@@ -26,8 +26,13 @@ namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/***
+ * @property int $user_id
+ */
 class BankAccount extends Model
 {
+    protected $fillable = ['user_id'];
+
     protected $casts = [
         'loaned_on' => 'datetime'
     ];
@@ -40,50 +45,50 @@ class BankAccount extends Model
      */
     public function reduceIbankCredits(array $playerinfo, int $credits): void
     {
-        BankAccount::where('ship_id', $playerinfo['ship_id'])->decrement('credits', $credits);
+        BankAccount::where('user_id', $playerinfo['user_id'])->decrement('credits', $credits);
     }
 
     /**
-     * @param int $ship_id
+     * @param int $user_id
      * @return int
      */
-    public function selectIbankScore(int $ship_id): int
+    public function selectIbankScore(int $user_id): int
     {
-        $account = BankAccount::where('ship_id', $ship_id)->first();
+        $account = BankAccount::where('user_id', $user_id)->first();
         return is_null($account)
             ? 0
             : $account->balance - $account->loan;
     }
 
     /**
-     * @param int $ship_id
+     * @param int $user_id
      * @return array
      * @todo refactor usages to use Ship -> BankAccount relationship
      */
-    public function selectIbankAccount(int $ship_id): BankAccount
+    public function selectIbankAccount(int $user_id): BankAccount
     {
-        return BankAccount::where('ship_id', $ship_id)->first();
+        return BankAccount::where('user_id', $user_id)->first();
     }
 
     /**
-     * @param int $ship_id
+     * @param int $user_id
      * @return int
      * @todo refactor usage to use Ship -> BankAccount relationship
      */
-    public function selectIbankLoanTime(int $ship_id): int
+    public function selectIbankLoanTime(int $user_id): int
     {
-        $account = BankAccount::where('ship_id', $ship_id)->first();
+        $account = BankAccount::where('user_id', $user_id)->first();
         return $account->loan_time->unix();
     }
 
     /**
-     * @param int $ship_id
+     * @param int $user_id
      * @return array
      * @todo refactor usage to use Ship -> BankAccount relationship
      */
-    public function selectIbankLoanandTime(int $ship_id): array
+    public function selectIbankLoanandTime(int $user_id): array
     {
-        $account = BankAccount::where('ship_id', $ship_id)->first();
+        $account = BankAccount::where('user_id', $user_id)->first();
         return ['time' => $account->loan_time->unix(), 'loan' => $account->loan];
     }
 }

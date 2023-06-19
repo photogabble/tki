@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            // Seems accounts are linked to ships not players?
-            $table->unsignedBigInteger('ship_id');
+            $table->unsignedBigInteger('user_id');
 
             $table->integer('balance')->default(0);
             $table->integer('loan')->default(0);
 
             $table->dateTime('loaned_on')->nullable()->default(null); // loantime
+
+            // TODO: Foreign Key
         });
     }
 
