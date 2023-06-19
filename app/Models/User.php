@@ -74,6 +74,22 @@ class User extends Authenticatable
     ];
 
     /**
+     * All Players have a ship or else they are a corpse
+     * floating in space.
+     *
+     * @return BelongsTo
+     */
+    public function ship(): BelongsTo
+    {
+        return $this->belongsTo(Ship::class);
+    }
+
+    public function presets(): HasMany
+    {
+        return $this->hasMany(Preset::class);
+    }
+
+    /**
      * @todo refactor to use Carbon and an offset in minutes
      * @param string $since_stamp
      * @param string $cur_time_stamp
