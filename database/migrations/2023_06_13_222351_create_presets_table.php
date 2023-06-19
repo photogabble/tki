@@ -16,11 +16,11 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('ship_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedInteger('preset')->default(1);
             $table->char('type', 1)->default('R');
 
-            $table->index(['ship_id', 'preset']);
+            $table->index(['user_id', 'preset']);
 
             // TODO: Foreign Keys
         });
