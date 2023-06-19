@@ -29,15 +29,15 @@
         <div class="w-full px-1 flex flex-col">
           <div class="text-sm flex flex-row border-t border-ui-orange-500/50 justify-between">
             <div class="border-t border-ui-orange-500 border-l border-partway-r p-1 px-2">
-              <span class="uppercase text-white">Turns Available:</span> X.001
+              <span class="uppercase text-white">Turns Available:</span> {{ isLoggedIn ? numberFormatter(user.turns) : 'X.001' }}
               <span class="text-ui-yellow">&middot;&nbsp;</span>
-              <span class="uppercase text-white">Turns Used:</span> X.002
+              <span class="uppercase text-white">Turns Used:</span> {{ isLoggedIn ? numberFormatter(user.turns_used) : 'X.002' }}
               <span class="text-ui-yellow">&middot;&nbsp;</span>
-              <span class="uppercase text-white">Credits</span> X.002
+              <span class="uppercase text-white">Credits</span> {{ isLoggedIn ? numberFormatter(user.credits) : 'X.003' }}
             </div>
 
             <div class="border-ui-orange-500 border-partway-t px-2 p-1">
-              <span class="uppercase text-white">Score</span> X.X
+              <span class="uppercase text-white">Score</span> {{ isLoggedIn ? numberFormatter(user.score) : 'X.X' }}
             </div>
           </div>
           <slot/>
@@ -48,12 +48,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import PlayerState from "@/components/molecules/PlayerState.vue";
 import PlayerProfilePanel from "@/components/molecules/PlayerProfilePanel.vue";
 import NavigationColumn from "@/components/atoms/navigation/NavigationColumn.vue";
 import ModalBackdrop from "@/components/atoms/modal/ModalBackdrop.vue";
 import HelpPanel from "@/components/molecules/HelpPanel.vue";
 import {TeleportTarget} from "vue-safe-teleport";
+import {useAuth} from "@/Composables/useAuth";
+import {useFormattedNumber} from "@/Composables/useFormattedNumber";
+
+const {isLoggedIn, user} = useAuth();
+const numberFormatter = useFormattedNumber();
+
 </script>
 
 <style lang="postcss" scoped>
