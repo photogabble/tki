@@ -26,9 +26,13 @@ namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-// TODO: copy to app/models
 class MovementLog extends Model
 {
+
+    protected $fillable = [
+        'ship_id', 'sector_id'
+    ];
+
     public static function writeLog(int $ship_id, int $sector_id): void
     {
         static::query()

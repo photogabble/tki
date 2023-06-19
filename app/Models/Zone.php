@@ -50,6 +50,12 @@ class Zone extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'owner_id',
+        'is_team_zone',
+    ];
+
     protected $casts = [
         'allow_beacon' => ZonePermission::class,
         'allow_attack' => ZonePermission::class,

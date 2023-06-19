@@ -47,6 +47,9 @@ class User extends Authenticatable
         'email',
         'password',
         'last_login',
+        'turns_used',
+        'turns',
+        'credits'
     ];
 
     /**
