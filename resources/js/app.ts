@@ -6,6 +6,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { Localisation } from '@/Plugins/localisation';
+import VueSafeTeleport from 'vue-safe-teleport';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'TKI';
 
@@ -17,6 +18,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(Localisation, Translations)
+            .use(VueSafeTeleport)
             .mount(el);
     },
     progress: {
