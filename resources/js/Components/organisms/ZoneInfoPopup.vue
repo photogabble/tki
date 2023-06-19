@@ -1,52 +1,52 @@
 <script setup lang="ts">
-    /**
-     * zoneinfo.php from The Kabal Invasion.
-     * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
-     *
-     * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
-     *
-     * @license GNU AGPL version 3.0 or (at your option) any later version.
-     *
-     * This program is free software: you can redistribute it and/or modify
-     * it under the terms of the GNU Affero General Public License as
-     * published by the Free Software Foundation, either version 3 of the
-     * License, or (at your option) any later version.
-     *
-     * This program is distributed in the hope that it will be useful,
-     * but WITHOUT ANY WARRANTY without even the implied warranty of
-     * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     * GNU Affero General Public License for more details.
-     *
-     * You should have received a copy of the GNU Affero General Public License
-     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-     *
-     */
+/**
+ * zoneinfo.php from The Kabal Invasion.
+ * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
+ *
+ * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
+ *
+ * @license GNU AGPL version 3.0 or (at your option) any later version.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 
-    import ZonePermission from "@/Components/atoms/ZonePermission.vue";
-    import PopUp from "@/Components/atoms/modal/PopUp.vue";
-    import {ZoneInfo} from "@/types/zone-info";
+import ZonePermission from "@/Components/atoms/ZonePermission.vue";
+import PopUp from "@/Components/atoms/modal/PopUp.vue";
+import {ZoneInfo} from "@/types/zone-info";
 
-    const zone : ZoneInfo = {
-        name: 'Warzone',
-        owner: 'Contested space',
-        isEditable: false,
-        isFriendly: 'L',
-        allow_beacon: 'L',
-        allow_attack: 'Y',
-        allow_planetattack: 'Y',
-        allow_warpedit: 'Y',
-        allow_planet: 'Y',
-        allow_trade: 'N',
-        allow_defenses: 'Y',
-        max_hull: 0,
-        over_size: false,
-    };
+const zone: ZoneInfo = {
+  name: 'Warzone',
+  owner: 'Contested space',
+  isEditable: false,
+  isFriendly: 'L',
+  allow_beacon: 'L',
+  allow_attack: 'Y',
+  allow_planetattack: 'Y',
+  allow_warpedit: 'Y',
+  allow_planet: 'Y',
+  allow_trade: 'N',
+  allow_defenses: 'Y',
+  max_hull: 0,
+  over_size: false,
+};
 
-    defineProps<{
-        modelValue: Boolean;
-    }>();
+defineProps<{
+  modelValue: Boolean;
+}>();
 
-    defineEmits(['update:modelValue']);
+defineEmits(['update:modelValue']);
 </script>
 
 <template>
