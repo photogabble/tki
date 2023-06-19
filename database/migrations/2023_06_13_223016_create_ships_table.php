@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TODO: Note the original shema seems to use ships as the users table?
-
         Schema::create('ships', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
+            // TODO: Rename to name
             $table->string('ship_name', 20);
-            $table->boolean('ship_destroyed')->default(false);
 
-            $table->string('character_name', 20);
+            // TODO: should be timestamp of when with ship_id on User set null
+            $table->boolean('ship_destroyed')->default(false);
+            // Is null until destroyed, then set to user_id who owned it
+            $table->unsignedBigInteger('belonged_to')->nullable()->default(null);
 
             $table->unsignedInteger('hull')->default(0);
             $table->unsignedInteger('engines')->default(0);
@@ -34,7 +35,6 @@ return new class extends Migration
             $table->unsignedInteger('armor')->default(0);
             $table->unsignedInteger('armor_pts')->default(0);
             $table->unsignedInteger('cloak')->default(0);
-            $table->unsignedInteger('credits')->default(0);
             $table->unsignedBigInteger('sector_id')->default(0);
             $table->unsignedInteger('ship_ore')->default(0);
             $table->unsignedInteger('ship_organics')->default(0);
@@ -43,6 +43,8 @@ return new class extends Migration
             $table->unsignedInteger('ship_colonists')->default(0);
             $table->unsignedInteger('ship_fighters')->default(0);
             $table->unsignedInteger('ship_damage')->default(0);
+
+            // TODO remove, has been moved to User
             $table->unsignedInteger('turns')->default(0);
 
             $table->boolean('on_planet')->default(false);
@@ -56,13 +58,15 @@ return new class extends Migration
             $table->boolean('dev_lssd')->default(false);
             $table->unsignedInteger('dev_minedeflector')->default(0);
 
-            $table->unsignedInteger('turns_used')->default(0);
-
+            // TODO remove, has been moved to User
             $table->unsignedInteger('rating')->default(0);
+            // TODO remove, has been moved to User
             $table->unsignedInteger('score')->default(0);
-
+            // TODO remove, has been moved to User
             $table->unsignedBigInteger('team_id')->nullable();
+            // TODO remove, has been moved to User
             $table->unsignedBigInteger('team_invite')->nullable();
+            // TODO remove, has been moved to User
             $table->unsignedBigInteger('planet_id')->nullable();
 
             $table->boolean('trade_colonists')->default(true);
