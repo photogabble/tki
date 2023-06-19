@@ -6,6 +6,14 @@
       <player-profile-panel />
       <help-panel />
 
+      <teleport-target id="modal-target" />
+
+      <!--
+        TODO: Add MOTD that displays once each fresh login or once a day. This can show player updates
+              any news items and message from admins. Very much like the "It is a New Day!" from
+              improbable island.
+      -->
+
       <!-- Modal backdrop -->
       <modal-backdrop />
 
@@ -45,6 +53,7 @@ import PlayerProfilePanel from "@/components/molecules/PlayerProfilePanel.vue";
 import NavigationColumn from "@/components/atoms/navigation/NavigationColumn.vue";
 import ModalBackdrop from "@/components/atoms/modal/ModalBackdrop.vue";
 import HelpPanel from "@/components/molecules/HelpPanel.vue";
+import {TeleportTarget} from "vue-safe-teleport";
 </script>
 
 <style lang="postcss" scoped>
