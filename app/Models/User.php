@@ -25,10 +25,14 @@
 namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property-read Ship|null $ship // If a player has no ship (escape pods are ships) then they have died in space
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -87,7 +91,7 @@ class User extends Authenticatable
     /**
      * @param string|null $email
      * @return User|null
-     *@todo refactor all usages to use authenticated user as provided by Laravel!
+     * @todo refactor all usages to use authenticated user as provided by Laravel!
      * @todo also this used to use the ships table instead of users, things need to be aware of that
      */
     public function selectPlayerInfo(?string $email): ?User

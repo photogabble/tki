@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Tki\Types\ZonePermission;
 
 return new class extends Migration
 {
@@ -17,16 +18,18 @@ return new class extends Migration
 
             $table->string('name', 40);
 
-            $table->unsignedBigInteger('owner')->nullable()->default(null);
+            $table->unsignedBigInteger('owner_id')->nullable()->default(null);
 
-            $table->boolean('team_zone')->default(false);
-            $table->boolean('allow_beacon')->default(true);
-            $table->boolean('allow_attack')->default(true);
-            $table->boolean('allow_planetattack')->default(true);
-            $table->boolean('allow_warpedit')->default(true);
-            $table->boolean('allow_planet')->default(true);
-            $table->boolean('allow_trade')->default(true);
-            $table->boolean('allow_defenses')->default(true);
+            $table->boolean('is_team_zone')->default(false);
+
+            $defaults = array_map(fn($day) => $day->value, ZonePermission::cases());
+            $table->enum('allow_beacon', $defaults)->default(ZonePermission::Allow->value);
+            $table->enum('allow_attack', $defaults)->default(ZonePermission::Allow->value);
+            $table->enum('allow_planetattack', $defaults)->default(ZonePermission::Allow->value);
+            $table->enum('allow_warpedit', $defaults)->default(ZonePermission::Allow->value);
+            $table->enum('allow_planet', $defaults)->default(ZonePermission::Allow->value);
+            $table->enum('allow_trade', $defaults)->default(ZonePermission::Allow->value);
+            $table->enum('allow_defenses', $defaults)->default(ZonePermission::Allow->value);
 
             $table->integer('max_hull')->default(0);
         });

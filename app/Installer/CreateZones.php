@@ -5,6 +5,7 @@ namespace Tki\Installer;
 // Second half of 60.php
 use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
+use Tki\Types\ZonePermission;
 
 class CreateZones extends Step implements InstallStep
 {
@@ -12,17 +13,11 @@ class CreateZones extends Step implements InstallStep
     {
         $this->timer->start();
 
+        // Default permission is Allow, only need to set the denies
+
         // Insert Unchartered Zone
         $zone = new Zone();
         $zone->name = 'Unchartered space';
-        $zone->team_zone = false;
-        $zone->allow_beacon = true;
-        $zone->allow_attack = true;
-        $zone->allow_planetattack = true;
-        $zone->allow_warpedit = true;
-        $zone->allow_planet = true;
-        $zone->allow_trade = true;
-        $zone->allow_defenses = true;
         $zone->save();
 
         $this->logger->info(__('create_universe.l_cu_setup_unchartered', ['elapsed' => $this->timer->sample()]));
@@ -30,14 +25,12 @@ class CreateZones extends Step implements InstallStep
         // Insert Federation Zone
         $zone = new Zone();
         $zone->name = 'Federation space';
-        $zone->team_zone = false;
-        $zone->allow_beacon = false;
-        $zone->allow_attack = false;
-        $zone->allow_planetattack = false;
-        $zone->allow_warpedit = false;
-        $zone->allow_planet = false;
-        $zone->allow_trade = true;
-        $zone->allow_defenses = false;
+        $zone->allow_beacon = ZonePermission::Deny;
+        $zone->allow_attack = ZonePermission::Deny;
+        $zone->allow_planetattack = ZonePermission::Deny;
+        $zone->allow_warpedit = ZonePermission::Deny;
+        $zone->allow_planet = ZonePermission::Deny;
+        $zone->allow_defenses = ZonePermission::Deny;
         $zone->max_hull = config('game.max_fed_hull');
         $zone->save();
 
@@ -46,14 +39,11 @@ class CreateZones extends Step implements InstallStep
         // Insert Free Trade Zone
         $zone = new Zone();
         $zone->name = 'Free-Trade space';
-        $zone->team_zone = false;
-        $zone->allow_beacon = false;
-        $zone->allow_attack = true;
-        $zone->allow_planetattack = false;
-        $zone->allow_warpedit = false;
-        $zone->allow_planet = false;
-        $zone->allow_trade = true;
-        $zone->allow_defenses = false;
+        $zone->allow_beacon = ZonePermission::Deny;
+        $zone->allow_planetattack = ZonePermission::Deny;
+        $zone->allow_warpedit = ZonePermission::Deny;
+        $zone->allow_planet = ZonePermission::Deny;
+        $zone->allow_defenses = ZonePermission::Deny;
         $zone->save();
 
         $this->logger->info(__('create_universe.l_cu_setup_free', ['elapsed' => $this->timer->sample()]));
@@ -61,14 +51,7 @@ class CreateZones extends Step implements InstallStep
         // Insert War Zone
         $zone = new Zone();
         $zone->name = 'War Zone';
-        $zone->team_zone = false;
-        $zone->allow_beacon = true;
-        $zone->allow_attack = true;
-        $zone->allow_planetattack = true;
-        $zone->allow_warpedit = true;
-        $zone->allow_planet = true;
-        $zone->allow_trade = false;
-        $zone->allow_defenses = true;
+        $zone->allow_trade = ZonePermission::Deny;
         $zone->save();
 
         $this->logger->info(__('create_universe.l_cu_setup_warzone', ['elapsed' => $this->timer->sample()]));
