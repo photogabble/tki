@@ -20,7 +20,15 @@ Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index']);
 });
 
-Route::get('/dashboard', function () {
+Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
+
+    /** @var \Tki\Models\User $user */
+    $user = $request->user();
+
+    $user->load(['ship', 'ship.sector', 'ship.sector.links', 'ship.sector.zone']);
+
+    // TODO: Pass loaded user to dashboard...
+
     // This is akin to main.php
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
