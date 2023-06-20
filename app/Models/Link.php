@@ -36,7 +36,7 @@ class Link extends Model
      */
     public function selectAllLinkInfoByLinkStart(int $sector_id): Collection
     {
-        return Link::where('link_start', $sector_id)->orderBy('link_dest', 'ASC')->get();
+        return Link::where('start', $sector_id)->orderBy('dest', 'ASC')->get();
     }
 
     /**
@@ -47,8 +47,8 @@ class Link extends Model
      */
     public function selectLinkId(int $src, int $dest): ?Link
     {
-        return Link::where('link_start', $src)
-            ->where('link_dest', $dest)
+        return Link::where('start', $src)
+            ->where('dest', $dest)
             ->first();
     }
 }
