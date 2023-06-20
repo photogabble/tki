@@ -38,6 +38,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int $turns_used
  * @property-read Ship|null $ship // If a player has no ship (escape pods are ships) then they have died in space
  * @property-read Preset|Collection $presets
+ * @property-read Team|null $team
  */
 class User extends Authenticatable
 {
@@ -98,6 +99,11 @@ class User extends Authenticatable
     public function movementLog(): HasMany
     {
         return $this->hasMany(MovementLog::class);
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function hasVisitedSector(int $sectorId) : bool
