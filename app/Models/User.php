@@ -24,8 +24,10 @@
 
 namespace Tki\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -87,6 +89,17 @@ class User extends Authenticatable
     public function presets(): HasMany
     {
         return $this->hasMany(Preset::class);
+    }
+
+    public function movementLog(): HasMany
+    {
+        return $this->hasMany(MovementLog::class);
+    }
+
+    public function hasVisitedSector(int $sectorId) : bool
+    {
+        // TODO: Ripe for caching
+        return $this->movementLog()->where('sector_id', $sectorId)->exists();
     }
 
     /**

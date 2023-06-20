@@ -26,6 +26,7 @@ namespace Tki\Models;
 
 // TODO: rename Sector and handle all the migration stuff
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -46,9 +47,19 @@ class Universe extends Model
         return $this->hasMany(Planet::class, 'sector_id');
     }
 
+    public function defenses(): HasMany
+    {
+        return $this->hasMany(SectorDefense::class, 'sector_id');
+    }
+
     public function ships(): HasMany
     {
-        // TODO: implement ships relationship
+        return $this->hasMany(Ship::class, 'sector_id');
+    }
+
+    public function links(): HasMany
+    {
+        return $this->hasMany(Link::class, 'start');
     }
 
     /**
