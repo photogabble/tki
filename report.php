@@ -22,115 +22,102 @@
  *
  */
 
-require_once './common.php';
+namespace Tki\Http\Resources;
 
-$login = new Tki\Login();
-$login->checkLogin($pdo_db, $lang, $tkireg, $tkitimer, $template);
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Tki\Helpers\CalcLevels;
+use Tki\Models\Ship;
 
-// Database driven language entries
-$langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'device',
-                                'footer', 'insignias', 'main', 'regional',
-                                'report', 'universal'));
-// Get playerinfo from database
-$players_gateway = new \Tki\Models\User($pdo_db);
-$playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-
-$shiptypes = array();
-$shiptypes[0] = "tinyship.png";
-$shiptypes[1] = "smallship.png";
-$shiptypes[2] = "mediumship.png";
-$shiptypes[3] = "largeship.png";
-$shiptypes[4] = "hugeship.png";
-
-$shipavg = \Tki\Helpers\CalcLevels::avgTech($playerinfo, "ship");
-
-if ($shipavg < 8)
+/**
+ * @mixin Ship
+ */
+class ShipResource extends JsonResource
 {
-    $shiplevel = 0;
-}
-elseif ($shipavg < 12)
-{
-    $shiplevel = 1;
-}
-elseif ($shipavg < 16)
-{
-    $shiplevel = 2;
-}
-elseif ($shipavg < 20)
-{
-    $shiplevel = 3;
-}
-else
-{
-    $shiplevel = 4;
-}
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        // TODO: Add different ship hulls that have different maximums of the below levels to balance things out a bit
+        $fittingLvs = [
+            'hull' => $this->hull,
+            'engines' => $this->engines,
+            'power' => $this->power,
+            'computer' => $this->computer,
+            'sensors' => $this->sensors,
+            'armor' => $this->armor,
+            'shields' => $this->shields,
+            'beams' => $this->beams,
+            'torp_launchers' => $this->torp_launchers,
+            'cloak' => $this->cloak,
+        ];
 
-$holds_used = $playerinfo['ship_ore'] + $playerinfo['ship_organics'] + $playerinfo['ship_goods'] + $playerinfo['ship_colonists'];
-$holds_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['hull'], $tkireg);
-$armor_pts_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['armor'], $tkireg);
-$ship_fighters_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['computer'], $tkireg);
-$torps_max = \Tki\Helpers\CalcLevels::abstractLevels($playerinfo['torp_launchers'], $tkireg);
-$energy_max = \Tki\Helpers\CalcLevels::energy($playerinfo['power'], $tkireg);
-$escape_pod = ($playerinfo['dev_escapepod'] == 'Y') ? $langvars['l_yes'] : $langvars['l_no'];
-$fuel_scoop = ($playerinfo['dev_fuelscoop'] == 'Y') ? $langvars['l_yes'] : $langvars['l_no'];
-$lssd = ($playerinfo['dev_lssd'] == 'Y') ? $langvars['l_yes'] : $langvars['l_no'];
+        $avgFittingLv = CalcLevels::avgTech($fittingLvs);
 
-// Clear variables array before use, and set array with all used variables in page
-$variables = null;
-$variables['body_class'] = 'tki'; // No special CSS
-$variables['lang'] = $lang;
-$variables['color_header'] = $tkireg->color_header;
-$variables['color_line1'] = $tkireg->color_line1;
-$variables['color_line2'] = $tkireg->color_line2;
-$variables['playerinfo_character_name'] = $playerinfo['character_name'];
-$variables['playerinfo_ship_name'] = $playerinfo['ship_name'];
-$variables['playerinfo_credits'] = $playerinfo['credits'];
-$variables['playerinfo_hull'] = $playerinfo['hull'];
-$variables['playerinfo_engines'] = $playerinfo['engines'];
-$variables['playerinfo_computer'] = $playerinfo['computer'];
-$variables['playerinfo_sensors'] = $playerinfo['sensors'];
-$variables['playerinfo_armor'] = $playerinfo['armor'];
-$variables['playerinfo_shields'] = $playerinfo['shields'];
-$variables['playerinfo_beams'] = $playerinfo['beams'];
-$variables['playerinfo_power'] = $playerinfo['power'];
-$variables['playerinfo_torp_launchers'] = $playerinfo['torp_launchers'];
-$variables['playerinfo_cloak'] = $playerinfo['cloak'];
-$variables['shipavg'] = $shipavg;
-$variables['holds_used'] = $holds_used;
-$variables['holds_max'] = $holds_max;
-$variables['playerinfo_ship_ore'] = $playerinfo['ship_ore'];
-$variables['playerinfo_ship_organics'] = $playerinfo['ship_organics'];
-$variables['playerinfo_ship_goods'] = $playerinfo['ship_goods'];
-$variables['playerinfo_ship_energy'] = $playerinfo['ship_energy'];
-$variables['playerinfo_ship_colonists'] = $playerinfo['ship_colonists'];
-$variables['playerinfo_ship_fighters'] = $playerinfo['ship_fighters'];
-$variables['playerinfo_armor_pts'] = $playerinfo['armor_pts'];
-$variables['playerinfo_torps'] = $playerinfo['torps'];
-$variables['torps_max'] = $torps_max;
-$variables['energy_max'] = $energy_max;
-$variables['armor_pts_max'] = $armor_pts_max;
-$variables['ship_fighters_max'] = $ship_fighters_max;
-$variables['playerinfo_dev_beacon'] = $playerinfo['dev_beacon'];
-$variables['playerinfo_dev_warpedit'] = $playerinfo['dev_warpedit'];
-$variables['playerinfo_dev_genesis'] = $playerinfo['dev_genesis'];
-$variables['playerinfo_dev_minedeflector'] = $playerinfo['dev_minedeflector'];
-$variables['playerinfo_dev_emerwarp'] = $playerinfo['dev_emerwarp'];
-$variables['escape_pod'] = $escape_pod;
-$variables['fuel_scoop'] = $fuel_scoop;
-$variables['lssd'] = $lssd;
-$variables['ship_img'] = $template->getVariables('template_dir') . "/images/" . $shiptypes[$shiplevel];
-$variables['linkback'] = array("fulltext" => $langvars['l_universal_main_menu'], "link" => "main.php");
-$variables['title'] = $langvars['l_report_title'];
+        if ($avgFittingLv < 8) {
+            $shipLv = 0;
+        } else if ($avgFittingLv < 12) {
+            $shipLv = 1;
+        } else if ($avgFittingLv < 16) {
+            $shipLv = 2;
+        } else if ($avgFittingLv < 20) {
+            $shipLv = 3;
+        } else {
+            $shipLv = 4;
+        }
 
-$langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'device',
-                                'footer', 'insignias', 'main', 'news',
-                                'regional', 'report', 'universal'));
-$header = new Tki\Header();
-$header->display($pdo_db, $lang, $template, $variables['title'], $variables['body_class']);
+        return [
+            'name' => $this->ship_name,
+            'sector_id' => $this->sector_id,
+            'sector' => new SectorResource($this->sector),
+            'level' => $shipLv,
 
-$template->addVariables('langvars', $langvars);
-$template->addVariables('variables', $variables);
-$template->display('report.tpl');
+            'armor' => [
+                'current' => $this->armor_pts,
+                'max' => CalcLevels::abstractLevels($this->armor),
+            ],
 
-$footer = new Tki\Footer();
-$footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
+            'weapons' => [
+                'fighters' => [
+                    'current' => $this->ship_fighters,
+                    'max' => CalcLevels::abstractLevels($this->computer),
+                ],
+                'torpedoes' => [
+                    'current' => $this->torps,
+                    'max' => CalcLevels::abstractLevels($this->torp_launchers),
+                ],
+            ],
+
+            'cargo_holds' => [
+                'ore' => $this->ship_ore,
+                'organics' => $this->ship_organics,
+                'goods' => $this->ship_goods,
+                'colonists' => $this->ship_colonists,
+                'holds_used' => $this->ship_ore +$this->ship_organics + $this->ship_goods + $this->ship_colonists,
+                'holds_max' => CalcLevels::abstractLevels($this->hull),
+            ],
+
+            'energy' => [
+                'current' => $this->ship_energy,
+                'max' => CalcLevels::energy($this->power),
+            ],
+
+            'devices' => [
+                'beacon' => $this->dev_beacon,
+                'warp_edit' => $this->dev_warpedit,
+                'genesis' => $this->dev_genesis,
+                'mine_deflector' => $this->dev_minedeflector,
+                'emergency_warp' => $this->dev_emerwarp,
+                'lssd_installed' => $this->dev_lssd, // last ship seen device
+                'escape_pod_installed' => $this->dev_escapepod,
+                'fuel_scoop_installed' => $this->dev_fuelscoop,
+            ],
+
+            'fitting' => $fittingLvs,
+            'avg_fitting_level' => $avgFittingLv,
+        ];
+    }
+}
