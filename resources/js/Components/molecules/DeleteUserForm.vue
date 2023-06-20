@@ -48,7 +48,7 @@ const deleteUser = () => {
 
     <danger-button @click="confirmUserDeletion" class="w-full">{{__('self_destruct.l_die_goodbye')}}</danger-button>
 
-    <pop-up :show="confirmingUserDeletion" @close="closeModal">
+    <pop-up :show="confirmingUserDeletion" @close="closeModal" danger>
       <div class="p-6 w-2/3 border border-ui-orange-500 bg-ui-grey-900/90 border-x-4">
         <h2 class="text-lg font-medium text-ui-yellow">
           {{__('self_destruct.l_die_check')}}
