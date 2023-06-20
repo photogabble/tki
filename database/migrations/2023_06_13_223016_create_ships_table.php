@@ -21,7 +21,7 @@ return new class extends Migration
             // TODO: should be timestamp of when with ship_id on User set null
             $table->boolean('ship_destroyed')->default(false);
             // Is null until destroyed, then set to user_id who owned it
-            $table->unsignedBigInteger('belonged_to')->nullable()->default(null);
+            $table->unsignedBigInteger('owner_id')->nullable()->default(null);
 
             $table->unsignedInteger('hull')->default(0);
             $table->unsignedInteger('engines')->default(0);
