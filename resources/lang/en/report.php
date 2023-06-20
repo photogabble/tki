@@ -16,7 +16,7 @@
     "l_deflect" => "Mine deflectors",
     "l_ewd" => "Emegency warp device",
     "l_shipavg" => "Average tech level",
-    "l_arm_weap" => "Armor &amp; weapons",
+    "l_arm_weap" => "Armor & weapons",
     "l_beacons" => "Space beacons",
     "l_warpedit" => "Warp editors",
     "l_genesis" => "Genesis torpedoes",
