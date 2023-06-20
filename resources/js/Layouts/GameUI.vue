@@ -20,14 +20,12 @@
 
       <div class="grid grid-cols-[350px_minmax(350px,_1fr)_64px] w-full h-full">
         <!-- Left Sidebar -->
-        <div class="flex flex-col h-full overflow-hidden">
-<!--          <PlayerState />-->
-          <!-- TODO: if sidebar slot is available then col-span-2 on middle area -->
+        <div v-if="slots.sidebar" class="flex flex-col h-full overflow-hidden">
           <slot name="sidebar"/>
         </div>
 
         <!-- Middle Area -->
-        <div class="w-full px-1 flex flex-col">
+        <div :class="['w-full px-1 flex flex-col', {'col-span-2': !slots.sidebar}]">
           <div class="text-sm flex flex-row border-t border-ui-orange-500/50 justify-between">
             <div class="border-t border-ui-orange-500 border-l border-partway-r p-1 px-2">
               <span class="uppercase text-white">Turns Available:</span> {{ isLoggedIn ? numberFormatter(user.turns) : 'X.001' }}
@@ -57,10 +55,11 @@ import {TeleportTarget} from "vue-safe-teleport";
 import {useAuth} from "@/Composables/useAuth";
 import {useFormattedNumber} from "@/Composables/useFormattedNumber";
 import ShipReportPanel from "@/Components/molecules/ShipReportPanel.vue";
+import {useSlots} from "vue";
 
 const {isLoggedIn, user} = useAuth();
 const numberFormatter = useFormattedNumber();
-
+const slots = useSlots();
 </script>
 
 <style lang="postcss" scoped>
