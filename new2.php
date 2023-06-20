@@ -22,183 +22,119 @@
  *
  */
 
-require_once './common.php';
 
-$title = $langvars['l_new_title2'];
+namespace Tki\Http\Controllers\Auth;
 
-$header = new Tki\Header();
-$header->display($pdo_db, $lang, $template, $title);
+use Illuminate\Support\Facades\DB;
+use Tki\Http\Controllers\Controller;
+use Tki\Models\BankAccount;
+use Tki\Models\Preset;
+use Tki\Models\Ship;
+use Tki\Models\User;
+use Tki\Models\Zone;
+use Tki\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+use Inertia\Inertia;
+use Inertia\Response;
 
-// Database driven language entries
-$langvars = Tki\Translate::load($pdo_db, $lang, array('combat', 'common',
-                                'footer', 'insignias', 'login', 'new',
-                                'news'));
-echo '<h1>' . $title . '</h1>';
-
-if ($tkireg->account_creation_closed)
+class RegisteredUserController extends Controller
 {
-    die($langvars['l_new_closed_message']); // This should ideally use a class based error handler instead
-}
-
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$character = null;
-$character = filter_input(INPUT_POST, 'character', FILTER_SANITIZE_STRING);
-if (strlen(trim($character)) === 0)
-{
-    $character = false;
-}
-
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$shipname = null;
-$shipname = filter_input(INPUT_POST, 'shipname', FILTER_SANITIZE_STRING);
-if (strlen(trim($shipname)) === 0)
-{
-    $shipname = false;
-}
-
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$username = null;
-$username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_EMAIL);
-if (strlen(trim($username)) === 0)
-{
-    $username = false;
-}
-
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$filtered_post_password = null;
-$filtered_post_password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_URL);
-if (strlen(trim($filtered_post_password)) === 0)
-{
-    $filtered_post_password = false;
-}
-
-$flag = 0;
-$sql = "SELECT email, character_name, ship_name FROM ::prefix::ships WHERE email = :email || character_name = :character_name || ship_name = :ship_name";
-$stmt = $pdo_db->prepare($sql);
-$stmt->bindParam(':email', $username, PDO::PARAM_STR);
-$stmt->bindParam(':character_name', $character, PDO::PARAM_STR);
-$stmt->bindParam(':ship_name', $shipname, PDO::PARAM_STR);
-$stmt->execute();
-$character_exists = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-if ($username === null || $character === null || $shipname === null)
-{
-    echo $langvars['l_new_blank'] . '<br>';
-    $flag = 1;
-}
-
-if ($character_exists !== null)
-{
-    foreach ($character_exists as $tmp_char)
+    /**
+     * Display the registration view.
+     */
+    public function create(): Response
     {
-        if (strtolower($tmp_char['email']) == strtolower($username))
-        {
-            echo $langvars['l_new_inuse'] . ' ' .  $langvars['l_new_4gotpw1'] . ' <a href=mail.php?mail=' . $username . '>' . $langvars['l_clickme'] . '</a> ' . $langvars['l_new_4gotpw2'] . '<br>';
-            $flag = 1;
-        }
-
-        if (strtolower($tmp_char['character_name']) == strtolower($character))
-        {
-            $langvars['l_new_inusechar'] = str_replace('[character]', $character, $langvars['l_new_inusechar']);
-            echo $langvars['l_new_inusechar'] . '<br>';
-            $flag = 1;
-        }
-
-        if (strtolower($tmp_char['ship_name']) == strtolower($shipname))
-        {
-            $langvars['l_new_inuseship'] = str_replace('[shipname]', $shipname, $langvars['l_new_inuseship']);
-            echo $langvars['l_new_inuseship'] . '<br>';
-            $flag = 1;
-        }
-    }
-}
-
-if ($flag == 0)
-{
-    // Insert code to add player to database
-    $cur_time_stamp = date('Y-m-d H:i:s');
-
-    $sql = "SELECT MAX(turns_used + turns) AS mturns FROM ::prefix::ships";
-    $stmt = $pdo_db->prepare($sql);
-    $stmt->execute();
-    $turns_info = $stmt->fetch(PDO::FETCH_ASSOC);
-    $mturns = $turns_info['mturns'];
-
-    if ($mturns > $tkireg->max_turns)
-    {
-        $mturns = $tkireg->max_turns;
+        return Inertia::render('Auth/Register');
     }
 
-    // Hash the password.  $hashed_pass will be a 60-character string.
-    $hashed_pass = password_hash($filtered_post_password, PASSWORD_DEFAULT); // PASSWORD_DEFAULT is the strongest algorithm available to PHP at the current time - today, it is BCRYPT.
-
-    $result2 = $old_db->Execute("INSERT INTO {$old_db->prefix}ships (ship_name, ship_destroyed, character_name, password, email, armor_pts, credits, ship_energy, ship_fighters, turns, on_planet, dev_warpedit, dev_genesis, dev_beacon, dev_emerwarp, dev_escapepod, dev_fuelscoop, dev_minedeflector, last_login, ip_address, trade_colonists, trade_fighters, trade_torps, trade_energy, cleared_defenses, lang, dev_lssd)
-                             VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);", array($shipname, 'N', $character, $hashed_pass, $username, 10, 1000, 100, 10, $mturns, 'N', 0, 0, 0, 0, 'N', 'N', 0, $cur_time_stamp, $request->server->get('REMOTE_ADDR'), 'Y', 'N', 'N', 'Y', null, $lang, 'N'));
-    Tki\Db::logDbErrors($pdo_db, $result2, __LINE__, __FILE__);
-
-    if (!$result2)
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request): RedirectResponse
     {
-        echo $old_db->ErrorMsg() . '<br>';
-    }
-    else
-    {
-        $result2 = $old_db->Execute("SELECT ship_id FROM {$old_db->prefix}ships WHERE email = ?;", array($username));
-        Tki\Db::logDbErrors($pdo_db, $result2, __LINE__, __FILE__);
-        $shipid = $result2->fields;
-        $shipid['ship_id'] = (int) $shipid['ship_id'];
+        $request->validate([
+            'name' => 'required|string|max:20',
+            'ship_name' => 'required|string|max:20',
+            'email' => 'required|string|email|max:255|unique:' . User::class,
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
 
-        // To do: build a bit better "new player" message
-        $langvars['l_new_message'] = str_replace('[pass]', $filtered_post_password, $langvars['l_new_message']);
-        $langvars['l_new_message'] = str_replace('[ip]', $request->server->get('REMOTE_ADDR'), $langvars['l_new_message']);
-
-        // Some reason \r\n is broken, so replace them now.
-        $langvars['l_new_message'] = str_replace('\r\n', "\r\n", $langvars['l_new_message']);
-
-        $link_to_game_unsafe = 'https://' . $request->server->get('HTTP_HOST') . Tki\SetPaths::setGamepath();
-        $link_to_game = htmlentities($link_to_game_unsafe, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $langvars['l_new_message'] = str_replace('[website]', $link_to_game, $langvars['l_new_message']);
-        $langvars['l_new_message'] = str_replace('[npg]', $link_to_game . 'newplayerguide.php', $langvars['l_new_message']);
-        $langvars['l_new_message'] = str_replace('[faq]', $link_to_game . 'faq.php', $langvars['l_new_message']);
-        $langvars['l_new_message'] = str_replace('[forums]', 'https://kabal-invasion.com/forums/', $langvars['l_new_message']);
-
-        mail("$username", $langvars['l_new_topic'], $langvars['l_new_message'] . "\r\n\r\n" . $link_to_game, 'From: ' . $tkireg->admin_mail . "\r\nReply-To: " . $tkireg->admin_mail . "\r\nX-Mailer: PHP/" . phpversion());
-
-        \Tki\Models\MovementLog::writeLog($pdo_db, $shipid['ship_id'], 1); // A new player is placed into sector 1. Make sure his movement log shows it, so they see it on the galaxy map.
-        $resx = $old_db->Execute("INSERT INTO {$old_db->prefix}zones VALUES (NULL, ?, ?, 'N', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 0);", array($character . "\'s Territory", $shipid['ship_id']));
-        Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-
-        $resx = $old_db->Execute("INSERT INTO {$old_db->prefix}ibank_accounts (ship_id,balance,loan) VALUES (?,0,0);", array($shipid['ship_id']));
-        Tki\Db::logDbErrors($pdo_db, $resx, __LINE__, __FILE__);
-
-        // Add presets for new player
-        for ($zz = 0; $zz < $tkireg->max_presets; $zz++)
-        {
-            $sql = "INSERT INTO ::prefix::presets (ship_id, preset, type) " .
-                   "VALUES (:ship_id, :preset, :type)";
-            $stmt = $pdo_db->prepare($sql);
-            $stmt->bindParam(':ship_id', $shipid['ship_id'], PDO::PARAM_INT);
-            $stmt->bindValue(':preset', 1, \PDO::PARAM_INT);
-            $stmt->bindValue(':type', 'R', \PDO::PARAM_STR);
-            $resxx = $stmt->execute();
+        if ($maxTurns = DB::selectOne('SELECT MAX(turns_used + turns) AS mTurns FROM users')) {
+            $maxTurns = is_null($maxTurns->mTurns)
+                ? config('scheduler.max_turns')
+                : min($maxTurns->mTurns, config('scheduler.max_turns'));
+        } else {
+            $maxTurns = config('scheduler.max_turns');
         }
 
-        echo $langvars['l_new_welcome_sent'] . '<br><br>';
+        /** @var User $user */
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'turns' => $maxTurns,
+            'credits' => 1000,
+        ]);
 
-        // They have logged in successfully, so update their session ID as well
-        session_regenerate_id();
+        // Create Ship
+        // TODO: Create Ship Enum and have this largely placed there
+        $ship = new Ship();
+        $ship->owner_id = $user->id;
+        $ship->ship_name = $request->ship_name;
+        $ship->ship_destroyed = false;
+        $ship->armor_pts = 10;
+        $ship->ship_energy = 100;
+        $ship->ship_fighters = 10;
+        $ship->on_planet = false;
+        $ship->dev_warpedit = 0;
+        $ship->dev_genesis = 0;
+        $ship->dev_beacon = 0;
+        $ship->dev_emerwarp = 0;
+        $ship->dev_escapepod = false;
+        $ship->dev_fuelscoop = false;
+        $ship->dev_minedeflector = 0;
+        $ship->trade_colonists = true;
+        $ship->trade_fighters = false;
+        $ship->trade_torps = false;
+        $ship->trade_energy = true;
+        $ship->cleared_defenses = null;
+        $ship->dev_lssd = false;
+        $ship->sector_id = 1;
+        $ship->save();
 
-        $_SESSION['logged_in'] = true;
-        $_SESSION['password'] = $filtered_post_password;
-        $_SESSION['username'] = $username;
-        Tki\Text::gotoMain($pdo_db, $lang);
-        header('Refresh: 2;url=main.php');
+        $user->ship()->associate($ship);
+
+        // Move ship to starting sector
+        $ship->moveTo(1);
+
+        // Create Players Zone record
+        Zone::create([
+            'name' => $user->name . "'s Territory",
+            'owner_id' => $user->id,
+            'team_zone' => false,
+        ]);
+
+        // Create Bank Account
+        BankAccount::create(['user_id' => $user->id]);
+
+        // Create Presets
+        $presets = [];
+        for ($i = 0; $i < config('game.max_presets'); $i++) {
+            $presets[] = new Preset();
+        }
+        $user->presets()->saveMany($presets);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(RouteServiceProvider::HOME);
     }
 }
-else
-{
-    $langvars['l_new_err'] = str_replace('[here]', "<a href='new.php'>" . $langvars['l_here'] . '</a>', $langvars['l_new_err']);
-    echo $langvars['l_new_err'];
-}
-
-$footer = new Tki\Footer();
-$footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
