@@ -30,14 +30,14 @@ class MovementLog extends Model
 {
 
     protected $fillable = [
-        'ship_id', 'sector_id'
+        'user_id', 'sector_id'
     ];
 
-    public static function writeLog(int $ship_id, int $sector_id): void
+    public static function writeLog(int $user_id, int $sector_id): void
     {
         static::query()
             ->create([
-                'ship_id' => $ship_id,
+                'user_id' => $user_id,
                 'sector_id' => $sector_id
             ]);
     }

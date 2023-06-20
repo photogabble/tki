@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('ship_id');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sector_id');
         });
     }
