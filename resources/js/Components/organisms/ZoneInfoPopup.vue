@@ -24,26 +24,11 @@
 
 import ZonePermission from "@/Components/atoms/ZonePermission.vue";
 import PopUp from "@/Components/atoms/modal/PopUp.vue";
-import {ZoneInfo} from "@/types/zone-info";
-
-const zone: ZoneInfo = {
-  name: 'Warzone',
-  owner: 'Contested space',
-  isEditable: false,
-  isFriendly: 'L',
-  allow_beacon: 'L',
-  allow_attack: 'Y',
-  allow_planetattack: 'Y',
-  allow_warpedit: 'Y',
-  allow_planet: 'Y',
-  allow_trade: 'N',
-  allow_defenses: 'Y',
-  max_hull: 0,
-  over_size: false,
-};
+import {ZoneResource} from "@/types/zone-info";
 
 defineProps<{
   modelValue: Boolean;
+  zone: ZoneResource;
 }>();
 
 defineEmits(['update:modelValue']);
