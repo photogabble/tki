@@ -34,13 +34,13 @@ use Tki\Registry;
 class CalcLevels
 {
     // This method can be used for armor, holds, shields, torps, beams, and fighters
-    public static function abstractLevels(int $level, Registry $tkireg): int
+    public static function abstractLevels(int $level): int
     {
         $result = round(pow(config('game.level_factor'), $level) * 100);
         return (int) $result;
     }
 
-    public static function energy(int $level_power, Registry $tkireg): float
+    public static function energy(int $level_power): float
     {
         $result = round(pow(config('game.level_factor'), $level_power) * 500);
         return $result;
