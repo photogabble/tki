@@ -15,13 +15,16 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('ship_id');
+            $table->unsignedBigInteger('deployed_by');
             $table->unsignedBigInteger('sector_id');
             $table->char('defense_type', 1)->default('M');
             $table->unsignedInteger('quantity')->default(0);
             $table->string('fm_setting')->default('toll');
 
-            // TODO Foreign Keys
+            $table->foreign('deployed_by')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

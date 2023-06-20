@@ -34,9 +34,9 @@ class SectorDefense extends Model
         'quantity'
     ];
 
-    public function ship(): BelongsTo
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(Ship::class);
+        return $this->belongsTo(User::class, 'deployed_by');
     }
 
     // TODO: Rename to System?
