@@ -40,7 +40,7 @@ watch(() => props.focus, (a,b) => {
       </div>
 
       <div>
-        <input-label for="name" value="Display Name"/>
+        <input-label for="name" :value="__('new.l_new_pname')"/>
         <text-input id="name" type="text" v-model="form.name" required autocomplete="name"/>
         <input-error class="mt-2" :message="form.errors.name" />
       </div>
