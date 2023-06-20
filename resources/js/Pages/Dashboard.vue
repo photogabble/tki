@@ -3,6 +3,15 @@ import { Head } from '@inertiajs/vue3';
 import GameUI from "@/Layouts/GameUI.vue";
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
+import SectorInfo from "@/Components/organisms/SectorInfo.vue";
+import {useAuth} from "@/Composables/useAuth";
+import SectorWarpsPanel from "@/Components/organisms/SectorWarpsPanel.vue";
+import PlayerPresetsPanel from "@/Components/organisms/PlayerPresetsPanel.vue";
+import ShipCargoPanel from "@/Components/organisms/ShipCargoPanel.vue";
+import PlayerShipPanel from "@/Components/organisms/PlayerShipPanel.vue";
+
+const { sector, presets, ship } = useAuth();
+
 </script>
 
 <template>
@@ -32,8 +41,9 @@ import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
         </div>
       </template>
 
-      <main-panel centered>
-        &rarr;&nbsp;<span class="text-white">XXX.501</span>&nbsp;&mdash; Implement Layout &larr;
+      <main-panel>
+        <!-- If on planet display planet overview else display sector overview -->
+        <sector-info />
       </main-panel>
     </GameUI>
 </template>
