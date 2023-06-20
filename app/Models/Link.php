@@ -27,6 +27,10 @@ namespace Tki\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $start
+ * @property int $dest
+ */
 class Link extends Model
 {
     /**

@@ -28,6 +28,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $defense_type
+ * @property int $quantity
+ * @property-read User $owner
+ * @property-read Universe $sector
+ */
 class SectorDefense extends Model
 {
     protected $fillable = [

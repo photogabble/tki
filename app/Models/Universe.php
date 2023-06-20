@@ -33,6 +33,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
 
+/**
+ * @property-read Zone $zone
+ * @property-read Collection|Link[] $links
+ * @property-read Collection|Planet[] $planets
+ * @property-read Collection|Ship[] $ships
+ * @property-read Collection|SectorDefense[] $defenses
+ * @property-read Collection $ports
+ */
 class Universe extends Model
 {
     use HasFactory;

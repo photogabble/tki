@@ -29,6 +29,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property bool $trade_colonists
+ * @property bool $trade_fighters
+ * @property bool $trade_torps
+ * @property bool $trade_energy
+ * @property bool $cleared_defenses
+ *
+ * @property string $ship_name
+ * @property bool $ship_destroyed
  * @property int $hull
  * @property int $engines
  * @property int $power
@@ -62,6 +70,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $dev_fuelscoop
  * @property bool $dev_lssd
  * @property int $dev_minedeflector
+ *
+ * @property int $owner_id
+ * @property-read Universe $sector
+ * @property-read User|null $owner
  */
 class Ship extends Model
 {
