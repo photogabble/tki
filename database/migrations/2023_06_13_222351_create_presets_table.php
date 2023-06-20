@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TODO: Rename ship_presets ???
+        // TODO: Rename user_presets ???
         Schema::create('presets', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
             $table->unsignedBigInteger('user_id');
+            // TODO: should preset be sector_id ??
             $table->unsignedInteger('preset')->default(1);
             $table->char('type', 1)->default('R');
 
