@@ -2,6 +2,7 @@
 
 namespace Tki\Http\Middleware;
 
+use Tki\Http\Resources\UserResource;
 use Tki\Models\Scheduler;
 use Tki\Models\User;
 use Illuminate\Http\Request;
@@ -32,10 +33,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        if ($user) $user->load(['ship', 'presets']);
+
         return array_merge(parent::share($request), [
             'auth' => [
-                'user' => $request->user(),
-                'online' => !is_null($request->user()),
+                'user' => $user ? new UserResource($user) : null,
+                'online' => !is_null($user),
             ],
             'stats' => [
                 // TODO: include values from Footer.php here
