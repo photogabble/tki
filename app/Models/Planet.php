@@ -42,7 +42,7 @@ use Psy\Exception\DeprecatedException;
  * @property int|null $owner_id
  * @property int|null $team_id
  * @property-read Team|null $team
- * @property-read Ship|null $owner
+ * @property-read User|null $owner
  */
 class Planet extends Model
 {
@@ -69,10 +69,9 @@ class Planet extends Model
         return $this->belongsTo(Team::class);
     }
 
-    // TODO: Need to move owner_id from relating to Ship to User
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(Ship::class, 'owner_id');
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public function setDefeated(int $planettorps): void
