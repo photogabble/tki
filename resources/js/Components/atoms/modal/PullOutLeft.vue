@@ -11,7 +11,7 @@ const onAfterLeave = () => emit('visible', false);
 
 <template>
   <Transition @after-enter="onAfterEnter" @after-leave="onAfterLeave">
-    <div v-if="isVisible" class="absolute w-[360px] left-0 top-0 border-r-4 p-[10px] border-double border-r-ui-orange-500 bg-ui-grey-900 z-50 h-full">
+    <div v-if="isVisible" class="overflow-y-auto absolute w-[360px] left-0 top-0 border-r-4 p-[10px] border-double border-r-ui-orange-500 bg-ui-grey-900 z-50 h-full">
       <slot/>
     </div>
   </Transition>
