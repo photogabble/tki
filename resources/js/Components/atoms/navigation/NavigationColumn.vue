@@ -17,8 +17,7 @@
       </div>
 
       <!-- Decoration -->
-      <!-- TODO: If height of viewport is <= 700px then hide this and replace with an hr -->
-      <div aria-hidden="true" class="flex-grow border-partway-y p-1 relative text-xs overflow-hidden min-h-[100px]" style="--border-part-b-height: 12px; --border-part-t-height: 12px;">
+      <div aria-hidden="true" class="decoration flex-grow border-partway-y p-1 relative text-xs overflow-hidden min-h-[100px]" style="--border-part-b-height: 12px; --border-part-t-height: 12px;">
         <small class="block right-1 top-2 absolute h-[240px]" style="writing-mode: vertical-rl;">X000.69 //////////////////////////////...</small>
         <small class="animate-pulse block absolute bottom-0 left-1">&middot;&middot;&middot;</small>
       </div>
@@ -55,3 +54,12 @@ const {openModal: openHelpPanel} = useModal('help');
 
 const isHelpPage = false; // computed<Boolean>(() => route.path.includes('help/'));
 </script>
+
+<style scoped>
+@media screen and (max-height: 700px)
+{
+  .decoration{
+    display:none;
+  }
+}
+</style>
