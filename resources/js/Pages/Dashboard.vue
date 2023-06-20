@@ -10,11 +10,26 @@ import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
 
     <GameUI>
       <template #sidebar>
-        <sidebar-panel>
-          <template #heading>
-            <span class="text-white">XX.501 &middot;</span> XXXX.XXXXXX
-          </template>
-        </sidebar-panel>
+        <player-ship-panel v-if="ship" :ship="ship" />
+
+        <div class="flex flex-col flex-grow overflow-y-scroll max-h-full">
+          <ship-cargo-panel v-if="ship" :cargo="ship.cargo_holds" :energy="ship.energy" />
+
+          <sector-warps-panel v-if="sector" :sector="sector" />
+
+          <player-presets-panel v-if="presets" :presets="presets" />
+
+          <sidebar-panel>
+            <template #heading>
+              <span class="text-white">Trade Routes</span>
+            </template>
+            <section class="flex flex-col">
+              <ul>
+                <li class="flex"><span class="flex-grow">None</span> <a href="#" class="self-end">[Trade Control]</a></li>
+              </ul>
+            </section>
+          </sidebar-panel>
+        </div>
       </template>
 
       <main-panel centered>

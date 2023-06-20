@@ -1,8 +1,8 @@
 import {computed, ref} from "vue";
 
-const openStates = ref<Array<'help' | 'profile'>>([]);
+const openStates = ref<Array<'help' | 'profile' | 'ship-report'>>([]);
 
-export function useModal(name?: 'help' | 'profile') {
+export function useModal(name?: 'help' | 'profile' | 'ship-report') {
     const openModal = () => {
         if (name) openStates.value.push(name);
     }

@@ -3,6 +3,7 @@
     <!-- Page Content -->
     <main class="w-full max-h-screen font-mono text-ui-orange-500 relative overflow-hidden">
       <!-- Modals -->
+      <ship-report-panel />
       <player-profile-panel />
       <help-panel />
 
@@ -55,6 +56,7 @@ import HelpPanel from "@/components/molecules/HelpPanel.vue";
 import {TeleportTarget} from "vue-safe-teleport";
 import {useAuth} from "@/Composables/useAuth";
 import {useFormattedNumber} from "@/Composables/useFormattedNumber";
+import ShipReportPanel from "@/Components/molecules/ShipReportPanel.vue";
 
 const {isLoggedIn, user} = useAuth();
 const numberFormatter = useFormattedNumber();
