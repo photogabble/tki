@@ -77,7 +77,15 @@ class Ship extends Model
         return $this->belongsTo(Team::class);
     }
 
-    // TODO: Has One BankAccount
+    public function sector(): BelongsTo
+    {
+        return $this->belongsTo(Universe::class, 'sector_id');
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
 
     /**
      * @todo refactor usages to be Model aware
