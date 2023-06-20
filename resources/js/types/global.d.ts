@@ -14,6 +14,9 @@ declare global {
     var Ziggy: ZiggyConfig;
 
     var Translations: TranslationDictionary;
+
+    // Need to add the below to stop PHPStorm crawling to a halt at every usage
+    const __ = (string: string) => string;
 }
 
 declare module 'vue' {
