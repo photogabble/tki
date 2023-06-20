@@ -19,7 +19,7 @@
 
       <div class="grid grid-cols-[350px_minmax(350px,_1fr)_64px] w-full h-full">
         <!-- Left Sidebar -->
-        <div class="flex flex-col">
+        <div class="flex flex-col h-full overflow-hidden">
 <!--          <PlayerState />-->
           <!-- TODO: if sidebar slot is available then col-span-2 on middle area -->
           <slot name="sidebar"/>
