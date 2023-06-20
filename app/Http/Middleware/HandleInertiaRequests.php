@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'stats' => [
                 // TODO: include values from Footer.php here
+                'total_players' => User::count(), // TODO Cache
                 'players_online' => 0, //User::loggedInCount(),
                 'scheduler_next_run' => 0, // Scheduler::nextRun()->unix(),
                 'sched_ticks' => config('scheduler.sched_ticks')
