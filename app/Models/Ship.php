@@ -144,4 +144,23 @@ class Ship extends Model
 
         $this->save();
     }
+
+    /**
+     * Moving the ship, does just that, with no checks to see if the ship can
+     * travel there under its own power.
+     *
+     * @param int $sectorId
+     * @return void
+     */
+    public function moveTo(int $sectorId): void
+    {
+        MovementLog::writeLog($this->owner_id, $sectorId);
+    }
+
+    public function travelTo(int $sectorId): void
+    {
+        // TODO: Implement, travelling should cost some energy, if
+        //       ship doesn't have enough to make the movement
+        //       then throw an exception.
+    }
 }
