@@ -22,177 +22,143 @@
  *
  */
 
-// FUTURE: Remove color controls out to css
 
-require_once './common.php';
+namespace Tki\Http\Controllers;
 
-// Always make sure we are using empty vars before use.
-$variables = null;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\In;
+use Inertia\Inertia;
+use Tki\Http\Resources\PlayerRankingResource;
+use Tki\Http\Resources\TeamRankingResource;
+use Tki\Models\Team;
+use Tki\Models\User;
 
-$variables['body_class'] = 'tki';
-$variables['lang'] = $lang;
-$variables['link'] = 'ranking.php';
-$variables['title'] = $langvars['l_ranks_title'];
-
-// These should be set within the template config, and be css driven using nth + 1 selectors.
-$variables['color_header'] = $tkireg->color_header;
-$variables['color_line1'] = $tkireg->color_line1;
-$variables['color_line2'] = $tkireg->color_line2;
-
-// Load required language variables for the ranking page.
-$langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'footer',
-                                'insignias', 'main', 'ranking', 'teams',
-                                'universal'));
-// Get requested ranking order.
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$sort = null;
-$sort = filter_input(INPUT_GET, 'sort', FILTER_SANITIZE_STRING);
-if (($sort === null) || (strlen(trim($sort)) === 0))
+class RankingController extends Controller
 {
-    $sort = false;
-}
-
-switch ($sort)
-{
-    case 'turns':
-        $by = 'turns_used DESC, character_name ASC';
-        break;
-    case 'login':
-        $by = 'last_login DESC, character_name ASC';
-        break;
-    case 'good':
-        $by = 'rating DESC, character_name ASC';
-        break;
-    case 'bad':
-        $by = 'rating ASC, character_name ASC';
-        break;
-    case 'team':
-        $by = "::prefix::teams.team_name DESC, character_name ASC";
-        break;
-    case 'efficiency':
-        $by = 'efficiency DESC';
-        break;
-    default:
-        $by = 'score DESC, character_name ASC';
-        break;
-}
-
-$variables['num_players'] = 0;
-
-$sql = "SELECT ::prefix::ships.ship_id, ::prefix::ships.email, ::prefix::ships.ip_address, " .
-"::prefix::ships.score, ::prefix::ships.character_name, ::prefix::ships.turns_used, " .
-"::prefix::ships.last_login, UNIX_TIMESTAMP(::prefix::ships.last_login) as online, " .
-"::prefix::ships.rating, ::prefix::teams.team_name, ::prefix::teams.admin AS team_admin, " .
-"if (::prefix::ships.turns_used < 150, 0, ROUND(::prefix::ships.score/::prefix::ships.turns_used)) " .
-"AS efficiency FROM ::prefix::ships LEFT JOIN ::prefix::teams ON " .
-"::prefix::ships.team = ::prefix::teams.id WHERE ship_destroyed='N' and email NOT LIKE '%@kabal' " .
-"AND turns_used > 0 ORDER BY :order_by LIMIT :limit";
-
-$stmt = $pdo_db->prepare($sql);
-$stmt->bindParam(':order_by', $by, PDO::PARAM_STR);
-$stmt->bindParam(':limit', $tkireg->max_ranks, PDO::PARAM_INT);
-$stmt->execute();
-$rankings = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$variables['num_players'] = count($rankings);
-$player_list = array();
-$xx = 1;
-
-if ($rankings !== null && ($variables['num_players'] > 0))
-{
-    foreach ($rankings as $row)
+    public function index(Request $request)
     {
-        // Set the players rank number.
-        $row['rank'] = count($player_list) + 1;
+        $availablePlayerSorts = ['score', 'turns', 'login', 'good', 'bad', 'efficiency'];
+        $availableTeamSorts = ['score', 'members', 'login', 'good', 'bad', 'efficiency'];
 
-        // Calculate the players rating.
-        $rating = round(sqrt(abs($row['rating'])));
-        if (abs($row['rating']) != $row['rating'])
-        {
-            $rating = -1 * $rating;
+        $this->validate($request, [
+            'sort_players_by' => ['sometimes', new In($availablePlayerSorts)],
+            'sort_players_direction' => ['sometimes', new In(['ASC', 'DESC', 'asc', 'desc'])],
+            'sort_teams_by' => ['sometimes', new In($availableTeamSorts)],
+            'sort_teams_direction' => ['sometimes', new In(['ASC', 'DESC', 'asc', 'desc'])],
+        ]);
+
+        //
+        // Team Ranking
+        //
+
+        $teamRankingQuery = Team::query()
+            ->leftJoin('users', 'users.team_id', '=', 'teams.id')
+            ->leftJoin('ships', 'users.ship_id', '=', 'ships.id')
+            ->groupBy('teams.id')
+            ->select(
+                'teams.name',
+                DB::raw('COUNT(users.id) as player_count'),
+                DB::raw('SUM(users.turns_used) as turns_used_sum'),
+                DB::raw('SUM(users.score) as score_sum'),
+                DB::raw('SUM(ships.rating) as rating_sum'),
+                DB::raw('if (SUM(users.turns_used) < 150, 0, ROUND(SUM(users.score)/SUM(users.turns_used))) as efficiency')
+            );
+
+        $sortTeamDirection = strtoupper($request->get('sort_teams_direction', 'DESC'));
+
+        switch($request->get('sort_teams_by')) {
+            case 'turns':
+                $teamRankingQuery
+                    ->orderBy('turns_used_sum', $sortTeamDirection)
+                    ->orderBy('name', 'ASC');
+                break;
+            case 'members':
+                $teamRankingQuery
+                    ->orderBy('player_count', $sortTeamDirection)
+                    ->orderBy('name', 'ASC');
+                break;
+            case 'good':
+                $teamRankingQuery
+                    ->orderBy('rating_sum', 'DESC')
+                    ->orderBy('name', 'ASC');
+                break;
+            case 'bad':
+                $teamRankingQuery
+                    ->orderBy('rating_sum', 'ASC')
+                    ->orderBy('name', 'ASC');
+            case 'efficiency':
+                $teamRankingQuery
+                    ->orderBy('efficiency', $sortTeamDirection);
+                break;
+            default:
+                $teamRankingQuery
+                    ->orderBy('score_sum', $sortTeamDirection)
+                    ->orderBy('name', 'ASC');
         }
 
-        $row['rating'] = $rating;
+        //
+        // Player Ranking
+        //
 
-        // Calculate the players online status.
-        $curtime = time();
-        $time = $row['online'];
-        $difftime = ($curtime - $time) / 60;
-        $temp_turns = $row['turns_used'];
-        if ($temp_turns <= 0)
-        {
-            $temp_turns = 1;
+        $playerRankingQuery = User::with('team')
+            ->join('ships', 'users.ship_id', '=', 'ships.id')
+            ->where('ships.ship_destroyed', false)
+            ->where('turns_used', '>', 0)
+            ->select([
+                'name',
+                'turns_used',
+                'users.score',
+                'last_login',
+                'ships.rating',
+                DB::raw('if (turns_used < 150, 0, ROUND(users.score/turns_used)) as efficiency')
+            ]);
+
+        $sortPlayerDirection = strtoupper($request->get('sort_players_direction', 'DESC'));
+
+        switch($request->get('sort_players_by')) {
+            case 'turns':
+                $playerRankingQuery
+                    ->orderBy('turns_used', $sortPlayerDirection)
+                    ->orderBy('name', 'ASC');
+                break;
+            case 'login':
+                $playerRankingQuery
+                    ->orderBy('last_login', $sortPlayerDirection)
+                    ->orderBy('name', 'ASC');
+                break;
+            case 'good':
+                $playerRankingQuery
+                    ->orderBy('rating', 'DESC')
+                    ->orderBy('name', 'ASC');
+                break;
+            case 'bad':
+                $playerRankingQuery
+                    ->orderBy('rating', 'ASC')
+                    ->orderBy('name', 'ASC');
+            case 'efficiency':
+                $playerRankingQuery
+                    ->orderBy('efficiency', $sortPlayerDirection);
+                break;
+            default:
+                $playerRankingQuery
+                    ->orderBy('score', $sortPlayerDirection)
+                    ->orderBy('name', 'ASC');
         }
 
-        // Set the players online/offline status.
-        $row['online'] = false;
-        if ($difftime <= 5)
-        {
-            $row['online'] = true;
-        }
-
-        // Set the characters Insignia.
-        $insignia = new \Tki\Actions\Character();
-        $row['insignia'] = $insignia->getInsignia($pdo_db, $lang, $row['email']);
-
-        // This is just to show that we can set the type of player.
-        // like: banned, admin, player, npc etc.
-        if ($row['email'] == $tkireg->admin_mail || $row['team_admin'] === 'Y')
-        {
-            $row['type'] = 'admin';
-        }
-        else
-        {
-            $row['type'] = 'player';
-        }
-
-        // Check for banned players.
-        $ban_result = Tki\CheckBan::isBanned($pdo_db, $row);
-
-        if ($ban_result === null)
-        {
-            $row['banned'] = false;
-            $row['ban_info'] = null;
-        }
-        else
-        {
-            $row['banned'] = true;
-            $row['ban_info'] = array('type' => $ban_result['ban_type'],
-                'public_info' => $langvars['l_ranks_ban_reason'] . "\n" . $ban_result['public_info']);
-        }
-
-        array_push($player_list, $row);
+        return Inertia::render('Ranking', [
+            'player' => [
+                'sorts' => $availablePlayerSorts,
+                'sorting_by' => $request->get('sort_players_by', 'score'),
+                'sorting_direction' => $sortPlayerDirection,
+                'ranking' => PlayerRankingResource::collection($playerRankingQuery->paginate(25, ['*'], 'player_page')->withQueryString()),
+            ],
+            'team' => [
+                'sorts' => $availableTeamSorts,
+                'sorting_by' => $request->get('sort_teams_by', 'score'),
+                'sorting_direction' => $sortTeamDirection,
+                'ranking' => TeamRankingResource::collection($teamRankingQuery->paginate(25)->withQueryString()),
+            ],
+        ]);
     }
-
-    $template->addVariables('players', $player_list);
 }
-
-if (empty($_SESSION['username']))
-{
-    $variables['loggedin'] = true;
-    $variables['linkback'] = array('caption' => $langvars['l_universal_main_login'], 'link' => 'index.php');
-}
-else
-{
-    $variables['loggedin'] = false;
-    $variables['linkback'] = array('caption' => $langvars['l_universal_main_menu'], 'link' => 'main.php');
-}
-
-$header = new Tki\Header();
-$header->display($pdo_db, $lang, $template, $variables['title'], $variables['body_class']);
-$template->addVariables('variables', $variables);
-
-// Load required language variables for the ranking page.
-$langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'footer',
-                                'insignias', 'main', 'news', 'ranking',
-                                'teams', 'universal'));
-// Modify the requires language variables here.
-$langvars['l_ranks_title'] = str_replace('[max_ranks]', $tkireg->max_ranks, $langvars['l_ranks_title']);
-
-// Now add the loaded language variables into Smarty.
-$template->addVariables('langvars', $langvars);
-
-// Now we tell Smarty to output the page
-$template->display('ranking.tpl');
-
-$footer = new Tki\Footer();
-$footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
