@@ -7,7 +7,6 @@ export function useAuth() {
     const isLoggedIn = computed<Boolean>(() => pageProps.props.auth.user !== null);
     const user = pageProps.props.auth.user;
 
-    console.log(pageProps.props.auth.user);
     return {
         isLoggedIn,
         logout: () => console.log('todo: implement'),
