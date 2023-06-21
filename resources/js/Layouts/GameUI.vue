@@ -25,7 +25,7 @@
         </div>
 
         <!-- Middle Area -->
-        <div :class="['w-full px-1 flex flex-col', {'col-span-2': !slots.sidebar}]">
+        <div :class="['w-full flex flex-col', {'col-span-2 pr-1': !slots.sidebar, 'px-1': slots.sidebar}]">
           <div class="text-sm flex flex-row border-t border-ui-orange-500/50 justify-between">
             <div class="border-t border-ui-orange-500 border-l border-partway-r p-1 px-2">
               <span class="uppercase text-white">Turns Available:</span> {{ isLoggedIn ? numberFormatter(user.turns) : 'X.001' }}
