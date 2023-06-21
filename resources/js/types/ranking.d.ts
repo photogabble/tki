@@ -1,6 +1,7 @@
 import {PageProps as InertiaPageProps} from "@inertiajs/core";
+import {PaginatedResource} from "@/types/pagination";
 
-export interface RankingResource {
+export interface PlayerRankingResource {
     name: string
     turns_used: number
     score: number
@@ -18,30 +19,13 @@ export interface PlayerRankingParams {
     sort_players_direction?: string;
 }
 
-export interface PaginationLink {
-    active: boolean;
-    label: string;
-    url: string;
-}
-
-export interface PaginatedRankingResource {
-    data: Array<RankingResource>;
-    links: {
-        first: string,
-        last: string,
-        next: null | string,
-        prev: null | string,
-    };
-    meta: {
-        current_page: number,
-        from: number,
-        last_page: number,
-        links: Array<PaginationLink>,
-        path: string;
-        per_page: number;
-        to: number;
-        total: number;
-    };
+export interface TeamRankingResource {
+    name: string;
+    player_count: number;
+    turns_used: number;
+    score: number;
+    rating: number;
+    efficiency: number;
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
@@ -49,7 +33,13 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         sorts: Array<string>;
         sorting_by: string;
         sorting_direction: 'ASC' | 'DESC';
-        ranking: PaginatedRankingResource;
+        ranking: PaginatedResource<PlayerRankingResource>;
+    },
+    team: {
+        sorts: Array<string>;
+        sorting_by: string;
+        sorting_direction: 'ASC' | 'DESC';
+        ranking: PaginatedResource<TeamRankingResource>;
     }
 }
 
