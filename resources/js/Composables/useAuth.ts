@@ -12,7 +12,7 @@ export function useAuth() {
         logout: () => console.log('todo: implement'),
         user,
         ship: isLoggedIn.value ? user.ship : null,
-        sector: isLoggedIn.value ? user.ship.sector : null,
+        sector: isLoggedIn.value ? user?.ship?.sector : null,
         presets: isLoggedIn.value ? user.presets : null,
     }
 }
