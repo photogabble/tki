@@ -1,20 +1,22 @@
 import {PageProps as InertiaPageProps} from "@inertiajs/core";
 import {PaginatedResource} from "@/types/pagination";
+import {RouteParams} from "ziggy-js";
 
 export interface PlayerRankingResource {
-    name: string
-    turns_used: number
-    score: number
+    name: string;
+    insignia: string;
+    turns_used: number;
+    score: number;
     last_login: {
         nice: string,
         unix: number,
-    }
-    rating
-    efficiency: number
+    };
+    rating: number;
+    efficiency: number;
     team: any; // todo TeamResource
 }
 
-export interface PlayerRankingParams {
+export type PlayerRankingParams = RouteParams & {
     sort_players_by: string;
     sort_players_direction?: string;
 }
@@ -26,6 +28,11 @@ export interface TeamRankingResource {
     score: number;
     rating: number;
     efficiency: number;
+}
+
+export type TeamRankingParams = RouteParams & {
+    sort_teams_by: string;
+    sort_teams_direction?: string;
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
