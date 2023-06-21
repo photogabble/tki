@@ -3,6 +3,7 @@ import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import PrimaryButton from "@/Components/atoms/form/PrimaryButton.vue";
 import {ShipResource} from "@/types/ship";
 import {useModal} from "@/Composables/useModal";
+import MoonOrbit from "@/Components/atoms/icons/MoonOrbit.vue";
 
 const props = defineProps<{
   ship: ShipResource;
@@ -26,8 +27,14 @@ const { openModal } = useModal('ship-report')
         <li>Torpedoes: {{ship.weapons.torpedoes.current}}/{{ship.weapons.torpedoes.max}}</li>
       </ul>
     </div>
-    <div class="flex">
-      <primary-button @click="openModal" class="h-6 flex-grow">Report</primary-button>
-    </div>
+    <nav class="flex justify-evenly">
+      <primary-button @click="openModal" class="aspect-square">Lv</primary-button>
+      <primary-button class="aspect-square">LRS</primary-button>
+      <primary-button class="aspect-square">0</primary-button>
+      <primary-button class="aspect-square">1</primary-button>
+      <primary-button class="aspect-square">2</primary-button>
+      <primary-button class="aspect-square">3</primary-button>
+      <primary-button class="aspect-square">4</primary-button>
+    </nav>
   </sidebar-panel>
 </template>
