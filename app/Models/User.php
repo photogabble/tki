@@ -36,6 +36,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int $credits
  * @property int $turns
  * @property int $turns_used
+ * @property int $score
  * @property-read Ship|null $ship // If a player has no ship (escape pods are ships) then they have died in space
  * @property-read Preset|Collection $presets
  * @property-read Team|null $team
