@@ -2,7 +2,7 @@
   <div class="bg-slate-700/10 w-16 p-2 border-partway-y flex flex-col" style="--border-part-b-height: 12px; --border-part-t-height: 12px;">
     <div class="flex flex-col space-y-2 mb-2 flex-grow">
       <div class="space-y-1 text-2xl">
-        <NavLink :href="isLoggedIn ? '/dashboard' : '/'" title="Overview"><DashboardIcon/></NavLink> <!-- Overview -->
+        <NavLink :href="isLoggedIn ? '/dashboard' : '/'" :active="route().current('dashboard')" title="Overview"><DashboardIcon/></NavLink> <!-- Overview -->
         <NavLink href="/explore" title="Explore universe" :disabled="!isLoggedIn"><ExploreIcon/></NavLink> <!-- Explore Universe -->
         <NavLink href="/research" title="Research and Development" :disabled="!isLoggedIn"><ResearchIcon/></NavLink> <!-- Research -->
         <NavLink href="/harvesting" title="Manage Resource Harvesting" :disabled="!isLoggedIn"><HarvestingIcon/></NavLink> <!-- Resource Harvesting -->
@@ -13,7 +13,7 @@
 
       <div class="space-y-1 text-2xl">
         <NavLink href="/market" title="Buy/Sell in the Marketplace" :disabled="!isLoggedIn"><MarketplaceIcon/></NavLink> <!-- Marketplace -->
-        <NavLink href="/ranking" title="View Player Rankings"><RankingIcon/></NavLink> <!-- Player Ranking -->
+        <NavLink href="/ranking" title="View Player Rankings" :active="route().current('ranking')"><RankingIcon/></NavLink> <!-- Player Ranking -->
       </div>
 
       <!-- Decoration -->
