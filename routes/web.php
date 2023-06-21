@@ -20,6 +20,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index']);
 });
 
+Route::get('/ranking', [\Tki\Http\Controllers\RankingController::class, 'index'])->name('ranking');
+
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
 
     /** @var \Tki\Models\User $user */

@@ -23,7 +23,7 @@ const linkParams = (s: string) => {
     <section-header>
       <template #actions>
         <span class="mr-2">Page {{ ranking.meta.current_page }}/{{ ranking.meta.last_page }}</span>
-        <nav class="space-x-2">
+        <nav class="space-x-2" v-if="ranking.meta.last_page > ranking.meta.current_page">
           <Link v-for="link of ranking.meta.links" :class="`${link.active ? 'text-ui-yellow' : 'hover:text-ui-yellow' }`" :href="link.url" v-html="link.label"/>
         </nav>
       </template>
@@ -62,9 +62,9 @@ const linkParams = (s: string) => {
       </thead>
       <tbody>
         <tr v-for="player in ranking.data">
-          <td class="p-1">123</td>
+          <td class="p-1">{{ (ranking.meta.per_page * (ranking.meta.current_page-1)) + (idx+1) }}</td>
           <td class="p-1">{{ player.score }}</td>
-          <td class="p-1">{{ player.name }}</td>
+          <td class="p-1">{{ player.insignia }} {{ player.name }}</td>
           <td class="p-1">{{ player.turns_used }}</td>
           <td class="p-1">{{ player.last_login.nice }}</td>
           <td :class="['p-1', {'text-red-600': player.rating < 0, 'text-green-600': player.rating > 0}]">{{ player.rating }}</td>
