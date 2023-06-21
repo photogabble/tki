@@ -25,6 +25,7 @@
 namespace Tki\Actions;
 
 use Tki\Helpers\Ownership;
+use Tki\Models\User;
 use Tki\Registry;
 use Tki\Translate;
 
@@ -99,33 +100,20 @@ class Character
         $stmt->execute();
     }
 
-    public function getInsignia(\PDO $pdo_db, string $language, string $a_username): string
+    public function getInsignia(User $user): string
     {
-        // Lookup players score.
-        $players_gateway = new Tki\Models\User($pdo_db);
-        $playerinfo = $players_gateway->selectPlayerInfo($a_username);
-
-        $langvars = Translate::load($pdo_db, $language, array('insignias'));
-
         for ($estimated_rank = 0; $estimated_rank < 20; $estimated_rank++)
         {
             $value = pow(2, $estimated_rank * 2);
             $value *= (500 * 2);
-            if ($playerinfo['score'] <= $value)
+            if ($user->score <= $value)
             {
                 // Ok we have found our Insignia, now set and break out of the for loop.
-                $temp_insignia = 'l_insignia_' . $estimated_rank;
-                $player_insignia = $langvars[$temp_insignia];
-                break;
+                return __('insignias.l_insignia_' . $estimated_rank);
             }
         }
 
-        if (!isset($player_insignia))
-        {
-            // Hmm, player has out ranked out highest rank, so just return that.
-            $player_insignia = $langvars['l_insignia_19'];
-        }
-
-        return (string) $player_insignia;
+        // Hmm, player has out ranked out highest rank, so just return that.
+        return __('insignias.l_insignia_l_insignia_19');
     }
 }
