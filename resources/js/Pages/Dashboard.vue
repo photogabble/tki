@@ -21,7 +21,7 @@ const { sector, presets, ship } = useAuth();
       <template #sidebar>
         <player-ship-panel v-if="ship" :ship="ship" />
 
-        <div class="flex flex-col flex-grow overflow-y-scroll max-h-full">
+        <div class="flex flex-col flex-grow overflow-y-scroll max-h-full space-y-2 mt-2">
           <ship-cargo-panel v-if="ship" :cargo="ship.cargo_holds" :energy="ship.energy" />
 
           <sector-warps-panel v-if="sector" :sector="sector" />
