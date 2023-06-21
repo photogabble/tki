@@ -44,6 +44,9 @@ class ProfileController extends Controller
 
     /**
      * Delete the user's account.
+     *
+     * This is similar functionality to self_destruct.php in that it removes you from the game; however unlike
+     * self_destruct.php it does so via complete deletion of the users account.
      */
     public function destroy(Request $request): RedirectResponse
     {
