@@ -3,6 +3,7 @@ import {usePage, Link} from "@inertiajs/vue3";
 import type {RankingPageProps, PlayerRankingParams} from "@/types/resources/ranking";
 import SectionHeader from "@/Components/atoms/layout/SectionHeader.vue";
 import ColumnSortLink from "@/Components/molecules/ColumnSortLink.vue";
+import PaginationPrevNext from "@/Components/atoms/pagination/PaginationPrevNext.vue";
 
 const {ranking, sorts, sorting_by, sorting_direction}  = usePage<RankingPageProps>().props.player;
 const linkParams = (s: string) => {
@@ -22,10 +23,7 @@ const linkParams = (s: string) => {
   <section>
     <section-header>
       <template #actions>
-        <span class="mr-2">Page {{ ranking.meta.current_page }}/{{ ranking.meta.last_page }}</span>
-        <nav class="space-x-2" v-if="ranking.meta.last_page > ranking.meta.current_page">
-          <Link v-for="link of ranking.meta.links" :class="`${link.active ? 'text-ui-yellow' : 'hover:text-ui-yellow' }`" :href="link.url" v-html="link.label"/>
-        </nav>
+        <pagination-prev-next :pagination="ranking" />
       </template>
       <span class="text-white">Players Ranking</span>
     </section-header>
