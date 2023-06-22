@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {usePage, Link} from "@inertiajs/vue3";
-import type {RankingPageProps, PlayerRankingParams} from "@/types/ranking";
+import type {RankingPageProps, PlayerRankingParams} from "@/types/resources/ranking";
 import SectionHeader from "@/Components/atoms/layout/SectionHeader.vue";
 import ColumnSortLink from "@/Components/molecules/ColumnSortLink.vue";
 

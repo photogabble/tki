@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import PrimaryButton from "@/Components/atoms/form/PrimaryButton.vue";
-import {ShipResource} from "@/types/ship";
+import {ShipResource} from "@/types/resources/ship";
 import {useModal} from "@/Composables/useModal";
-import MoonOrbit from "@/Components/atoms/icons/MoonOrbit.vue";
 
 const props = defineProps<{
   ship: ShipResource;

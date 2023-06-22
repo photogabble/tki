@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
-import {PresetResource} from "@/types/preset";
+import {PresetResource} from "@/types/resources/preset";
 import SectorNavButton from "@/Components/atoms/SectorNavButton.vue";
 
 const props = defineProps<{

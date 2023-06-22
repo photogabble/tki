@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {usePage, Link} from "@inertiajs/vue3";
-import type {RankingPageProps} from "@/types/ranking";
+import type {RankingPageProps} from "@/types/resources/ranking";
 import SectionHeader from "@/Components/atoms/layout/SectionHeader.vue";
-import {TeamRankingParams} from "@/types/ranking";
+import {TeamRankingParams} from "@/types/resources/ranking";
 import ColumnSortLink from "@/Components/molecules/ColumnSortLink.vue";
 
 const {ranking, sorts, sorting_by, sorting_direction}  = usePage<RankingPageProps>().props.team;
