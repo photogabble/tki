@@ -48,6 +48,14 @@ class Universe extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        // These are virtual attributes, loaded for the Galaxy Map
+        // See: GameController::galaxyMap
+        'is_current_sector' => 'bool',
+        'has_visited' => 'bool',
+        'has_danger' => 'bool',
+    ];
+
     public function zone(): BelongsTo
     {
         return $this->belongsTo(Zone::class);
