@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Psy\Exception\DeprecatedException;
 
 /**
@@ -75,6 +76,11 @@ class Universe extends Model
     public function movementLog(): HasMany
     {
         return $this->hasMany(MovementLog::class, 'sector_id');
+    }
+
+    public function latestMovementLog(): HasOne
+    {
+        return $this->hasOne(MovementLog::class, 'sector_id')->latestOfMany();
     }
 
     /**
