@@ -72,7 +72,7 @@ class ShipResource extends JsonResource
         return [
             'name' => $this->ship_name,
             'sector_id' => $this->sector_id,
-            'sector' => new SectorResource($this->sector),
+            'sector' => new SectorScanResource($this->whenLoaded('sector')),
             'level' => $shipLv,
 
             'armor' => [
