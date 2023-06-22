@@ -34,12 +34,14 @@ use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
 
 /**
+ * @property string $beacon
  * @property-read Zone $zone
  * @property-read Collection|Link[] $links
  * @property-read Collection|Planet[] $planets
  * @property-read Collection|Ship[] $ships
  * @property-read Collection|SectorDefense[] $defenses
  * @property-read Collection $ports
+ * @property-read Collection|MovementLog[] $movementLog
  */
 class Universe extends Model
 {
@@ -68,6 +70,11 @@ class Universe extends Model
     public function links(): HasMany
     {
         return $this->hasMany(Link::class, 'start');
+    }
+
+    public function movementLog(): HasMany
+    {
+        return $this->hasMany(MovementLog::class, 'sector_id');
     }
 
     /**
