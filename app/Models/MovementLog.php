@@ -25,13 +25,25 @@
 namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon $created_at
+ * @property int $sector_id
+ * @property-read Universe $sector
+ */
 class MovementLog extends Model
 {
 
     protected $fillable = [
         'user_id', 'sector_id'
     ];
+
+    public function sector(): BelongsTo
+    {
+        return $this->belongsTo(Universe::class, 'sector_id');
+    }
 
     public static function writeLog(int $user_id, int $sector_id): void
     {
