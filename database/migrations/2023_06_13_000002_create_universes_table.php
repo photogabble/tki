@@ -25,6 +25,8 @@ return new class extends Migration
             $table->integer('port_ore')->default(0);
             $table->integer('port_goods')->default(0);
             $table->integer('port_energy')->default(0);
+
+            // Sector Beacons are able to be set by owners of a sectors zone.
             $table->string('beacon', 50)->nullable()->default(null);
             $table->decimal('angle1')->default(0);
             $table->decimal('angle2')->default(0);
