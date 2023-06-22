@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'ship' => new ShipResource($this->whenLoaded('ship')),
             'presets' => UserPresetResource::collection($this->whenLoaded('presets')),
+            'movement_log' => MovementLogResource::collection($this->whenLoaded('movementLog')),
             'turns' => $this->turns,
             'turns_used' => $this->turns_used,
             'credits' => $this->credits,
