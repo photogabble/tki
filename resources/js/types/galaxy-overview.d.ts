@@ -6,6 +6,7 @@ import {SectorResource} from "@/types/resources/sector";
 export type PageProps = GlobalPageProps & {
     movement_log: Array<MovementLogResource>;
     current_sector: SectorResource;
+    sector_count: number;
 }
 
 export interface GalaxyOverviewPageProps extends InertiaPageProps, PageProps {
