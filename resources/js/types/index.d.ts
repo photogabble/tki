@@ -1,5 +1,6 @@
-import {ShipResource} from "@/types/ship";
-import {PresetResource} from "@/types/preset";
+import {ShipResource} from "@/types/resources/ship";
+import {PresetResource} from "@/types/resources/preset";
+import {MovementLogResource} from "@/types/resources/movement-log";
 
 export interface User {
     id: number;
@@ -7,8 +8,11 @@ export interface User {
     email: string;
     email_verified_at: string;
     lang: string;
-    ship: ShipResource;
+
+    ship?: ShipResource;
+    movement_log?: Array<MovementLogResource>;
     presets: Array<PresetResource>;
+
     turns: number;
     turns_used: number;
     credits: number;

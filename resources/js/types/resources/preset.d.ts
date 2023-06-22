@@ -1,4 +1,4 @@
-import {LinkResource} from "@/types/link";
+import type {LinkResource} from "@/types/resources/link";
 
 export interface PresetResource
 {

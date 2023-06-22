@@ -1,4 +1,4 @@
-import {SectorResource} from "@/types/sector";
+import type {SectorResource} from "@/types/resources/sector";
 
 // TODO Ship Sizes
 export type ShipSize = 'S' | 'M' | 'L';
@@ -58,7 +58,7 @@ export interface ShipResource
     };
 
     sector_id: number;
-    sector: SectorResource;
+    sector?: SectorResource;
     devices: ShipDevices;
     cargo_holds: ShipCargo;
     energy: CurrentMax;

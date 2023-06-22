@@ -1,4 +1,4 @@
-import {Owner} from "@/types/index";
+import type {Owner} from "@/types";
 
 export interface PlanetResource
 {

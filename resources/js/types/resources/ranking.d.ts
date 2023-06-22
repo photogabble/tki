@@ -1,6 +1,6 @@
-import {PageProps as InertiaPageProps} from "@inertiajs/core";
-import {PaginatedResource} from "@/types/pagination";
-import {RouteParams} from "ziggy-js";
+import type {PageProps as InertiaPageProps} from "@inertiajs/core";
+import type {PaginatedResource} from "@/types/laravel/pagination";
+import type {RouteParams} from "ziggy-js";
 
 export interface PlayerRankingResource {
     name: string;

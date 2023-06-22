@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {LinkResource} from "@/types/link";
+import {LinkResource} from "@/types/resources/link";
 
 const props = defineProps<{
   link: LinkResource;
