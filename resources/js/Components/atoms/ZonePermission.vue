@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ZonePermission} from "@/types/zone-info";
+import {ZonePermission} from "@/types/resources/zone";
 
 withDefaults(
     defineProps<{
