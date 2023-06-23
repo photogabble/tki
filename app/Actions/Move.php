@@ -27,14 +27,13 @@ namespace Tki\Actions;
 // TODO: move to app/Helpers
 
 use Tki\Helpers\CalcLevels;
-use Tki\Registry;
 
 class Move
 {
-    public static function calcFuelScooped(array $playerinfo, int $distance, int $triptime, Registry $tkireg): int
+    public static function calcFuelScooped(\Tki\Models\Ship $ship, int $distance, int $turns): int
     {
         // Check if we have a fuel scoop
-        if ($playerinfo['dev_fuelscoop'] == 'Y')
+        if ($ship->dev_fuelscoop)
         {
             // We have a fuel scoop, now calculate the amount of energy scooped.
             $energyscooped = $distance * 100;
@@ -46,13 +45,13 @@ class Move
         }
 
         // Seems this will never happen ?
-        if ($playerinfo['dev_fuelscoop'] == 'Y' && $energyscooped == 0 && $triptime == 1)
+        if ($ship->dev_fuelscoop && $energyscooped === 0 && $turns === 1)
         {
             $energyscooped = 100;
         }
 
         // Calculate the free power for the ship.
-        $free_power = CalcLevels::energy($playerinfo['power'], $tkireg) - $playerinfo['ship_energy'];
+        $free_power = CalcLevels::energy($ship->power) - $ship->ship_energy;
         if ($free_power < $energyscooped)
         {
             // Limit the energy scooped to the maximum free power available.
