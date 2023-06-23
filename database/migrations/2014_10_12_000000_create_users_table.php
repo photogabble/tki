@@ -38,6 +38,21 @@ return new class extends Migration
 
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('team_id')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('set null');
+
+            $table->foreign('team_invite')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('set null');
+
+            $table->foreign('ship_id')
+                ->references('id')
+                ->on('ships')
+                ->onDelete('set null');
         });
     }
 

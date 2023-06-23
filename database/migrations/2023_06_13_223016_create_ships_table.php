@@ -75,6 +75,11 @@ return new class extends Migration
             $table->boolean('trade_energy')->default(true);
 
             $table->string('cleared_defenses', 99)->nullable()->default(null);
+
+            $table->foreign('owner_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
         });
     }
 

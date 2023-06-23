@@ -17,6 +17,16 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sector_id');
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('sector_id')
+                ->references('id')
+                ->on('universes')
+                ->onDelete('cascade');
         });
     }
 
