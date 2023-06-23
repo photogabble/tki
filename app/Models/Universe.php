@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /**
  * classes/Sectors/SectorsGateway.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
@@ -26,13 +26,17 @@ namespace Tki\Models;
 
 // TODO: rename Sector and handle all the migration stuff
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
+use DB;
+
 
 /**
  * @property string $beacon
@@ -117,13 +121,13 @@ class Universe extends Model
         $yy = ($this->distance * sin($sa1) * sin($sa2)) - ($destination->distance * sin($fa1) * sin($fa2));
         $zz = ($this->distance * cos($sa1)) - ($destination->distance * cos($fa1));
 
-        $distance = (int) round(sqrt(pow($xx, 2) + pow($yy, 2) + pow($zz, 2)));
+        $distance = (int)round(sqrt(pow($xx, 2) + pow($yy, 2) + pow($zz, 2)));
 
         // Calculate the speed of the ship.
         $shipSpeed = pow(config('game.level_factor'), $ship->engines);
 
         // Calculate the trip time.
-        $turns = (int) round($distance / $shipSpeed);
+        $turns = (int)round($distance / $shipSpeed);
 
         return [
             'turns' => $turns,
@@ -132,12 +136,41 @@ class Universe extends Model
     }
 
     /**
-     * @todo refactor all usages to use sector relationship
-     * @deprecated
+     * Helper function for getting a sector (or sectors) from the point of view of the
+     * player. If this begins getting more complex, maybe turn into a macro.
+     *
+     * @param User $user
+     * @return Builder
+     */
+    public static function queryForUser(User $user): Builder
+    {
+        return Universe::query()
+            ->leftJoin('movement_logs', function (JoinClause $join) use ($user) {
+                // Have we visited?
+                $join
+                    ->on('movement_logs.sector_id', '=', 'universes.id')
+                    ->where('movement_logs.user_id', '=', $user->id);
+            })
+            ->leftJoin('ships', function (JoinClause $join) use ($user) {
+                // Are we currently in this sector?
+                $join
+                    ->on('ships.sector_id', '=', 'universes.id')
+                    ->where('ships.id', '=', $user->ship_id);
+            })
+            ->select([
+                'universes.*',
+                DB::raw('IF(movement_logs.id IS NULL, false, true) as has_visited'),
+                DB::raw('IF(ships.id IS NULL, false, true) as is_current_sector'),
+            ]);
+    }
+
+    /**
      * @param int $sector_id
      * @return array|bool
+     * @todo refactor all usages to use sector relationship
+     * @deprecated
      */
-    public function selectSectorInfo(int $sector_id): array | bool
+    public function selectSectorInfo(int $sector_id): array|bool
     {
         throw new DeprecatedException('refactor usage to use sector relationship');
     }
