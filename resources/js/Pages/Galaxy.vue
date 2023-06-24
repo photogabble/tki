@@ -104,27 +104,27 @@ const computeRsMove = (sector: number) => {
 
         <div class="mt-4 space-x-4 flex">
           <span class="flex items-center">
-            <img src="../../../images/map-tiles/port-ore.png" class="mr-2"
+            <img src="../../images/map-tiles/port-ore.png" class="mr-2"
                  :alt="`${__('main.l_port')}:  ${__('galaxy.l_ore_port')}`"/> {{ __('galaxy.l_ore_port') }}
             </span>
           <span class="flex items-center">
-            <img src="../../../images/map-tiles/port-organics.png" class="mr-2"
+            <img src="../../images/map-tiles/port-organics.png" class="mr-2"
                  :alt="`${__('main.l_port')}:  ${__('galaxy.l_organics_port')}`"/> {{ __('galaxy.l_organics_port') }}
             </span>
           <span class="flex items-center">
-            <img src="../../../images/map-tiles/port-energy.png" class="mr-2"
+            <img src="../../images/map-tiles/port-energy.png" class="mr-2"
                  :alt="`${__('main.l_port')}:  ${__('galaxy.l_energy_port')}`"/> {{ __('galaxy.l_energy_port') }}
             </span>
           <span class="flex items-center">
-            <img src="../../../images/map-tiles/port-goods.png" class="mr-2"
+            <img src="../../images/map-tiles/port-goods.png" class="mr-2"
                  :alt="`${__('main.l_port')}:  ${__('galaxy.l_goods_port')}`"/> {{ __('galaxy.l_goods_port') }}
             </span>
           <span class="flex items-center">
-            <img src="../../../images/map-tiles/none.png" class="mr-2"
+            <img src="../../images/map-tiles/none.png" class="mr-2"
                  :alt="`${__('main.l_port')}:  ${__('galaxy.l_no_port')}`"/> {{ __('galaxy.l_no_port') }}
             </span>
           <span class="flex items-center">
-            <img src="../../../images/map-tiles/unknown.png" class="mr-2"
+            <img src="../../images/map-tiles/unknown.png" class="mr-2"
                  :alt="`${__('main.l_port')}:  ${__('galaxy.l_unexplored')}`"/> {{ __('galaxy.l_unexplored') }}
           </span>
         </div>
