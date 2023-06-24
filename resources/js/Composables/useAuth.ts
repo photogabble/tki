@@ -1,11 +1,12 @@
 import {usePage} from "@inertiajs/vue3";
 import {computed} from "vue";
+import type {User} from "@/types";
 
 // TODO: Rename to usePlayerState
 export function useAuth() {
     const pageProps = usePage();
     const isLoggedIn = computed<Boolean>(() => pageProps.props.auth.user !== null);
-    const user = pageProps.props.auth.user;
+    const user: User = pageProps.props.auth.user;
 
     return {
         isLoggedIn,
