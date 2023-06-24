@@ -7,10 +7,29 @@ export type SectorType = 'unknown' | 'none' | 'port-goods' | 'port-energy' | 'po
 
 export interface SectorResource
 {
-    id: number
-    zone: ZoneResource
+    id: number;
+    beacon: string;
+    port_type: SectorType;
+
+    // Scanned Resources:
+    zone?: ZoneResource;
     planets?: Array<PlanetResource>;
     ports?: Array<any>;
     defenses?: Array<SectorDefenseResource>;
     links?: Array<LinkResource>;
+}
+
+export interface SectorResourceWithPlayerMeta extends SectorResource
+{
+    is_current_sector: boolean
+    has_visited: boolean;
+    has_danger: boolean;
+}
+
+export interface SectorMapTile
+{
+    sector_id: number;
+    sector?: SectorResource;
+    sector_type: SectorType;
+    is_current_sector: boolean;
 }
