@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<script setup lang="ts">
 /**
  * galaxy.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
@@ -21,109 +21,114 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import NavigationConfirmPopup from "@/Components/organisms/NavigationConfirmPopup.vue";
+import PaginationPrevNext from "@/Components/atoms/pagination/PaginationPrevNext.vue";
+import type {SectorResourceWithPlayerMeta} from "@/types/resources/sector";
+import SectionHeader from "@/Components/atoms/layout/SectionHeader.vue";
+import type {GalaxyOverviewPageProps} from "@/types/galaxy-overview";
+import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
+import MapTile from "@/Components/atoms/MapTile.vue";
+import {usePage, router} from "@inertiajs/vue3";
+import GameUI from "@/Layouts/GameUI.vue";
+import {computed, ref} from "vue";
 
-require_once './common.php';
+const hoveringSector = ref<SectorResourceWithPlayerMeta>({id:0} as SectorResourceWithPlayerMeta);
+const {sectors, rsMove, navCom} = usePage<GalaxyOverviewPageProps>().props;
+const realSpaceOpen = ref(rsMove !== undefined);
+const map = ref(null);
+const columns = 50;
 
-$login = new Tki\Login();
-$login->checkLogin($pdo_db, $lang, $tkireg, $tkitimer, $template);
+const tiles = computed(() => {
+    const rows : Array<Array<SectorResourceWithPlayerMeta>> = [];
+    let cols : Array<SectorResourceWithPlayerMeta> = [];
 
-// Database driven language entries
-$langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'footer',
-                                'galaxy', 'insignias', 'main', 'port',
-                                'universal'));
-$title = $langvars['l_map_title'];
-
-$header = new Tki\Header();
-$header->display($pdo_db, $lang, $template, $title);
-
-echo "<h1>" . $title . "</h1>\n";
-
-// Get playerinfo from database
-$players_gateway = new \Tki\Models\User($pdo_db);
-$playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-
-$sql = "SELECT distinct ::prefix::movement_log.sector_id, port_type, beacon FROM ::prefix::movement_log, ::prefix::universe WHERE ship_id = :ship_id AND ::prefix::movement_log.sector_id = ::prefix::universe.sector_id order by sector_id ASC";
-$stmt = $pdo_db->prepare($sql);
-$stmt->bindParam(':ship_id', $playerinfo['ship_id'], PDO::PARAM_INT);
-$stmt->execute();
-$discovered_sectors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-$discovered_count = 0;
-$tile = array();
-
-$tile['special'] = "port-special.png";
-$tile['ore'] = "port-ore.png";
-$tile['organics'] = "port-organics.png";
-$tile['energy'] = "port-energy.png";
-$tile['goods'] = "port-goods.png";
-$tile['none'] = "space.png";
-$tile['unknown'] = "uspace.png";
-
-$current_sector = 1; // Clear this before iterating through the sectors
-
-// Display sectors as imgs, and each class in css in header.php; then match the width and height here
-$div_w = 20; // Only this width to match the included images
-$div_h = 20; // Only this height to match the included images
-$div_border = 2; // CSS border is 1 so this should be 2
-$div_xmax = 50; // Where to wrap to next line
-$div_ymax = $tkireg->max_sectors / $div_xmax;
-$map_width = ($div_w + $div_border) * $div_xmax;  // Define the containing div to be the right width to wrap at $div_xmax
-
-// Setup containing div to hold the width of the images
-echo "\n<div id='map' style='position:relative;background-color:#0000ff;width:" . $map_width . "px'>\n";
-for ($rows = 0; $rows < $div_ymax; $rows++) // Loop the rows
-{
-    for ($columns = 0; $columns < $div_xmax; $columns++) // Loop the columns
-    {
-        if ((count($discovered_sectors) > $discovered_count) && ($discovered_sectors[$discovered_count]['sector_id'] !== null && ($discovered_sectors[$discovered_count]['sector_id'] === $current_sector)))
-        {
-            $port_type_title = $discovered_sectors[$discovered_count]['port_type'];
-            // Build the alt text for each image
-            $alt = $langvars['l_sector'] . ": {$discovered_sectors[$discovered_count]['sector_id']} Port: {$discovered_sectors[$discovered_count]['port_type']} ";
-
-            if ($discovered_sectors[$discovered_count]['beacon'] !== null)
-            {
-                $alt .= "{$discovered_sectors[$discovered_count]['beacon']}";
-            }
-
-            echo "\n<a href=\"rsmove.php?engage=1&amp;destination=" . $discovered_sectors[$discovered_count]['sector_id'] . "\">";
-            echo "<img class='map " . $discovered_sectors[$discovered_count]['port_type'] . "' src='" . $template->getVariables('template_dir') . "/images/" . $tile[$port_type_title] . "' alt='" . $alt . "' style='width:20px; height:20px'></a> ";
-
-            // Move to next explored sector in database results
-            if ($discovered_count < count($discovered_sectors))
-            {
-                $discovered_count++;
-            }
-
-            $current_sector++;
-        }
-        else
-        {
-            // Build the alt text for each image
-            $alt = $current_sector . " - " . $langvars['l_unknown'] . " ";
-            echo "<a href=\"rsmove.php?engage=1&amp;destination=" . $current_sector . "\">";
-            echo "<img class='map un' src='" . $template->getVariables('template_dir') . "/images/" . $tile['unknown'] . "' alt='" . $alt . "' style='width:20px; height:20px'></a> ";
-            $current_sector++;
+    for (const sector of sectors.data) {
+        cols.push(sector);
+        if (cols.length === columns) {
+            rows.push(cols);
+            cols = [];
         }
     }
+    return rows;
+});
+
+/**
+ * Triggers Inertia::lazy to compute rsMove and return, that value is then used to open a modal
+ * in order to display the RealSpace Move info and ask the player if they wish to navigate.
+ *
+ * @param sector
+ */
+const computeRsMove = (sector: number) => {
+    router.visit(route('explore', {sector}), {
+        only: ['rsMove'],
+    })
 }
+</script>
 
-// These are the row numbers on the side of the map
-for ($row_number = 1; $row_number <= ($tkireg->max_sectors / 50); $row_number++)
-{
-    echo "\n<div style='position:absolute;left:" . ($map_width + 10) . "px;top:" . (($row_number - 1) * ($div_h + $div_border)) . "px;'>" . ($row_number * 50) . "</div>";
-}
+<template>
+  <GameUI>
+    <navigation-confirm-popup v-model="realSpaceOpen" :rs-move="rsMove" :nav-com="navCom" />
+    <main-panel>
+      <section ref="map" class="flex flex-col justify-center items-center h-full">
+        <div class="border-4 border-double border-ui-orange-500/50 ">
+          <section-header class="mb-4">
+            <template #actions>
+              <pagination-prev-next :pagination="sectors" />
+            </template>
+            <span class="text-white">{{ __('galaxy.l_map_title') }}</span>
+          </section-header>
 
-echo "</div><div style='clear:both'></div><br>";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_special_port'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['special']}'> &lt;- " . $langvars['l_special_port'] . "</div>\n";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_ore_port'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['ore']}'> &lt;- " . $langvars['l_ore_port'] . "</div>\n";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_organics_port'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['organics']}'> &lt;- " . $langvars['l_organics_port'] . "</div>\n";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_energy_port'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['energy']}'> &lt;- " . $langvars['l_energy_port'] . "</div>\n";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_goods_port'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['goods']}'> &lt;- " . $langvars['l_goods_port'] . "</div>\n";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_no_port'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['none']}'> &lt;- " . $langvars['l_no_port'] . "</div>\n";
-echo "    <div><img style='height:20px; width:20px' alt='" . $langvars['l_port'] . ": " . $langvars['l_unexplored'] . "' src='" . $template->getVariables('template_dir') . "/images/{$tile['unknown']}'> &lt;- " . $langvars['l_unexplored'] . "</div>\n";
+          <div v-if="tiles.length > 0" v-for="(row, r) in tiles" :key="`row-${r}`" class="flex px-4">
+            <button
+                v-for="column in row"
+                :class="['border-2 hover:border-white', {
+                'border-transparent': !column.is_current_sector,
+                'border-green-600': column.is_current_sector,
+              }]"
+                :key="`sector-${column.id}`"
+                :aria-label="`${__('main.l_sector')}: ${column.id} - `"
+                @mouseenter="hoveringSector = column"
+                @click="computeRsMove(column.id)"
+            >
+              <map-tile :type="column.port_type" :aria-hidden="true" />
+            </button>
+            <span :class="['text-sm w-8 ml-2 block text-left', {
+            'text-white': (hoveringSector.id >= (r * columns) && hoveringSector.id <= (r * columns))
+          }]">{{ columns + r * columns }}</span>
+          </div>
 
-echo "<br><br>";
-Tki\Text::gotoMain($pdo_db, $lang);
+          <div class="flex w-full px-4">
+            <span>Sector: {{ hoveringSector.id }} - {{ hoveringSector.port_type }}</span>
+          </div>
+        </div>
 
-$footer = new Tki\Footer();
-$footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
+        <div class="mt-4 space-x-4 flex">
+          <span class="flex items-center">
+            <img src="../../../images/map-tiles/port-ore.png" class="mr-2"
+                 :alt="`${__('main.l_port')}:  ${__('galaxy.l_ore_port')}`"/> {{ __('galaxy.l_ore_port') }}
+            </span>
+          <span class="flex items-center">
+            <img src="../../../images/map-tiles/port-organics.png" class="mr-2"
+                 :alt="`${__('main.l_port')}:  ${__('galaxy.l_organics_port')}`"/> {{ __('galaxy.l_organics_port') }}
+            </span>
+          <span class="flex items-center">
+            <img src="../../../images/map-tiles/port-energy.png" class="mr-2"
+                 :alt="`${__('main.l_port')}:  ${__('galaxy.l_energy_port')}`"/> {{ __('galaxy.l_energy_port') }}
+            </span>
+          <span class="flex items-center">
+            <img src="../../../images/map-tiles/port-goods.png" class="mr-2"
+                 :alt="`${__('main.l_port')}:  ${__('galaxy.l_goods_port')}`"/> {{ __('galaxy.l_goods_port') }}
+            </span>
+          <span class="flex items-center">
+            <img src="../../../images/map-tiles/none.png" class="mr-2"
+                 :alt="`${__('main.l_port')}:  ${__('galaxy.l_no_port')}`"/> {{ __('galaxy.l_no_port') }}
+            </span>
+          <span class="flex items-center">
+            <img src="../../../images/map-tiles/unknown.png" class="mr-2"
+                 :alt="`${__('main.l_port')}:  ${__('galaxy.l_unexplored')}`"/> {{ __('galaxy.l_unexplored') }}
+          </span>
+        </div>
+      </section>
+    </main-panel>
+  </GameUI>
+</template>
