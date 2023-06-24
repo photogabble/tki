@@ -1,12 +1,20 @@
 import type {PageProps as InertiaPageProps} from "@inertiajs/core";
 import type {PageProps as GlobalPageProps} from "./index";
-import {MovementLogResource} from "@/types/resources/movement-log";
-import {SectorResource} from "@/types/resources/sector";
+import {SectorResourceWithPlayerMeta} from "@/types/resources/sector";
+import {PaginatedResource} from "@/types/laravel/pagination";
+
+export interface RealSpaceMove {
+    sector: SectorResourceWithPlayerMeta;
+    can_navigate: boolean;
+    turns: number;
+    turns_available: number;
+    energy_scooped: number;
+}
 
 export type PageProps = GlobalPageProps & {
-    movement_log: Array<MovementLogResource>;
-    current_sector: SectorResource;
-    sector_count: number;
+    sectors: PaginatedResource<SectorResourceWithPlayerMeta>;
+    rsMove?: RealSpaceMove;
+    navCom?: unknown;
 }
 
 export interface GalaxyOverviewPageProps extends InertiaPageProps, PageProps {
