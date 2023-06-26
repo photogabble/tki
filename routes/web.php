@@ -6,6 +6,7 @@ use Tki\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Tki\Http\Controllers\RankingController;
 use Tki\Http\Controllers\RealSpaceNavigationController;
+use Tki\Http\Controllers\WarpNavigationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,11 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/navigation/real-space', [RealSpaceNavigationController::class, 'makeRealSpaceMove'])
         ->name('real-space.move');
 
-    // TODO: Pass loaded user to dashboard...
+    Route::get('/navigation/warp', [WarpNavigationController::class, 'calculateWarpMoves'])
+        ->name('warp.calculate');
 
-    // This is akin to main.php
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::post('/navigation/warp', [WarpNavigationController::class, 'makeWarpMove'])
+        ->name('warp.move');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])
