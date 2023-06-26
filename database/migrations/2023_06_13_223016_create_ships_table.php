@@ -81,6 +81,13 @@ return new class extends Migration
                 ->on('users')
                 ->onDelete('set null');
         });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('ship_id')
+                ->references('id')
+                ->on('ships')
+                ->onDelete('set null');
+        });
     }
 
     /**

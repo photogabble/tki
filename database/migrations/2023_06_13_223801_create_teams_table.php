@@ -20,6 +20,18 @@ return new class extends Migration
             $table->string('description', 20);
             $table->unsignedInteger('number_of_members')->default(0);
         });
+
+        Schema::table('users', function (Blueprint $table){
+            $table->foreign('team_id')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('set null');
+
+            $table->foreign('team_invite')
+                ->references('id')
+                ->on('teams')
+                ->onDelete('set null');
+        });
     }
 
     /**
