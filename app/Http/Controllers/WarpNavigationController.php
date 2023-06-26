@@ -57,7 +57,7 @@ class WarpNavigationController extends Controller {
         if (!$link) {
             return new JsonResponse([
                 'message' => __('move.l_move_failed')
-            ], 400);
+            ], 404);
         }
 
         // TODO: refactor CheckDefenses::fighters to provide a JsonResponse on battle. This can sometimes result in
