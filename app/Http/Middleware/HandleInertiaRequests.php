@@ -40,10 +40,11 @@ class HandleInertiaRequests extends Middleware
             ],
             'stats' => [
                 // TODO: include values from Footer.php here
+                'max_sectors' => config('game.max_sectors'),
                 'total_players' => User::count(), // TODO Cache
                 'players_online' => 0, //User::loggedInCount(),
                 'scheduler_next_run' => 0, // Scheduler::nextRun()->unix(),
-                'sched_ticks' => config('scheduler.sched_ticks')
+                'sched_ticks' => config('scheduler.sched_ticks'),
             ],
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
