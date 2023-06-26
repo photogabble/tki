@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Tki\Types\MovementMode;
 
 class RegisteredUserController extends Controller
 {
@@ -112,7 +113,7 @@ class RegisteredUserController extends Controller
         $user->ship()->associate($ship);
 
         // Move ship to starting sector
-        $ship->moveTo(1);
+        $ship->moveTo(1, MovementMode::Spawn);
 
         // Create Players Zone record
         Zone::create([
