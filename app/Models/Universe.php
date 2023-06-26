@@ -47,6 +47,11 @@ use DB;
  * @property-read Collection|SectorDefense[] $defenses
  * @property-read Collection $ports
  * @property-read Collection|MovementLog[] $movementLog
+ *
+ * Virtual Attributes, these are set by the queryForUser method or elsewhere
+ * when needing to flag one or all of the below values:
+ * @property bool $has_visited
+ * @property bool $is_current_sector
  */
 class Universe extends Model
 {
