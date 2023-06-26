@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import TextButton from "@/Components/atoms/form/TextButton.vue";
-import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
-import {SectorResource} from "@/types/resources/sector";
-import SectorNavButton from "@/Components/atoms/SectorNavButton.vue";
 import NavigationConfirmPopup from "@/Components/organisms/NavigationConfirmPopup.vue";
+import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
+import SectorNavButton from "@/Components/atoms/SectorNavButton.vue";
+import TextButton from "@/Components/atoms/form/TextButton.vue";
+import {SectorResource} from "@/types/resources/sector";
+import {useApi} from "@/Composables/useApi";
 import {computed, ref} from "vue";
+import {router} from "@inertiajs/vue3";
+
 const selectedSector = ref(-1);
+
+const api = useApi();
 
 const props = defineProps<{
   sector: SectorResource;
@@ -14,7 +19,23 @@ const props = defineProps<{
 const hasLinks = computed(() => {
   if (!props.sector.links) return false;
   return props.sector.links.length > 0;
-})
+});
+
+const navigateTo = async (sector: number) => {
+  const response = await api.post(route('warp.move'), {sector});
+
+  // const json = await response.json();
+
+  if (response.ok) {
+    router.visit(route('dashboard'), {data:{navigation: true}});
+  } else if (response.status === 402) {
+    // Fighters in sector are demanding a payment to continue
+  } else if (response.status === 404) {
+    // Warp link does not exist
+  } else {
+    // Mystery error
+  }
+}
 
 </script>
 
@@ -28,7 +49,7 @@ const hasLinks = computed(() => {
     <section class="flex flex-col">
       <ul>
         <li v-for="link in sector.links" class="flex">
-          <sector-nav-button :link="link" />
+          <sector-nav-button :link="link" @click="navigateTo(link.to_sector_id)" />
           <text-button>[Scan]</text-button>
         </li>
         <li v-if="!hasLinks" class="text-red-600">
