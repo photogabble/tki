@@ -27,6 +27,7 @@ namespace Tki\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Tki\Types\MovementMode;
 
 /**
  * @property bool $trade_colonists
@@ -147,18 +148,21 @@ class Ship extends Model
 
     /**
      * Moving the ship, does just that, with no checks to see if the ship can
-     * travel there under its own power.
+     * travel there under its own power. To be used for spawning and towing.
      *
      * @param int $sectorId
      * @return void
      */
-    public function moveTo(int $sectorId): void
+    public function moveTo(int $sectorId, MovementMode $mode): void
     {
-        MovementLog::writeLog($this->owner_id, $sectorId);
+        MovementLog::writeLog($this->owner_id, $sectorId, $mode);
     }
 
-    public function travelTo(int $sectorId): void
+    public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): void
     {
+        MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
+        $this->update(['sector_id' => $sectorId]);
+
         // TODO: Implement, travelling should cost some energy, if
         //       ship doesn't have enough to make the movement
         //       then throw an exception.
