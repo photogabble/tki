@@ -24,7 +24,7 @@
 
 import ZonePermission from "@/Components/atoms/ZonePermission.vue";
 import PopUp from "@/Components/atoms/modal/PopUp.vue";
-import {ZoneResource} from "@/types/zone-info";
+import {ZoneResource} from "@/types/resources/zone";
 
 defineProps<{
   modelValue: Boolean;
@@ -50,6 +50,7 @@ defineEmits(['update:modelValue']);
                 {{ zone.name }}: <span :class="{'text-green-600': zone.isFriendly === 'Y', 'text-ui-orange-500': zone.isFriendly === 'L', 'text-red-600': zone.isFriendly === 'N'}">{{ zone.owner }}</span>.
             </p>
             <p class="mt-1 text-sm text-white">
+                <!-- TODO: Finish adding localisation strings -->
                 {{__('report.l_beacons')}} are <zone-permission :value="zone.allow_beacon" />,
                 Attacking is <zone-permission :value="zone.allow_attack" />, deploying Sector Defenses is
                 <zone-permission :value="zone.allow_defenses" />, Warp Editors are <zone-permission :value="zone.allow_warpedit" />,
