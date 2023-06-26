@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -41,6 +42,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Preset|Collection $presets
  * @property-read Team|null $team
  * @property-read MovementLog[]|Collection $movementLog
+ * @property-read Universe $sector
  */
 class User extends Authenticatable
 {
@@ -91,6 +93,11 @@ class User extends Authenticatable
     public function ship(): BelongsTo
     {
         return $this->belongsTo(Ship::class);
+    }
+
+    public function sector(): HasOneThrough
+    {
+        return $this->hasOneThrough(Universe::class, Ship::class);
     }
 
     public function presets(): HasMany
