@@ -32,7 +32,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Database\Eloquent\Model;
 use Psy\Exception\DeprecatedException;
 use DB;
@@ -150,22 +149,10 @@ class Universe extends Model
     public static function queryForUser(User $user): Builder
     {
         return Universe::query()
-            ->leftJoin('movement_logs', function (JoinClause $join) use ($user) {
-                // Have we visited?
-                $join
-                    ->on('movement_logs.sector_id', '=', 'universes.id')
-                    ->where('movement_logs.user_id', '=', $user->id);
-            })
-            ->leftJoin('ships', function (JoinClause $join) use ($user) {
-                // Are we currently in this sector?
-                $join
-                    ->on('ships.sector_id', '=', 'universes.id')
-                    ->where('ships.id', '=', $user->ship_id);
-            })
             ->select([
                 'universes.*',
-                DB::raw('IF(movement_logs.id IS NULL, false, true) as has_visited'),
-                DB::raw('IF(ships.id IS NULL, false, true) as is_current_sector'),
+                DB::raw("(SELECT COUNT(id) FROM movement_logs WHERE `movement_logs`.`sector_id` = `universes`.`id` AND `movement_logs`.`user_id` = $user->id) > 0 as has_visited"),
+                DB::raw("(SELECT COUNT(id) FROM ships WHERE `ships`.`sector_id` = `universes`.`id` AND `ships`.`id` = $user->ship_id) > 0 as is_current_sector"),
             ]);
     }
 
