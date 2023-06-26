@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import TextButton from "@/Components/atoms/form/TextButton.vue";
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import {SectorResource} from "@/types/resources/sector";
 import SectorNavButton from "@/Components/atoms/SectorNavButton.vue";
@@ -22,19 +23,19 @@ const hasLinks = computed(() => {
   <sidebar-panel>
     <template #heading>
       <span class="text-white flex-grow">Sector Warps</span>
-      <a href="#">[Nav Computer]</a>
+      <text-button @click="selectedSector = 0">[Nav Computer]</text-button>
     </template>
     <section class="flex flex-col">
       <ul>
         <li v-for="link in sector.links" class="flex">
           <sector-nav-button :link="link" />
-          <button>[Scan]</button>
+          <text-button>[Scan]</text-button>
         </li>
         <li v-if="!hasLinks" class="text-red-600">
           No warps found
         </li>
       </ul>
-      <button class="self-end">[Full Scan]</button>
+      <text-button v-if="hasLinks" class="self-end">[Full Scan]</text-button>
     </section>
   </sidebar-panel>
 </template>
