@@ -31,5 +31,6 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     };
     stats: {
         total_players: number;
+        max_sectors: number;
     }
 };
