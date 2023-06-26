@@ -6,6 +6,7 @@ import {PaginatedResource} from "@/types/laravel/pagination";
 export interface RealSpaceMove {
     sector: SectorResourceWithPlayerMeta;
     can_navigate: boolean;
+    is_same_sector: boolean;
     turns: number;
     turns_available: number;
     energy_scooped: number;

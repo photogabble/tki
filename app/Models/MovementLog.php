@@ -60,5 +60,8 @@ class MovementLog extends Model
                 'turns_used' => $turnsUsed,
                 'energy_scooped' => $energyScooped,
             ]);
+
+        // Clear Response cache for map pages
+        Cache::tags('galaxy-'.$user_id)->clear();
     }
 }

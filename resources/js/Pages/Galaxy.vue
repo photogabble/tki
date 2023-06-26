@@ -20,6 +20,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * ---
+ *
+ * This component is the result of refactoring the legacy galaxy.php. It deals with
+ * displaying all sectors in the game universe from the point of view of the player.
  */
 import NavigationConfirmPopup from "@/Components/organisms/NavigationConfirmPopup.vue";
 import PaginationPrevNext from "@/Components/atoms/pagination/PaginationPrevNext.vue";
@@ -28,13 +32,13 @@ import SectionHeader from "@/Components/atoms/layout/SectionHeader.vue";
 import type {GalaxyOverviewPageProps} from "@/types/galaxy-overview";
 import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
 import MapTile from "@/Components/atoms/MapTile.vue";
-import {usePage, router} from "@inertiajs/vue3";
+import {usePage} from "@inertiajs/vue3";
 import GameUI from "@/Layouts/GameUI.vue";
 import {computed, ref} from "vue";
 
 const hoveringSector = ref<SectorResourceWithPlayerMeta>({id:0} as SectorResourceWithPlayerMeta);
-const {sectors, rsMove, navCom} = usePage<GalaxyOverviewPageProps>().props;
-const realSpaceOpen = ref(rsMove !== undefined);
+const selectedSector = ref(-1);
+const {sectors} = usePage<GalaxyOverviewPageProps>().props;
 const map = ref(null);
 const columns = 50;
 
@@ -51,23 +55,11 @@ const tiles = computed(() => {
     }
     return rows;
 });
-
-/**
- * Triggers Inertia::lazy to compute rsMove and return, that value is then used to open a modal
- * in order to display the RealSpace Move info and ask the player if they wish to navigate.
- *
- * @param sector
- */
-const computeRsMove = (sector: number) => {
-    router.visit(route('explore', {sector}), {
-        only: ['rsMove'],
-    })
-}
 </script>
 
 <template>
   <GameUI>
-    <navigation-confirm-popup v-model="realSpaceOpen" :rs-move="rsMove" :nav-com="navCom" />
+    <navigation-confirm-popup v-model="selectedSector" />
     <main-panel>
       <section ref="map" class="flex flex-col justify-center items-center h-full">
         <div class="border-4 border-double border-ui-orange-500/50 ">
@@ -88,7 +80,7 @@ const computeRsMove = (sector: number) => {
                 :key="`sector-${column.id}`"
                 :aria-label="`${__('main.l_sector')}: ${column.id} - `"
                 @mouseenter="hoveringSector = column"
-                @click="computeRsMove(column.id)"
+                @click="selectedSector = column.id"
             >
               <map-tile :type="column.port_type" :aria-hidden="true" />
             </button>

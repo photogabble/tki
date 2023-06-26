@@ -1,5 +1,6 @@
 <?php
 
+use Tki\Http\Controllers\GameController;
 use Tki\Http\Controllers\HomeController;
 use Tki\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +25,12 @@ Route::middleware('guest')->group(function () {
 Route::get('/ranking', [RankingController::class, 'index'])
     ->name('ranking');
 
-Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [GameController::class, 'index'])
+        ->name('dashboard');
+    Route::get('/explore', [GameController::class, 'galaxyMap'])
+        ->middleware('cache.response:galaxy-'.(request()->user()->id ?? 'unknown'))
+        ->name('explore');
 
     Route::get('/navigation/real-space', [RealSpaceNavigationController::class, 'calculateRealSpaceRoute'])
         ->name('real-space.calculate');
@@ -39,9 +45,12 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

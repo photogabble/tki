@@ -3,7 +3,7 @@
     <div class="flex flex-col space-y-2 mb-2 flex-grow">
       <div class="space-y-1 text-2xl">
         <NavLink :href="isLoggedIn ? '/dashboard' : '/'" :active="route().current('dashboard')" title="Overview"><DashboardIcon/></NavLink> <!-- Overview -->
-        <NavLink href="/explore" title="Explore universe" :disabled="!isLoggedIn"><ExploreIcon/></NavLink> <!-- Explore Universe -->
+        <NavLink :href="route('explore')" :active="route().current('explore')" title="Explore universe" :disabled="!isLoggedIn"><ExploreIcon/></NavLink> <!-- Explore Universe -->
         <NavLink href="/research" title="Research and Development" :disabled="!isLoggedIn"><ResearchIcon/></NavLink> <!-- Research -->
         <NavLink href="/harvesting" title="Manage Resource Harvesting" :disabled="!isLoggedIn"><HarvestingIcon/></NavLink> <!-- Resource Harvesting -->
         <NavLink href="/manufacturing" title="Manage Manufacturing" :disabled="!isLoggedIn"><ManufacturingIcon/></NavLink> <!-- Manufacturing -->
