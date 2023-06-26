@@ -97,7 +97,7 @@ class User extends Authenticatable
 
     public function sector(): HasOneThrough
     {
-        return $this->hasOneThrough(Universe::class, Ship::class);
+        return $this->hasOneThrough(Universe::class, Ship::class, 'id', 'id', 'ship_id' , 'sector_id');
     }
 
     public function presets(): HasMany
