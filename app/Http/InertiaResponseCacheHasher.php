@@ -25,6 +25,7 @@
 namespace Tki\Http;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Spatie\ResponseCache\Hasher\DefaultHasher;
 
 /**
@@ -37,7 +38,7 @@ class InertiaResponseCacheHasher extends DefaultHasher
     {
         $baseHash = parent::getHashFor($request);
 
-        $contentType = $request->getContentTypeFormat();
+        $contentType = $request->getContentTypeFormat() ?? 'html';
 
         return "{$baseHash}-{$contentType}";
     }
