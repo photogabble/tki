@@ -3,7 +3,8 @@
 use Tki\Http\Controllers\HomeController;
 use Tki\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use Tki\Http\Controllers\RankingController;
+use Tki\Http\Controllers\RealSpaceNavigationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +21,16 @@ Route::middleware('guest')->group(function () {
     Route::get('/', [HomeController::class, 'index']);
 });
 
-Route::get('/ranking', [\Tki\Http\Controllers\RankingController::class, 'index'])->name('ranking');
+Route::get('/ranking', [RankingController::class, 'index'])
+    ->name('ranking');
 
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
 
-    /** @var \Tki\Models\User $user */
-    $user = $request->user();
+    Route::get('/navigation/real-space', [RealSpaceNavigationController::class, 'calculateRealSpaceRoute'])
+        ->name('real-space.calculate');
 
-    $user->load(['ship', 'ship.sector', 'ship.sector.links', 'ship.sector.zone']);
+    Route::post('/navigation/real-space', [RealSpaceNavigationController::class, 'makeRealSpaceMove'])
+        ->name('real-space.move');
 
     // TODO: Pass loaded user to dashboard...
 
