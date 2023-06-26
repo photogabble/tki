@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Tki\Types\MovementMode;
 
 return new class extends Migration
 {
@@ -17,6 +18,10 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sector_id');
+
+            $table->enum('mode',  array_from_enum(MovementMode::cases()));
+            $table->integer('turns_used');
+            $table->integer('energy_scooped');
 
             $table->foreign('user_id')
                 ->references('id')

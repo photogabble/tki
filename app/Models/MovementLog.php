@@ -27,6 +27,8 @@ namespace Tki\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Tki\Types\MovementMode;
 
 /**
  * @property Carbon $created_at
@@ -35,9 +37,12 @@ use Illuminate\Support\Carbon;
  */
 class MovementLog extends Model
 {
-
     protected $fillable = [
-        'user_id', 'sector_id'
+        'user_id', 'sector_id', 'turns_used', 'energy_scooped', 'mode'
+    ];
+
+    protected $casts = [
+        'mode' => MovementMode::class,
     ];
 
     public function sector(): BelongsTo
@@ -45,12 +50,15 @@ class MovementLog extends Model
         return $this->belongsTo(Universe::class, 'sector_id');
     }
 
-    public static function writeLog(int $user_id, int $sector_id): void
+    public static function writeLog(int $user_id, int $sector_id, MovementMode $mode = MovementMode::RealSpace, int $turnsUsed = 0, int $energyScooped = 0): void
     {
         static::query()
             ->create([
                 'user_id' => $user_id,
-                'sector_id' => $sector_id
+                'sector_id' => $sector_id,
+                'mode' => $mode,
+                'turns_used' => $turnsUsed,
+                'energy_scooped' => $energyScooped,
             ]);
     }
 }
