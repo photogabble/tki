@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->boolean('is_team_zone')->default(false);
 
-            $defaults = array_map(fn($day) => $day->value, ZonePermission::cases());
+            $defaults = array_from_enum(ZonePermission::cases());
             $table->enum('allow_beacon', $defaults)->default(ZonePermission::Allow->value);
             $table->enum('allow_attack', $defaults)->default(ZonePermission::Allow->value);
             $table->enum('allow_planetattack', $defaults)->default(ZonePermission::Allow->value);
