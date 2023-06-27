@@ -102,7 +102,7 @@ class User extends Authenticatable
 
     public function presets(): HasMany
     {
-        return $this->hasMany(Preset::class);
+        return $this->hasMany(Preset::class)->orderBy('id', 'asc');
     }
 
     public function movementLog(): HasMany
