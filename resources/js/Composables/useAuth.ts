@@ -16,5 +16,6 @@ export function useAuth() {
         sector: isLoggedIn.value ? user?.ship?.sector : null,
         presets: isLoggedIn.value ? user.presets : null,
         stats: pageProps.props.stats,
+        config: pageProps.props.config,
     }
 }

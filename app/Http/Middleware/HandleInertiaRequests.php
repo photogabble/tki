@@ -38,9 +38,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user ? new UserResource($user) : null,
                 'online' => !is_null($user),
             ],
+            'config' => [
+                'allow_navcomp' => config('features.allow_navcomp'),
+                'max_sectors' => config('game.max_sectors'),
+            ],
             'stats' => [
                 // TODO: include values from Footer.php here
-                'max_sectors' => config('game.max_sectors'),
                 'total_players' => User::count(), // TODO Cache
                 'players_online' => 0, //User::loggedInCount(),
                 'scheduler_next_run' => 0, // Scheduler::nextRun()->unix(),
