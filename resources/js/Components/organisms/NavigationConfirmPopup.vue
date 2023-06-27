@@ -80,7 +80,7 @@ const error = ref<string>();
 
 const destSector = ref<number>();
 
-const {sector, stats} = useAuth();
+const {sector, config} = useAuth();
 const api = useApi();
 
 const computeRsMove = async (sector: number) => {
@@ -181,14 +181,19 @@ watch(props, async (v) => {
   <pop-up :show="modelValue !== -1" @close="$emit('update:modelValue', -1)">
     <div class="p-6 w-3/5 border border-ui-orange-500 bg-ui-grey-900/90 border-x-4">
       <header class="flex items-center">
-          <h2 class="flex-grow text-lg font-medium text-ui-yellow">{{ currentMode === 'RealSpace' ?  __('rsmove.l_rs_title') : 'Navigation Computer' }}</h2>
+          <h2 class="flex-grow text-lg font-medium text-ui-yellow">{{ currentMode === 'RealSpace' ?  __('rsmove.l_rs_title') : __('navcomp.l_nav_title') }}</h2>
           <div class="flex space-x-4">
             <text-button @click="$emit('update:modelValue', -1)" class="underline">Close [ESC]</text-button>
           </div>
         </header>
-      <form v-if="currentState === 'input'" @submit.prevent="compute">
+      <template v-if="currentMode === 'Warps' && !config.allow_navcomp">
+        <div class="mt-1 text-sm text-red-600">
+          {{ __('navcomp.l_nav_nocomp') }}
+        </div>
+      </template>
+      <form v-else-if="currentState === 'input'" @submit.prevent="compute">
         <div class="mt-1 text-sm">
-          <label for="sector">{{ __('rsmove.l_rs_insector', {sector: sector.id, max_sectors: stats.max_sectors}) }}</label>
+          <label for="sector">{{ __('rsmove.l_rs_insector', {sector: sector.id, max_sectors: config.max_sectors}) }}</label>
           <text-input id="sector" v-model="inputSector" autofocus />
           <input-error :message="error"/>
         </div>
@@ -212,7 +217,7 @@ watch(props, async (v) => {
         </p>
         <footer class="mt-5 text-ui-orange-500 font-medium">
           <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ Engage Engines ] </text-button>
-          <text-button @click="computeWarpMove(modelValue)">[ Nav Computer ] </text-button>
+          <text-button @click="computeWarpMove(modelValue)" :disabled="!config.allow_navcomp">[ Nav Computer ] </text-button>
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
       </template>
