@@ -21,6 +21,7 @@ class UserPresetResource extends JsonResource
         $user = $request->user();
 
         return [
+            'id' => $this->id,
             'link' => [
                 'to_sector_id' => $this->preset,
                 'hasVisited' => $user->hasVisitedSector($this->preset),
