@@ -14,6 +14,10 @@ class Preset extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'preset', 'type'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
