@@ -2,6 +2,7 @@
 
 use Tki\Http\Controllers\GameController;
 use Tki\Http\Controllers\HomeController;
+use Tki\Http\Controllers\NavigationPresetsController;
 use Tki\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Tki\Http\Controllers\RankingController;
@@ -33,17 +34,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('cache.response:galaxy-'.(request()->user()->id ?? 'unknown'))
         ->name('explore');
 
-    Route::get('/navigation/real-space', [RealSpaceNavigationController::class, 'calculateRealSpaceRoute'])
-        ->name('real-space.calculate');
+    Route::group(['prefix' => 'navigation'], function () {
+        Route::get('real-space', [RealSpaceNavigationController::class, 'calculateRealSpaceRoute'])
+            ->name('real-space.calculate');
 
-    Route::post('/navigation/real-space', [RealSpaceNavigationController::class, 'makeRealSpaceMove'])
-        ->name('real-space.move');
+        Route::post('real-space', [RealSpaceNavigationController::class, 'makeRealSpaceMove'])
+            ->name('real-space.move');
 
-    Route::get('/navigation/warp', [WarpNavigationController::class, 'calculateWarpMoves'])
-        ->name('warp.calculate');
+        Route::get('warp', [WarpNavigationController::class, 'calculateWarpMoves'])
+            ->name('warp.calculate');
 
-    Route::post('/navigation/warp', [WarpNavigationController::class, 'makeWarpMove'])
-        ->name('warp.move');
+        Route::post('warp', [WarpNavigationController::class, 'makeWarpMove'])
+            ->name('warp.move');
+
+        Route::patch('preset/{preset}', [NavigationPresetsController::class, 'store'])
+            ->name('real-space.preset.store');
+    });
 });
 
 Route::middleware('auth')->group(function () {
