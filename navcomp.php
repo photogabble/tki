@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /**
  * navcomp.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
@@ -22,178 +22,106 @@
  *
  */
 
-require_once './common.php';
+namespace Tki\Actions;
 
-$login = new Tki\Login();
-$login->checkLogin($pdo_db, $lang, $tkireg, $tkitimer, $template);
+use Tki\Http\Resources\LinkResource;
+use Illuminate\Support\Facades\DB;
+use Tki\Models\Universe;
+use Tki\Models\Ship;
+use Tki\Models\User;
 
-// Database driven language entries
-$langvars = Tki\Translate::load($pdo_db, $lang, array('common', 'footer',
-                                'insignias', 'navcomp', 'universal'));
-$title = $langvars['l_nav_title'];
-
-$header = new Tki\Header();
-$header->display($pdo_db, $lang, $template, $title);
-
-echo "<h1>" . $title . "</h1>\n";
-
-if (!$tkireg->allow_navcomp)
+class NavCom
 {
-    echo $langvars['l_nav_nocomp'] . '<br><br>';
-    Tki\Text::gotoMain($pdo_db, $lang);
-
-    $footer = new Tki\Footer();
-    $footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
-    die();
-}
-
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$state = null;
-$state = (int) filter_input(INPUT_POST, 'state', FILTER_SANITIZE_NUMBER_INT);
-if ($state === 0)
-{
-    $state = false;
-}
-
-// Detect if this variable exists, and filter it. Returns false if anything wasn't right.
-$stop_sector = null;
-$stop_sector = (int) filter_input(INPUT_POST, 'stop_sector', FILTER_SANITIZE_NUMBER_INT);
-if ($stop_sector === 0)
-{
-    $stop_sector = false;
-}
-
-// Get playerinfo from database
-$players_gateway = new \Tki\Models\User($pdo_db);
-$playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-
-$current_sector = $playerinfo['sector'];
-$computer_tech  = $playerinfo['computer'];
-$found = null;
-$search_result = null;
-$search_depth  = 0;
-
-// Get sectorinfo from database
-$sectors_gateway = new \Tki\Models\Universe($pdo_db);
-$sectorinfo = $sectors_gateway->selectSectorInfo($current_sector);
-
-if ($state == 0)
-{
-    echo "<form accept-charset='utf-8' action=\"navcomp.php\" method=post>";
-    echo $langvars['l_nav_query'] . " <input name=\"stop_sector\">&nbsp;<input type=submit value=" . $langvars['l_submit'] . "><br>\n";
-    echo "<input name=\"state\" value=1 type=hidden>";
-    echo "</form>\n";
-}
-elseif ($state == 1)
-{
-    if ($computer_tech < 5)
+    public function calculate(User $user, Ship $ship, int $destSector): ?array
     {
-        $max_search_depth = 2;
-    }
-    elseif ($computer_tech < 10)
-    {
-        $max_search_depth = 3;
-    }
-    elseif ($computer_tech < 15)
-    {
-        $max_search_depth = 4;
-    }
-    elseif ($computer_tech < 20)
-    {
-        $max_search_depth = 5;
-    }
-    else
-    {
-        $max_search_depth = 6;
-    }
-
-    for ($search_depth = 1; $search_depth <= $max_search_depth; $search_depth++)
-    {
-        $search_query = "SELECT distinct a1.link_start, a1.link_dest ";
-        for ($i = 2; $i <= $search_depth; $i++)
-        {
-            $search_query = $search_query . " ,a" . $i . ".link_dest ";
+        if ($ship->computer < 5) {
+            $maxSearchDepth = 2;
+        } elseif ($ship->computer < 10) {
+            $maxSearchDepth = 3;
+        } elseif ($ship->computer < 15) {
+            $maxSearchDepth = 4;
+        } elseif ($ship->computer < 20) {
+            $maxSearchDepth = 5;
+        } else {
+            $maxSearchDepth = 6;
         }
 
-        $search_query = $search_query . "FROM     {$old_db->prefix}links AS a1 ";
+        for ($searchDepth = 1; $searchDepth <= $maxSearchDepth; $searchDepth++) {
+            $select = ['a1.start', 'a1.dest as dest_1'];
 
-        for ($i = 2; $i <= $search_depth; $i++)
-        {
-            $search_query = $search_query . "    ,{$old_db->prefix}links AS a" . $i . " ";
-        }
-
-        $search_query = $search_query . "WHERE         a1.link_start = $current_sector ";
-
-        for ($i = 2; $i <= $search_depth; $i++)
-        {
-            $temp1 = $i - 1;
-            $search_query = $search_query . "    AND a" . $temp1 . ".link_dest = a" . $i . ".link_start ";
-        }
-
-        $search_query = $search_query . "    AND a" . $search_depth . ".link_dest = $stop_sector ";
-        $search_query = $search_query . "    AND a1.link_dest != a1.link_start ";
-
-        for ($i = 2; $i <= $search_depth; $i++)
-        {
-            $search_query = $search_query . "    AND a" . $i . ".link_dest not in (a1.link_dest, a1.link_start ";
-
-            for ($temp2 = 2; $temp2 < $i; $temp2++)
-            {
-                $search_query = $search_query . ",a" . $temp2 . ".link_dest ";
+            for ($i = 2; $i <= $searchDepth; $i++) {
+                $select[] = "a$i.dest as dest_$i";
             }
 
-            $search_query = $search_query . ")";
-        }
+            $from = ['links as a1'];
 
-        $search_query = $search_query . "ORDER BY a1.link_start, a1.link_dest ";
-        for ($i = 2; $i <= $search_depth; $i++)
-        {
-            $search_query = $search_query . ", a" . $i . ".link_dest";
-        }
+            for ($i = 2; $i <= $searchDepth; $i++) {
+                $from[] = "links AS a$i";
+            }
 
-        $search_query = $search_query . " LIMIT 1";
-        $old_db->SetFetchMode(ADODB_FETCH_NUM);
+            $query = DB::table(DB::raw(implode(',', $from)))
+                ->select($select)
+                ->where('a1.start', '=', $ship->sector_id);
 
-        $search_result = $old_db->Execute($search_query);
-        if ($search_result === false)
-        {
-            die('Invalid query');
-        }
-        else
-        {
-            Tki\Db::logDbErrors($pdo_db, $search_result, __LINE__, __FILE__);
-            $found = $search_result->RecordCount();
-            if ($found > 0)
-            {
-                break;
+            for ($i = 2; $i <= $searchDepth; $i++) {
+                $temp1 = $i - 1;
+                $query->where("a$temp1.dest", '=', DB::raw("a$i.start"));
+            }
+
+            $query->where("a$searchDepth.dest", '=', $destSector);
+            $query->where("a1.dest", '!=', DB::raw('a1.start'));
+
+            for ($i = 2; $i <= $searchDepth; $i++) {
+                $notIn = [DB::raw('a1.dest'), DB::raw('a1.start')];
+
+                for ($temp2 = 2; $temp2 < $i; $temp2++) {
+                    $notIn[] = DB::raw("a$temp2.dest");
+                }
+
+                $query->whereNotIn("a$i.dest", $notIn);
+            }
+
+            $query->orderBy('a1.start', 'desc');
+            $query->orderBy('a1.dest', 'desc');
+
+            for ($i = 2; $i <= $searchDepth; $i++) {
+                $query->orderBy("a$i.dest", 'desc');
+            }
+
+            $result = $query
+                ->distinct()
+                ->limit(1)
+                ->first();
+
+            if (!is_null($result)) {
+                $result = get_object_vars($result);
+
+                $sectors = Universe::queryForUser($user)
+                    ->whereIn('id', array_values($result))
+                    ->get();
+
+                $output = [
+                    'start' => null,
+                    'path' => [],
+                ];
+
+                foreach ($result as $key => $value) {
+                    $value = new LinkResource($sectors->where('id', $value)->first());
+
+                    if ($key === 'start') {
+                        $output['start'] = $value;
+                        continue;
+                    }
+
+                    $ord = explode('_', $key)[1];
+                    $output['path'][$ord] = $value;
+                }
+
+                $output['path'] = array_values($output['path']);
+
+                return $output;
             }
         }
-    }
-
-    if ($found > 0)
-    {
-        echo "<h3>" . $langvars['l_nav_pathfnd'] . "</h3>\n";
-        $links = $search_result->fields;
-        echo $links[0];
-        for ($i = 1; $i < $search_depth + 1; $i++)
-        {
-            echo " >> " . $links[$i];
-        }
-
-        $old_db->SetFetchMode(ADODB_FETCH_ASSOC);
-
-        echo "<br><br>";
-        echo $langvars['l_nav_answ1'] . " " . $search_depth . " " . $langvars['l_nav_answ2'] . "<br><br>";
-    }
-    else
-    {
-        echo $langvars['l_nav_proper'] . "<br><br>";
+        return null;
     }
 }
-
-$old_db->SetFetchMode(ADODB_FETCH_ASSOC);
-
-Tki\Text::gotoMain($pdo_db, $lang);
-
-$footer = new Tki\Footer();
-$footer->display($pdo_db, $lang, $tkireg, $tkitimer, $template);
