@@ -32,7 +32,7 @@
  * main.php handled a lot of functionality which I have refactored into multiple
  * components as well as backend functions.
  */
-import { Head } from '@inertiajs/vue3';
+import {Head, usePage} from '@inertiajs/vue3';
 import GameUI from "@/Layouts/GameUI.vue";
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
@@ -42,8 +42,10 @@ import SectorWarpsPanel from "@/Components/organisms/SectorWarpsPanel.vue";
 import PlayerPresetsPanel from "@/Components/organisms/PlayerPresetsPanel.vue";
 import ShipCargoPanel from "@/Components/organisms/ShipCargoPanel.vue";
 import PlayerShipPanel from "@/Components/organisms/PlayerShipPanel.vue";
+import {DashboardPageProps} from "@/types/dashboard";
 
 const { sector, presets, ship } = useAuth();
+const { navigation, route } = usePage<DashboardPageProps>().props
 
 </script>
 

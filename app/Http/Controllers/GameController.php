@@ -27,13 +27,14 @@ namespace Tki\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Tki\Actions\NavCom;
 use Tki\Http\Resources\SectorResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
 
 class GameController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, NavCom $navCom): Response
     {
         /** @var User $user */
         $user = $request->user();
@@ -42,7 +43,14 @@ class GameController extends Controller
         // The above is passed through to the frontend via the Middleware attaching user
         // to all responses...
 
-        return Inertia::render('Dashboard');
+        if ($route = $request->get('route')) {
+            $route = $navCom->fromUrlParam($user, $route);
+        }
+
+        return Inertia::render('Dashboard', [
+            'navigation' => $request->get('navigation', false),
+            'route' => $route,
+        ]);
     }
 
     public function galaxyMap(Request $request): Response
