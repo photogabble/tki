@@ -24,6 +24,8 @@
 
 namespace Tki\Actions;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Tki\Http\Resources\LinkResource;
 use Illuminate\Support\Facades\DB;
 use Tki\Models\Universe;
@@ -123,5 +125,33 @@ class NavCom
             }
         }
         return null;
+    }
+
+    public function fromUrlParam(User $user, string $param): ?array
+    {
+        $routes = explode(',', $param);
+        if (count($routes) < 2) return null;
+
+        $cache = Cache::tags(['user-'.$user->id, 'navcom']);
+        $cached = $cache->get(sha1($param));
+
+        if ($cached) return $cached;
+
+        /** @var Collection<Universe> $sectors */
+        $sectors = Universe::queryForUser($user)
+            ->whereIn('id', $routes)
+            ->get();
+
+        $start = array_shift($routes);
+        $result = [
+            'start' => new LinkResource($sectors->where('id', $start)->first()),
+            'path' => array_map(function($id) use ($sectors) {
+                return new LinkResource($sectors->where('id', $id)->first());
+            }, $routes),
+        ];
+
+        $cache->forever(sha1($param), $result);
+
+        return $result;
     }
 }
