@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -117,8 +118,14 @@ class User extends Authenticatable
 
     public function hasVisitedSector(int $sectorId) : bool
     {
-        // TODO: Ripe for caching
-        return $this->movementLog()->where('sector_id', $sectorId)->exists();
+        $cache = Cache::tags(['user-'.$this->id]);
+
+        if (!$value = $cache->get('visited_'.$sectorId)) {
+            $value = $this->movementLog()->where('sector_id', $sectorId)->exists();
+            $cache->forever('visited_'.$sectorId, $value);
+        }
+
+        return $value;
     }
 
     /**
