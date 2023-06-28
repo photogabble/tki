@@ -54,6 +54,8 @@ import {useAuth} from "@/Composables/useAuth";
 import {useApi} from "@/Composables/useApi";
 import {router} from "@inertiajs/vue3";
 import {ref, watch} from 'vue';
+import {WarpRouteResource} from "@/types/resources/link";
+import NavComWarpPath from "@/Components/molecules/NavComWarpPath.vue";
 
 type States = 'input' | 'loading' | 'error' | 'loadedRealSpace' | 'loadedWarpMoves';
 type Modes  = 'RealSpace' | 'Warps';
@@ -73,7 +75,7 @@ const {currentState, stackActions} = useStack<States>('input');
 const {currentState: currentMode, stackActions: modeActions} = useStack<Modes>(props.mode ?? 'RealSpace');
 
 const realSpaceMove = ref<RealSpaceMove>({} as RealSpaceMove);
-const warpMoves = ref({});
+const warpMoves = ref<WarpRouteResource|undefined>();
 
 const inputSector = ref<number>();
 const error = ref<string>();
@@ -111,20 +113,31 @@ const computeRsMove = async (sector: number) => {
 
 const computeWarpMove = async (sector: number) => {
   stackActions.add('loading');
-  const response = await fetch(route('real-space.calculate', {sector}), {
+  const response = await fetch(route('warp.calculate', {sector}), {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
     },
   });
 
-  const json = await response.json();
+  let data;
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.indexOf("application/json") !== -1) {
+    data = await response.json();
+  } else {
+    data = await response.text();
+  }
 
   if (response.ok) {
-    realSpaceMove.value = json;
+    if (response.status === 204) {
+      warpMoves.value = undefined;
+    } else {
+      warpMoves.value = data;
+    }
+
     stackActions.add('loadedWarpMoves');
   } else {
-    error.value = json.message;
+    error.value = data?.message ?? data;
     stackActions.add('error');
   }
 };
@@ -193,7 +206,11 @@ watch(props, async (v) => {
       </template>
       <form v-else-if="currentState === 'input'" @submit.prevent="compute">
         <div class="mt-1 text-sm">
-          <label for="sector">{{ __('rsmove.l_rs_insector', {sector: sector.id, max_sectors: config.max_sectors}) }}</label>
+          <label for="sector">{{
+            currentMode === 'RealSpace'
+                ? __('rsmove.l_rs_insector', {sector: sector.id, max_sectors: config.max_sectors})
+                : __('navcomp.l_nav_query')
+          }}</label>
           <text-input id="sector" v-model="inputSector" autofocus />
           <input-error :message="error"/>
         </div>
@@ -221,13 +238,12 @@ watch(props, async (v) => {
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
       </template>
-      <template v-else-if="currentState === 'loadedWarpMoves'">
-        <p class="mt-1 text-sm text-white">WARP MOVES</p>
+      <nav-com-warp-path v-else-if="currentState === 'loadedWarpMoves'" :route="warpMoves">
         <footer class="mt-5 text-ui-orange-500 font-medium">
           <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ Engage Engines ] </text-button>
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
-      </template>
+      </nav-com-warp-path>
       <template v-else>
         <p class="mt-1 text-sm text-white">{{error}}</p>
       </template>
