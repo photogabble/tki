@@ -25,11 +25,3 @@ export interface SectorResourceWithPlayerMeta extends SectorResource
     has_visited: boolean;
     has_danger: boolean;
 }
-
-export interface SectorMapTile
-{
-    sector_id: number;
-    sector?: SectorResource;
-    sector_type: SectorType;
-    is_current_sector: boolean;
-}
