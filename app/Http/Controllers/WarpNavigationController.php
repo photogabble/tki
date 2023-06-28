@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /**
  * move.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
@@ -26,13 +26,16 @@ namespace Tki\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Tki\Actions\NavCom;
 use Tki\Http\Resources\SectorResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
 use Tki\Types\MovementMode;
 
-class WarpNavigationController extends Controller {
-    public function makeWarpMove(Request $request): JsonResponse {
+class WarpNavigationController extends Controller
+{
+    public function makeWarpMove(Request $request): JsonResponse
+    {
         $this->validate($request, [
             'sector' => ['required', 'exists:universes,id'],
         ]);
@@ -81,7 +84,17 @@ class WarpNavigationController extends Controller {
         ]);
     }
 
-    public function calculateWarpMoves(Request $request): JsonResponse {
-        // TODO: Refactor navcomp.php into action and invoke here
+    public function calculateWarpMoves(Request $request, NavCom $navCom): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        $this->validate($request, [
+            'sector' => ['required', 'numeric', 'between:0,' . config('game.max_sectors'), 'exists:universes,id'],
+        ]);
+
+        $result = $navCom->calculate($user, $user->ship, (int)$request->get('sector'));
+
+        return new JsonResponse($result, is_null($result) ? 204 : 200);
     }
 }
