@@ -233,14 +233,14 @@ watch(props, async (v) => {
           <span v-else>This is the same sector</span>
         </p>
         <footer class="mt-5 text-ui-orange-500 font-medium">
-          <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ Engage Engines ] </text-button>
+          <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ {{ __('rsmove.l_rs_engage_link') }} ] </text-button>
           <text-button @click="computeWarpMove(modelValue)" :disabled="!config.allow_navcomp">[ Nav Computer ] </text-button>
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
       </template>
       <nav-com-warp-path v-else-if="currentState === 'loadedWarpMoves'" :route="warpMoves">
         <footer class="mt-5 text-ui-orange-500 font-medium">
-          <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ Engage Engines ] </text-button>
+          <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ {{ __('navcomp.l_nav_engage')}} ] </text-button>
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
       </nav-com-warp-path>
