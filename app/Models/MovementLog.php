@@ -50,9 +50,9 @@ class MovementLog extends Model
         return $this->belongsTo(Universe::class, 'sector_id');
     }
 
-    public static function writeLog(int $user_id, int $sector_id, MovementMode $mode = MovementMode::RealSpace, int $turnsUsed = 0, int $energyScooped = 0): void
+    public static function writeLog(int $user_id, int $sector_id, MovementMode $mode = MovementMode::RealSpace, int $turnsUsed = 0, int $energyScooped = 0): MovementLog
     {
-        static::query()
+        $movement = static::query()
             ->create([
                 'user_id' => $user_id,
                 'sector_id' => $sector_id,
@@ -63,5 +63,7 @@ class MovementLog extends Model
 
         // Clear Response cache for map pages
         Cache::tags('galaxy-'.$user_id)->clear();
+
+        return $movement;
     }
 }

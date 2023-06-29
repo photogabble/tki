@@ -153,16 +153,17 @@ class Ship extends Model
      * @param int $sectorId
      * @return void
      */
-    public function moveTo(int $sectorId, MovementMode $mode): void
+    public function moveTo(int $sectorId, MovementMode $mode): MovementLog
     {
-        MovementLog::writeLog($this->owner_id, $sectorId, $mode);
+        return MovementLog::writeLog($this->owner_id, $sectorId, $mode);
     }
 
-    public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): void
+    public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): MovementLog
     {
-        MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
+        $movement = MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
         $this->update(['sector_id' => $sectorId]);
 
+        return $movement;
         // TODO: Implement, travelling should cost some energy, if
         //       ship doesn't have enough to make the movement
         //       then throw an exception.
