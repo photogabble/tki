@@ -158,10 +158,33 @@ class Ship extends Model
         return MovementLog::writeLog($this->owner_id, $sectorId, $mode);
     }
 
+    /**
+     * This function handles moving the player between sectors, it returns a movement log which
+     * can contain events that have happened during travel.
+     *
+     * @param int $sectorId
+     * @param MovementMode $mode
+     * @param int $turnsUsed
+     * @param int $energyScooped
+     * @return MovementLog
+     */
     public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): MovementLog
     {
+        $this->user->decrement('turns', 1);
+        $this->user->increment('turns_used', 1);
+
+        // energyScooped is calculated by Move::calcFuelScooped, it will never go over our max energy
+        $this->increment('ship_energy', $energyScooped);
+
+        // TODO: refactor CheckDefenses::fighters to provide a JsonResponse on battle. This can sometimes result in
+        //       the player _not_ making it to their final destination!
+        // \Tki\CheckDefenses::fighters($pdo_db, $lang, $sector, $playerinfo, $tkireg, $title, $calledfrom);
+
         $movement = MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
         $this->update(['sector_id' => $sectorId]);
+
+        // TODO: refactor CheckDefenses::mines to provide a JsonResponse on battle
+        // \Tki\CheckDefenses::mines($pdo_db, $lang, $sector, $title, $playerinfo, $tkireg);
 
         return $movement;
         // TODO: Implement, travelling should cost some energy, if

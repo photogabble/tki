@@ -80,28 +80,19 @@ final class RealSpaceNavigationController extends Controller
             return new JsonResponse(['message' => 'Not enough turns to make RealSpace move'], 400);
         }
 
-        // TODO: refactor CheckDefenses::fighters to provide a JsonResponse on battle. This can sometimes result in
-        //       the player _not_ making it to their final destination!
-        // \Tki\CheckDefenses::fighters($pdo_db, $lang, $sector, $playerinfo, $tkireg, $title, $calledfrom);
-
-        $this->user->ship->travelTo(
+        $movement = $this->user->ship->travelTo(
             $this->destination->id,
             MovementMode::RealSpace,
             $navigation['turns'],
             $navigation['energyScooped']
         );
 
-        $this->user->decrement('turns', $navigation['turns']);
-        $this->user->increment('turns_used', $navigation['turns']);
-
-        // TODO: refactor CheckDefenses::mines to provide a JsonResponse on battle
-        // \Tki\CheckDefenses::mines($pdo_db, $lang, $sector, $title, $playerinfo, $tkireg);
-
         // Set virtual attributes on the sector model so SectorResource loads all related data
         $this->destination->has_visited = true;
         $this->destination->is_current_sector = true;
 
         return new JsonResponse([
+            'movement' => $movement,
             'sector' => new SectorResource($this->destination),
             'turns' => number_format($navigation['turns']),
             'energy_scooped' => $navigation['energyScooped'],

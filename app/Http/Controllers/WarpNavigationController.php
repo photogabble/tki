@@ -63,21 +63,13 @@ class WarpNavigationController extends Controller
             ], 404);
         }
 
-        // TODO: refactor CheckDefenses::fighters to provide a JsonResponse on battle. This can sometimes result in
-        //       the player _not_ making it to their final destination!
-        // \Tki\CheckDefenses::fighters($pdo_db, $lang, $sector, $playerinfo, $tkireg, $title, $calledfrom);
+        // TODO: make warp turns dependant upon ship classification
 
-        // TODO: make warp turns dependant upon ship clasification
-        $user->decrement('turns', 1);
-        $user->increment('turns_used', 1);
-
-        $user->ship->travelTo($sector, MovementMode::Warp, 1, 0);
-
-        // TODO: refactor CheckDefenses::mines to provide a JsonResponse on battle
-        // \Tki\CheckDefenses::mines($pdo_db, $lang, $sector, $title, $playerinfo, $tkireg);
+        $movement = $user->ship->travelTo($sector, MovementMode::Warp, 1, 0);
 
         $destination = Universe::queryForUser($user)->find($sector);
         return new JsonResponse([
+            'movement' => $movement,
             'sector' => new SectorResource($destination),
             'turns' => 1,
             'energy_scooped' => 0,
@@ -95,6 +87,11 @@ class WarpNavigationController extends Controller
 
         $result = $navCom->calculate($user, $user->ship, (int)$request->get('sector'));
 
-        return new JsonResponse($result, is_null($result) ? 204 : 200);
+        if (is_null($result)) return new JsonResponse(null, 204);
+
+        return new JsonResponse([
+            'result' => $result->toArray(),
+            'engage' => $result->toUrlParam($request),
+        ], 200);
     }
 }
