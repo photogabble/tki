@@ -72,8 +72,9 @@ class WarpRoute implements Arrayable
 
     public static function fromUrlParam(Request $request, string $key = 'waypoints'): ?WarpRoute
     {
-        $cache = Cache::tags(['user-' . $request->user()->id, 'navcom']);
+        if (!$request->has($key)) return null;
 
+        $cache = Cache::tags(['user-' . $request->user()->id, 'navcom']);
         return $cache->get($request->get($key));
     }
 
@@ -84,8 +85,19 @@ class WarpRoute implements Arrayable
 
     public function remaining(int $sector): int
     {
-        if (!$ord = array_search($sector, $this->ids)) return 0;
+        $ord = array_search($sector, $this->ids);
+        if ($ord === false) return 0;
+
         return count($this->ids) - ($ord + 1);
+    }
+
+    public function next(int $sector): int
+    {
+        $ord = array_search($sector, $this->ids);
+        if ($ord === false) return 0;
+
+        $key = count($this->ids) - 1 - $ord;
+        return $this->ids[$key];
     }
 
     public function toArray(): array
