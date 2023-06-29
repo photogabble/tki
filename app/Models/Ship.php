@@ -170,18 +170,24 @@ class Ship extends Model
      */
     public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): MovementLog
     {
-        $this->user->decrement('turns', 1);
-        $this->user->increment('turns_used', 1);
+        $this->owner()->decrement('turns', 1);
+        $this->owner()->increment('turns_used', 1);
 
         // energyScooped is calculated by Move::calcFuelScooped, it will never go over our max energy
         $this->increment('ship_energy', $energyScooped);
+
+        // Make Move, this might be undone depending on how CheckDefenses::fighters computes.
+        $movement = MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
+        $this->update(['sector_id' => $sectorId]);
 
         // TODO: refactor CheckDefenses::fighters to provide a JsonResponse on battle. This can sometimes result in
         //       the player _not_ making it to their final destination!
         // \Tki\CheckDefenses::fighters($pdo_db, $lang, $sector, $playerinfo, $tkireg, $title, $calledfrom);
 
-        $movement = MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
-        $this->update(['sector_id' => $sectorId]);
+        // CheckDefenses::fighters may create a MovementLogEvent of EventType::Fighters attach it to $movement
+        // and then return without running CheckDefenses::mines so the front end can display the retreat,
+        // pay, fight or cloak options to the player. For example, resolving MovementLogEvent with retreat
+        // will trigger Ship::moveTo(previous).
 
         // TODO: refactor CheckDefenses::mines to provide a JsonResponse on battle
         // \Tki\CheckDefenses::mines($pdo_db, $lang, $sector, $title, $playerinfo, $tkireg);
