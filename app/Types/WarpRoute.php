@@ -24,26 +24,46 @@
 
 namespace Tki\Types;
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Tki\Http\Resources\LinkResource;
+use Tki\Models\Universe;
+use Tki\Models\User;
 
-class WarpRoute implements Arrayable {
+class WarpRoute implements Arrayable
+{
+
+    public array $ids;
+    public LinkResource $start;
+    /** @var LinkResource[] */
+    public array $waypoints;
+
     /**
-     * @param LinkResource $start
-     * @param LinkResource[] $waypoints
+     * @param User $user
+     * @param int $start
+     * @param int[] $waypoints
      */
-    public function __construct(public LinkResource $start, public array $waypoints){}
+    public function __construct(User $user, int $start, array $waypoints)
+    {
+        $this->ids = [$start, ...$waypoints];
+
+        $sectors = Universe::queryForUser($user)
+            ->whereIn('id', $this->ids)
+            ->get();
+
+        $this->start = new LinkResource($sectors->where('id', $start)->first());
+        $this->waypoints = array_map(function(int $id) use ($sectors){
+            return new LinkResource($sectors->where('id', $id)->first());
+        }, $waypoints);
+    }
 
     public function toUrlParam(Request $request): string
     {
-        $key = sha1(implode(',', array_reduce($this->waypoints, function(array $carry, LinkResource $link) use ($request){
-            $carry[] = $link->toArray($request)['to_sector_id'];
-            return $carry;
-        }, [$this->start->toArray($request)['to_sector_id']])));
+        $key = sha1(implode(',', $this->ids));
 
-        $cache = Cache::tags(['user-'.$request->user()->id, 'navcom']);
+        $cache = Cache::tags(['user-' . $request->user()->id, 'navcom']);
 
         $cache->forever($key, $this);
 
@@ -52,16 +72,30 @@ class WarpRoute implements Arrayable {
 
     public static function fromUrlParam(Request $request, string $key = 'waypoints'): ?WarpRoute
     {
-        $cache = Cache::tags(['user-'.$request->user()->id, 'navcom']);
-        $n = $request->get($key);
+        $cache = Cache::tags(['user-' . $request->user()->id, 'navcom']);
+
         return $cache->get($request->get($key));
+    }
+
+    public function contains(int $sector): bool
+    {
+        return in_array($sector, $this->ids);
+    }
+
+    public function remaining(int $sector): int
+    {
+        if (!$ord = array_search($sector, $this->ids)) return 0;
+        return count($this->ids) - ($ord + 1);
     }
 
     public function toArray(): array
     {
+        $request = Container::getInstance()->make('request');
         return [
-            'start' => $this->start,
-            'waypoints' => $this->waypoints,
+            'start' => $this->start->toArray($request),
+            'waypoints' => array_map(function (LinkResource $link) use ($request) {
+                return $link->toArray($request);
+            }, $this->waypoints),
         ];
     }
 }

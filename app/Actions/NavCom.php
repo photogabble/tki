@@ -24,14 +24,10 @@
 
 namespace Tki\Actions;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
-use Tki\Http\Resources\LinkResource;
 use Illuminate\Support\Facades\DB;
-use Tki\Models\Universe;
+use Tki\Types\WarpRoute;
 use Tki\Models\Ship;
 use Tki\Models\User;
-use Tki\Types\WarpRoute;
 
 class NavCom
 {
@@ -98,17 +94,10 @@ class NavCom
 
             if (!is_null($result)) {
                 $result = get_object_vars($result);
-
-                $sectors = Universe::queryForUser($user)
-                    ->whereIn('id', array_values($result))
-                    ->get();
-
                 $start = null;
                 $path = [];
 
                 foreach ($result as $key => $value) {
-                    $value = new LinkResource($sectors->where('id', $value)->first());
-
                     if ($key === 'start') {
                         $start = $value;
                         continue;
@@ -119,6 +108,7 @@ class NavCom
                 }
 
                 return new WarpRoute(
+                    $user,
                     $start,
                     array_values($path)
                 );
