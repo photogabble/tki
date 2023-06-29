@@ -18,12 +18,12 @@ defineProps<{
           <li>
             <sector-nav-button :link="route.start"/>
           </li>
-          <li v-for="link in route.path">
+          <li v-for="link in route.waypoints">
             <sector-nav-button :link="link"/>
           </li>
         </ol>
       </div>
-      <p>{{ __('navcomp.l_nav_answ', {turns: route.path.length}) }}</p>
+      <p>{{ __('navcomp.l_nav_answ', {turns: route.waypoints.length}) }}</p>
     </nav>
     <div v-else>
       <p class="mt-1 text-sm">{{ __('navcomp.l_nav_proper') }}</p>

@@ -31,6 +31,7 @@ use Tki\Actions\NavCom;
 use Tki\Http\Resources\SectorResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
+use Tki\Types\WarpRoute;
 
 class GameController extends Controller
 {
@@ -43,8 +44,8 @@ class GameController extends Controller
         // The above is passed through to the frontend via the Middleware attaching user
         // to all responses...
 
-        if ($route = $request->get('route')) {
-            $route = $navCom->fromUrlParam($user, $route);
+        if ($route = $request->get('waypoints')) {
+            $route = WarpRoute::fromUrlParam($request);
         }
 
         return Inertia::render('Dashboard', [

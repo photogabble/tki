@@ -53,8 +53,8 @@ import {useStack} from "@/Composables/useStack";
 import {useAuth} from "@/Composables/useAuth";
 import {useApi} from "@/Composables/useApi";
 import {router} from "@inertiajs/vue3";
-import {ref, watch} from 'vue';
-import {WarpRouteResource} from "@/types/resources/link";
+import {computed, ref, watch} from 'vue';
+import {CalculateWarpMovesResource} from "@/types/resources/link";
 import NavComWarpPath from "@/Components/molecules/NavComWarpPath.vue";
 
 type States = 'input' | 'loading' | 'error' | 'loadedRealSpace' | 'loadedWarpMoves';
@@ -75,7 +75,7 @@ const {currentState, stackActions} = useStack<States>('input');
 const {currentState: currentMode, stackActions: modeActions} = useStack<Modes>(props.mode ?? 'RealSpace');
 
 const realSpaceMove = ref<RealSpaceMove>({} as RealSpaceMove);
-const warpMoves = ref<WarpRouteResource|undefined>();
+const warpMoves = ref<CalculateWarpMovesResource|undefined>();
 
 const inputSector = ref<number>();
 const error = ref<string>();
@@ -120,12 +120,12 @@ const computeWarpMove = async (sector: number) => {
     },
   });
 
-  let data;
+  let data : CalculateWarpMovesResource|undefined;
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.indexOf("application/json") !== -1) {
     data = await response.json();
   } else {
-    data = await response.text();
+    data = undefined
   }
 
   if (response.ok) {
@@ -178,12 +178,20 @@ const engage = async () => {
   }
 };
 
+const engageAutopilot = async () => {
+  router.visit(route('dashboard'), {
+    data: {navigation: true, waypoints: warpMoves?.value?.engage }
+  })
+}
+
+const cantEngageAutopilot = computed(() => typeof warpMoves.value === 'undefined');
+
 watch(props, async (v) => {
   if (v.modelValue >= 1) return await computeRsMove(v.modelValue);
 
   // Reset component state
   realSpaceMove.value = {} as RealSpaceMove;
-  warpMoves.value = {};
+  warpMoves.value = undefined;
   inputSector.value = undefined;
   error.value = undefined;
   stackActions.reset();
@@ -238,9 +246,9 @@ watch(props, async (v) => {
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
       </template>
-      <nav-com-warp-path v-else-if="currentState === 'loadedWarpMoves'" :route="warpMoves">
+      <nav-com-warp-path v-else-if="currentState === 'loadedWarpMoves'" :route="warpMoves?.result">
         <footer class="mt-5 text-ui-orange-500 font-medium">
-          <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ {{ __('navcomp.l_nav_engage')}} ] </text-button>
+          <text-button @click="engageAutopilot" :disabled="cantEngageAutopilot">[ {{ __('navcomp.l_nav_engage')}} ] </text-button>
           <text-button @click="stackActions.add('input')">[ Other ]</text-button>
         </footer>
       </nav-com-warp-path>

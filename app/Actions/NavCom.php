@@ -31,10 +31,11 @@ use Illuminate\Support\Facades\DB;
 use Tki\Models\Universe;
 use Tki\Models\Ship;
 use Tki\Models\User;
+use Tki\Types\WarpRoute;
 
 class NavCom
 {
-    public function calculate(User $user, Ship $ship, int $destSector): ?array
+    public function calculate(User $user, Ship $ship, int $destSector): ?WarpRoute
     {
         if ($ship->computer < 5) {
             $maxSearchDepth = 2;
@@ -102,56 +103,27 @@ class NavCom
                     ->whereIn('id', array_values($result))
                     ->get();
 
-                $output = [
-                    'start' => null,
-                    'path' => [],
-                ];
+                $start = null;
+                $path = [];
 
                 foreach ($result as $key => $value) {
                     $value = new LinkResource($sectors->where('id', $value)->first());
 
                     if ($key === 'start') {
-                        $output['start'] = $value;
+                        $start = $value;
                         continue;
                     }
 
                     $ord = explode('_', $key)[1];
-                    $output['path'][$ord] = $value;
+                    $path[$ord] = $value;
                 }
 
-                $output['path'] = array_values($output['path']);
-
-                return $output;
+                return new WarpRoute(
+                    $start,
+                    array_values($path)
+                );
             }
         }
         return null;
-    }
-
-    public function fromUrlParam(User $user, string $param): ?array
-    {
-        $routes = explode(',', $param);
-        if (count($routes) < 2) return null;
-
-        $cache = Cache::tags(['user-'.$user->id, 'navcom']);
-        $cached = $cache->get(sha1($param));
-
-        if ($cached) return $cached;
-
-        /** @var Collection<Universe> $sectors */
-        $sectors = Universe::queryForUser($user)
-            ->whereIn('id', $routes)
-            ->get();
-
-        $start = array_shift($routes);
-        $result = [
-            'start' => new LinkResource($sectors->where('id', $start)->first()),
-            'path' => array_map(function($id) use ($sectors) {
-                return new LinkResource($sectors->where('id', $id)->first());
-            }, $routes),
-        ];
-
-        $cache->forever(sha1($param), $result);
-
-        return $result;
     }
 }

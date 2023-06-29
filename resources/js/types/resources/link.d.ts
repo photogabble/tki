@@ -8,5 +8,10 @@ export interface LinkResource {
 
 export interface WarpRouteResource {
     start: LinkResource;
-    path: Array<LinkResource>;
+    waypoints: Array<LinkResource>;
+}
+
+export interface CalculateWarpMovesResource {
+    result: WarpRouteResource;
+    engage: string;
 }
