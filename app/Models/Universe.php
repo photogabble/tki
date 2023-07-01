@@ -100,7 +100,8 @@ class Universe extends Model
     }
 
     /**
-     * This functionality was refactored from rsmove.php
+     * This functionality was refactored from rsmove.php, which was also
+     * similar or the same as classes/Realspace.php.
      * @param Ship $ship
      * @param Universe $destination
      * @return array

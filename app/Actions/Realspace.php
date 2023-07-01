@@ -30,9 +30,13 @@ use Tki\Helpers;
 
 class Realspace
 {
-    public function realSpaceMove(\PDO $pdo_db, string $lang, int $destination, Registry $tkireg): string
+    /**
+     * @deprecated Replaced by Universe::calculateRealSpaceMove
+     * @param int $destination
+     * @return string
+     */
+    public function realSpaceMove(int $destination): string
     {
-        $langvars = Translate::load($pdo_db, $lang, array('planet_report', 'regional', 'rsmove'));
         $energyscooped = 0;
         $players_gateway = new Tki\Models\User($pdo_db);
         $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
