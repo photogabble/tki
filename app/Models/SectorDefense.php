@@ -27,9 +27,10 @@ namespace Tki\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Tki\Types\DefenseType;
 
 /**
- * @property string $defense_type
+ * @property DefenseType $defense_type
  * @property int $quantity
  * @property-read User $owner
  * @property-read Universe $sector
@@ -39,6 +40,11 @@ class SectorDefense extends Model
     protected $fillable = [
         'quantity'
     ];
+
+    protected $casts = [
+        'defense_type' => DefenseType::class,
+    ];
+
 
     public function owner(): BelongsTo
     {
@@ -60,7 +66,7 @@ class SectorDefense extends Model
     {
         return SectorDefense::query()
             ->where('sector_id', $sector_id)
-            ->where('defense_type', 'F')
+            ->where('defense_type', DefenseType::Fighters)
             ->orderBy('quantity', 'DESC')
             ->get();
     }
@@ -74,7 +80,7 @@ class SectorDefense extends Model
     {
         return SectorDefense::query()
             ->where('sector_id', $sector_id)
-            ->where('defense_type', 'M')
+            ->where('defense_type', DefenseType::Mines)
             ->orderBy('quantity', 'DESC')
             ->get();
     }
