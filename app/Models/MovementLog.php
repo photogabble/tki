@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /**
  * classes/LogMove.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
@@ -26,19 +26,24 @@ namespace Tki\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Tki\Types\MovementMode;
 
 /**
+ * @property int|null $previous_id
  * @property Carbon $created_at
  * @property int $sector_id
+ * @property string $mode
  * @property-read Universe $sector
+ * @property-read MovementLog $previous
+ * @property-read Encounter|null $encounter
  */
 class MovementLog extends Model
 {
     protected $fillable = [
-        'user_id', 'sector_id', 'turns_used', 'energy_scooped', 'mode'
+        'previous_id', 'user_id', 'sector_id', 'turns_used', 'energy_scooped', 'mode'
     ];
 
     protected $casts = [
@@ -55,10 +60,25 @@ class MovementLog extends Model
         return $this->belongsTo(Universe::class, 'sector_id');
     }
 
+    public function previous(): BelongsTo
+    {
+        return $this->belongsTo(MovementLog::class, 'previous_id');
+    }
+
     public static function writeLog(int $user_id, int $sector_id, MovementMode $mode = MovementMode::RealSpace, int $turnsUsed = 0, int $energyScooped = 0): MovementLog
     {
+        /** @var MovementLog|null $previous */
+        $previous = static::query()
+            ->select('id')
+            ->where('user_id', $user_id)
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        if ($previous) $previous = $previous->id;
+
         $movement = static::query()
             ->create([
+                'previous_id' => $previous,
                 'user_id' => $user_id,
                 'sector_id' => $sector_id,
                 'mode' => $mode,

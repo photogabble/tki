@@ -18,6 +18,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('sector_id');
+            $table->unsignedBigInteger('previous_id')->nullable();
 
             $table->enum('mode',  array_from_enum(MovementMode::cases()));
             $table->integer('turns_used');
@@ -31,6 +32,11 @@ return new class extends Migration
             $table->foreign('sector_id')
                 ->references('id')
                 ->on('universes')
+                ->onDelete('cascade');
+
+            $table->foreign('previous_id')
+                ->references('id')
+                ->on('movement_logs')
                 ->onDelete('cascade');
         });
     }
