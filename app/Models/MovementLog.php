@@ -62,7 +62,7 @@ class MovementLog extends Model
             ]);
 
         // Clear Response cache for map pages
-        Cache::tags('galaxy-'.$user_id)->clear();
+        Cache::tags('galaxy-' . $user_id)->flush();
 
         return $movement;
     }
