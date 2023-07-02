@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * app/Actions/EncounterFactory.php from The Kabal Invasion.
+ * Actions/EncounterFactory.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -39,27 +39,29 @@ abstract class EncounterFactory
         $this->model = $model;
     }
 
-    abstract public function actions(): array;
+    abstract public function options(): array;
+
+    abstract public function introduction(): void;
 
     public function has(string $action): bool
     {
-        return in_array($action, array_keys($this->actions()));
+        return in_array($action, array_keys($this->options()));
     }
 
     /**
      * @param string $action
-     * @return EncounterActivity
+     * @return EncounterOption
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      * @throws Exception
      */
-    public function make(string $action): EncounterActivity
+    public function make(string $action): EncounterOption
     {
         if (!$this->has($action)) {
             throw new Exception("Invalid Encounter action [$action]");
         }
-        /** @var EncounterActivity $class */
-        $class = Container::getInstance()->get($this->actions()[$action]);
+        /** @var EncounterOption $class */
+        $class = Container::getInstance()->get($this->options()[$action]);
         $class->setEncounter($this->model);
 
         return $class;

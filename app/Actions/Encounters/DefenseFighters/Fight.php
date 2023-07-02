@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * app/Actions/EncounterActivity.php from The Kabal Invasion.
+ * Actions/Encounters/DefenseFighters/Fight.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -20,28 +20,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * ---
+ *
+ * This class is the refactored result of CheckDefenses::fighters
+ *
  */
 
-namespace Tki\Actions\Encounters;
+namespace Tki\Actions\Encounters\DefenseFighters;
 
-use Illuminate\Http\Request;
-use Tki\Models\Encounter;
+use Tki\Actions\Encounters\EncounterOption;
 
-abstract class EncounterActivity
+final class Fight extends EncounterOption
 {
-    protected Encounter $model;
-
-    protected Request $request;
-
-    public function __construct(Request $request)
+    public function execute(): bool
     {
-        $this->request = $request;
+        // TODO: Refactor sectorFighters into this method?
+        // \Tki\CheckDefenses::sectorFighters($pdo_db, $lang, $sector, $calledfrom, 0, $playerinfo, $tkireg);
+        return false; // TODO
     }
-
-    public function setEncounter(Encounter $model): void
-    {
-        $this->model = $model;
-    }
-
-    abstract public function execute(): bool;
 }
