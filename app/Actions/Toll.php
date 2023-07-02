@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Toll.php from The Kabal Invasion.
+ * Actions/Toll.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
- * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
+ * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
  *
  * @license GNU AGPL version 3.0 or (at your option) any later version.
  *
@@ -24,29 +24,34 @@
 
 namespace Tki\Actions;
 
+use Tki\Models\PlayerLog;
 use Tki\Types\LogEnums;
 
 class Toll
 {
-    public static function distribute(\PDO $pdo_db, int $sector, int $toll, int $total_fighters): void
+    /**
+     * This function distributes the toll paid by a player entering a system with Fighter defenses
+     * between all players who added fighters to the systems defense. The split is always equal.
+     *
+     * @param int $sector
+     * @param int $toll
+     * @param int $total_fighters
+     * @return void
+     */
+    public static function distribute(int $sector, int $toll, int $total_fighters): void
     {
-        $sql = "SELECT * FROM ::prefix::sector_defense WHERE sector_id = :sector_id AND defense_type='F'";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector, \PDO::PARAM_INT);
-        $stmt->execute();
-        $defense_present = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        if ($defense_present !== false)
-        {
-            foreach ($defense_present as $tmp_defense)
-            {
-                $toll_amount = round(($tmp_defense['quantity'] / $total_fighters) * $toll);
-                $sql = "UPDATE ::prefix::ships SET credits=credits + :toll_amount WHERE ship_id = :ship_id";
-                $stmt = $pdo_db->prepare($sql);
-                $stmt->bindParam(':toll_amount', $toll_amount, \PDO::PARAM_INT);
-                $stmt->bindParam(':ship_id', $tmp_defense['ship_id'], \PDO::PARAM_INT);
-                $stmt->execute();
-                \Tki\Models\PlayerLog::writeLog($pdo_db, $tmp_defense['ship_id'], LogEnums::TOLL_RECV, "$toll_amount|$sector");
-            }
+        $defensePresent = \Tki\Models\SectorDefense::fighters($sector);
+
+        foreach ($defensePresent as $defense) {
+            $tollShare = round(($defense->quantity / $total_fighters) * $toll);
+
+            // TODO: This should go into their iBank account as a transaction
+            $defense->owner->increment('credits', $tollShare);
+            PlayerLog::writeLog(
+                $defense->owner->ship_id,
+                LogEnums::TOLL_RECV,
+                "$tollShare|$sector"
+            );
         }
     }
 }
