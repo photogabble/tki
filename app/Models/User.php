@@ -146,6 +146,12 @@ class User extends Authenticatable
         return $value;
     }
 
+    public function spendTurns(int $amount): void
+    {
+        $this->decrement('turns', $amount);
+        $this->increment('turns_used', $amount);
+    }
+
     /**
      * @todo refactor to use Carbon and an offset in minutes
      * @param string $since_stamp

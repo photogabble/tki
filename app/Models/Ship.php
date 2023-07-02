@@ -170,8 +170,7 @@ class Ship extends Model
      */
     public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): MovementLog
     {
-        $this->owner()->decrement('turns', 1);
-        $this->owner()->increment('turns_used', 1);
+        $this->owner->spendTurns($turnsUsed);
 
         // energyScooped is calculated by Move::calcFuelScooped, it will never go over our max energy
         $this->increment('ship_energy', $energyScooped);
