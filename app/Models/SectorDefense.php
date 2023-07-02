@@ -71,6 +71,15 @@ class SectorDefense extends Model
             ->get();
     }
 
+    public static function fightersCount(int $sector_id): int
+    {
+        return SectorDefense::with('owner')
+            ->where('sector_id', $sector_id)
+            ->where('defense_type', DefenseType::Fighters)
+            ->orderBy('quantity', 'DESC')
+            ->sum('quantity');
+    }
+
     /**
      * @param int $sector_id
      * @return Collection<SectorDefense>
