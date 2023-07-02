@@ -45,6 +45,11 @@ class MovementLog extends Model
         'mode' => MovementMode::class,
     ];
 
+    public function encounter(): HasOne
+    {
+        return $this->hasOne(Encounter::class, 'movement_id');
+    }
+
     public function sector(): BelongsTo
     {
         return $this->belongsTo(Universe::class, 'sector_id');

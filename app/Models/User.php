@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -114,6 +115,23 @@ class User extends Authenticatable
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function encounters(): HasMany
+    {
+        return $this->hasMany(Encounter::class);
+    }
+
+    /**
+     * Players might have multiple Encounters which need to be dealt with one after the other,
+     * for example Hostile followed by Death.
+     * @return HasOne
+     */
+    public function currentEncounter(): HasOne
+    {
+        return $this->hasOne(Encounter::class)
+            ->whereNull('completed_at')
+            ->oldestOfMany();
     }
 
     public function hasVisitedSector(int $sectorId) : bool
