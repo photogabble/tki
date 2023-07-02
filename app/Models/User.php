@@ -152,6 +152,11 @@ class User extends Authenticatable
         $this->increment('turns_used', $amount);
     }
 
+    public function spendCredits(int $amount, string $on): void
+    {
+        $this->decrement('credits', $amount);
+    }
+
     /**
      * @todo refactor to use Carbon and an offset in minutes
      * @param string $since_stamp
