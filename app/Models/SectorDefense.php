@@ -32,6 +32,7 @@ use Tki\Types\DefenseType;
 /**
  * @property DefenseType $defense_type
  * @property int $quantity
+ * @property int $owner_id
  * @property-read User $owner
  * @property-read Universe $sector
  */
@@ -44,7 +45,6 @@ class SectorDefense extends Model
     protected $casts = [
         'defense_type' => DefenseType::class,
     ];
-
 
     public function owner(): BelongsTo
     {
@@ -62,9 +62,9 @@ class SectorDefense extends Model
      * @return Collection<SectorDefense>
      *@todo refactor usages for new Collection return
      */
-    public function selectFighterDefenses(int $sector_id): Collection
+    public static function fighters(int $sector_id): Collection
     {
-        return SectorDefense::query()
+        return SectorDefense::with('owner')
             ->where('sector_id', $sector_id)
             ->where('defense_type', DefenseType::Fighters)
             ->orderBy('quantity', 'DESC')
@@ -78,7 +78,7 @@ class SectorDefense extends Model
      */
     public function selectMineDefenses(int $sector_id): Collection
     {
-        return SectorDefense::query()
+        return SectorDefense::with('owner')
             ->where('sector_id', $sector_id)
             ->where('defense_type', DefenseType::Mines)
             ->orderBy('quantity', 'DESC')
