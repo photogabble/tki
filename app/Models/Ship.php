@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Tki\Actions\Bounty;
 use Tki\Types\MovementMode;
+use Tki\CheckDefenses;
 
 /**
  * @property bool $trade_colonists
@@ -190,6 +191,7 @@ class Ship extends Model
      * @param int $turnsUsed
      * @param int $energyScooped
      * @return MovementLog
+     * @throws \Exception
      */
     public function travelTo(int $sectorId, MovementMode $mode, int $turnsUsed, int $energyScooped): MovementLog
     {
@@ -198,21 +200,19 @@ class Ship extends Model
         // energyScooped is calculated by Move::calcFuelScooped, it will never go over our max energy
         $this->increment('ship_energy', $energyScooped);
 
-        // Make Move, this might be undone depending on how CheckDefenses::fighters computes.
+        // Make Move
         $movement = MovementLog::writeLog($this->owner_id, $sectorId, $mode, $turnsUsed, $energyScooped);
         $this->update(['sector_id' => $sectorId]);
 
-        // TODO: refactor CheckDefenses::fighters to provide a JsonResponse on battle. This can sometimes result in
-        //       the player _not_ making it to their final destination!
-        // \Tki\CheckDefenses::fighters($pdo_db, $lang, $sector, $playerinfo, $tkireg, $title, $calledfrom);
+        if (CheckDefenses::fighters($movement, $this->owner) === true) {
+            return $movement; // Player has a Fighters Encounter
+        }
 
-        // CheckDefenses::fighters may create a MovementLogEvent of EventType::Fighters attach it to $movement
-        // and then return without running CheckDefenses::mines so the front end can display the retreat,
-        // pay, fight or cloak options to the player. For example, resolving MovementLogEvent with retreat
-        // will trigger Ship::moveTo(previous).
+        if (CheckDefenses::mines($movement, $this->owner) === true) {
+            return $movement; // Player has a Mines Encounter
+        }
 
-        // TODO: refactor CheckDefenses::mines to provide a JsonResponse on battle
-        // \Tki\CheckDefenses::mines($pdo_db, $lang, $sector, $title, $playerinfo, $tkireg);
+        // TODO Add random encounters...
 
         return $movement;
         // TODO: Implement, travelling should cost some energy, if

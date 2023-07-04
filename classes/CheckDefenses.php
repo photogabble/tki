@@ -26,638 +26,259 @@ namespace Tki;
 
 // TODO: unsure if this is an action class or a helper class, or if these methods belong on a Model
 
+use Tki\Models\SectorDefense;
+use Tki\Types\EncounterType;
+use Tki\Models\MovementLog;
+use Tki\Models\PlayerLog;
+use Tki\Models\Encounter;
+use Tki\Models\User;
+
 class CheckDefenses
 {
-    public static function sectorFighters(\PDO $pdo_db, string $lang, int $sector, string $calledfrom, int $energyscooped, array $playerinfo, Registry $tkireg): void
+    /**
+     * @deprecated use Fight
+     * @param PDO $pdo_db
+     * @param string $lang
+     * @param int $sector
+     * @param string $calledfrom
+     * @param int $energyscooped
+     * @param array $playerinfo
+     * @param Registry $tkireg
+     * @return void
+     * @throws \Exception
+     */
+    public static function sectorFighters(
+        PDO $pdo_db,
+        string $lang,
+        int $sector,
+        string $calledfrom,
+        int $energyscooped,
+        array $playerinfo,
+        Registry $tkireg
+    ): void {
+        throw new \Exception('Deprecated');
+    }
+
+    /**
+     * Determine if there is a DefenseFighters encounter.
+     *
+     * I have refactored the majority of this methods functionality into EncounterActivity
+     * classes. These can be found in Actions\Encounters\DefenseFighters.
+     *
+     * @param MovementLog $movement
+     * @param User $player
+     * @return bool
+     */
+    public static function fighters(MovementLog $movement, User $player): bool
     {
         $total_sec_fighters = 0;
 
-        $langvars = \Tki\Translate::load($pdo_db, $lang, array('common',
-                                         'footer', 'insignias', 'news',
-                                         'sector_fighters', 'universal'));
-        echo $langvars['l_sf_attacking'] . "<br>";
-        $targetfighters = $total_sec_fighters;
+        // Get sector defense info from database
+        $defenses = SectorDefense::fighters($movement->sector_id);
 
-        $playerbeams = Helpers\CalcLevels::abstractLevels($playerinfo['beams'], $tkireg);
-        $playerenergy = $playerinfo['ship_energy'];
+        foreach ($defenses as $defense){
+            // Can't be attacked if portion of defense was deployed by player
+            if ($defense->owner_id === $player->id) return false;
 
-        if ($calledfrom == 'rsmove.php')
-        {
-            $playerenergy += $energyscooped;
+            // Can't be attacked if defense is deployed by someone on the same team
+            // All sector defenses must be owned by members of the same team.
+            if ($defense->owner->team_id === $player->team_id && !is_null($player->team_id)) return false;
+
+            $total_sec_fighters += $defense->quantity;
         }
 
-        if ($playerbeams > (int) $playerinfo['ship_energy'])
-        {
-            $playerbeams = $playerinfo['ship_energy'];
+        if ($total_sec_fighters > 0) {
+            // Create Encounter with options for player to choose what happens next
+            $movement->encounter()->save(new Encounter([
+                'user_id' => $player->id,
+                'sector_id' => $movement->sector_id,
+                'type' => EncounterType::DefenseFighters,
+            ]));
+            return true;
         }
 
-        $playerenergy = $playerenergy - $playerbeams;
-        $playertorpnum = round(pow($tkireg->level_factor, $playerinfo['torp_launchers'])) * 2;
+        // Clean up any sectors that have used up all mines or fighters
+        SectorDefense::query()
+            ->where('quantity', '<=', '0')
+            ->delete();
 
-        if ($playertorpnum > $playerinfo['torps'])
-        {
-            $playertorpnum = $playerinfo['torps'];
-        }
-
-        $playertorpdmg = $tkireg->torp_dmg_rate * $playertorpnum;
-        $playerarmor = $playerinfo['armor_pts'];
-        $playerfighters = $playerinfo['ship_fighters'];
-        if (($targetfighters > 0) && ($playerbeams > 0))
-        {
-            if ($playerbeams > round($targetfighters / 2))
-            {
-                $temp = round($targetfighters / 2);
-                $lost = $targetfighters - $temp;
-                $langvars['l_sf_destfight'] = str_replace("[lost]", (string) $lost, $langvars['l_sf_destfight']);
-                echo $langvars['l_sf_destfight'] . "<br>";
-                $targetfighters = $temp;
-                $playerbeams = $playerbeams - $lost;
-            }
-            else
-            {
-                $targetfighters = $targetfighters - $playerbeams;
-                $langvars['l_sf_destfightb'] = str_replace("[lost]", (string) $playerbeams, $langvars['l_sf_destfightb']);
-                echo $langvars['l_sf_destfightb'] . "<br>";
-                $playerbeams = 0;
-            }
-        }
-
-        echo "<br>" . $langvars['l_sf_torphit'] . "<br>";
-        if ($targetfighters > 0 && $playertorpdmg > 0)
-        {
-            if ($playertorpdmg > round($targetfighters / 2))
-            {
-                $temp = round($targetfighters / 2);
-                $lost = $targetfighters - $temp;
-                $langvars['l_sf_destfightt'] = str_replace("[lost]", (string) $lost, $langvars['l_sf_destfightt']);
-                echo $langvars['l_sf_destfightt'] . "<br>";
-                $targetfighters = $temp;
-                $playertorpdmg = $playertorpdmg - $lost;
-            }
-            else
-            {
-                $targetfighters = $targetfighters - $playertorpdmg;
-                $langvars['l_sf_destfightt'] = str_replace("[lost]", (string) $playertorpdmg, $langvars['l_sf_destfightt']);
-                echo $langvars['l_sf_destfightt'];
-                $playertorpdmg = 0;
-            }
-        }
-
-        echo "<br>" . $langvars['l_sf_fighthit'] . "<br>";
-        if ($playerfighters > 0 && $targetfighters > 0)
-        {
-            if ($playerfighters > $targetfighters)
-            {
-                echo $langvars['l_sf_destfightall'] . "<br>";
-                $temptargfighters = 0;
-            }
-            else
-            {
-                $langvars['l_sf_destfightt2'] = str_replace("[lost]", (string) $playerfighters, $langvars['l_sf_destfightt2']);
-                echo $langvars['l_sf_destfightt2'] . "<br>";
-                $temptargfighters = $targetfighters - $playerfighters;
-            }
-
-            if ($targetfighters > $playerfighters)
-            {
-                echo $langvars['l_sf_lostfight'] . "<br>";
-                $tempplayfighters = 0;
-            }
-            else
-            {
-                 $langvars['l_sf_lostfight2'] = str_replace("[lost]", $targetfighters, $langvars['l_sf_lostfight2']);
-                 echo $langvars['l_sf_lostfight2'] . "<br>";
-                 $tempplayfighters = $playerfighters - $targetfighters;
-            }
-
-            $playerfighters = $tempplayfighters;
-            $targetfighters = $temptargfighters;
-        }
-
-        if ($targetfighters > 0)
-        {
-            if ($targetfighters > $playerarmor)
-            {
-                $playerarmor = 0;
-                echo $langvars['l_sf_armorbreach'] . "<br>";
-            }
-            else
-            {
-                $playerarmor = $playerarmor - $targetfighters;
-                $langvars['l_sf_armorbreach2'] = str_replace("[lost]", $targetfighters, $langvars['l_sf_armorbreach2']);
-                echo $langvars['l_sf_armorbreach2'] . "<br>";
-            }
-        }
-
-        $fighterslost = $total_sec_fighters - $targetfighters;
-        Actions\Fighters::destroy($pdo_db, $sector, $fighterslost);
-        $langvars['l_sf_sendlog'] = str_replace("[player]", $playerinfo['character_name'], $langvars['l_sf_sendlog']);
-        $langvars['l_sf_sendlog'] = str_replace("[lost]", (string) $fighterslost, $langvars['l_sf_sendlog']);
-        $langvars['l_sf_sendlog'] = str_replace("[sector]", (string) $sector, $langvars['l_sf_sendlog']);
-
-        Actions\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_sf_sendlog']);
-        \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], Types\LogEnums::DEFS_DESTROYED_F, "$fighterslost|$sector");
-        $armor_lost = $playerinfo['armor_pts'] - $playerarmor;
-        $fighters_lost = $playerinfo['ship_fighters'] - $playerfighters;
-
-        $sql = "UPDATE ::prefix::ships SET ship_energy = :ship_energy, ship_fighters = ship_fighters - :fighters_lost," .
-               "armor_pts = armor_pts - :armor_lost, torps = torps - :playertorps WHERE ship_id = :ship_id";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindParam(':ship_energy', $playerenergy, \PDO::PARAM_INT);
-        $stmt->bindParam(':fighters_lost', $fighters_lost, \PDO::PARAM_INT);
-        $stmt->bindParam(':armor_lost', $armor_lost, \PDO::PARAM_INT);
-        $stmt->bindParam(':playertorps', $playertorpnum, \PDO::PARAM_INT);
-        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-        $stmt->execute();
-        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-        $langvars['l_sf_lreport'] = str_replace("[armor]", (string) $armor_lost, $langvars['l_sf_lreport']);
-        $langvars['l_sf_lreport'] = str_replace("[fighters]", (string) $fighters_lost, $langvars['l_sf_lreport']);
-        $langvars['l_sf_lreport'] = str_replace("[torps]", (string) $playertorpnum, $langvars['l_sf_lreport']);
-        echo $langvars['l_sf_lreport'] . "<br><br>";
-        if ($playerarmor < 1)
-        {
-            echo $langvars['l_sf_shipdestroyed'] . "<br><br>";
-            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], Types\LogEnums::DEFS_KABOOM, "$sector|$playerinfo[dev_escapepod]");
-            $langvars['l_sf_sendlog2'] = str_replace("[player]", $playerinfo['character_name'], $langvars['l_sf_sendlog2']);
-            $langvars['l_sf_sendlog2'] = str_replace("[sector]", (string) $sector, $langvars['l_sf_sendlog2']);
-            Actions\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_sf_sendlog2']);
-            if ($playerinfo['dev_escapepod'] == 'Y')
-            {
-                $rating = round($playerinfo['rating'] / 2);
-                echo $langvars['l_sf_escape'] . "<br><br>";
-
-                $sql = "UPDATE ::prefix::ships SET hull = 0," .
-                       "engines = 0, power = 0, computer = 0, sensors = 0," .
-                       "beams = 0, torp_launchers = 0, torps = 0, armor = 0," .
-                       "armor_pts = 100, cloak = 0, shields = 0, sector = 1," .
-                       "ship_ore = 0, ship_organics = 0, ship_energy = 1000," .
-                       "ship_colonists = 0, ship_goods = 0, rating = :rating," .
-                       "ship_fighters = 100, ship_damage = 0, credits = 1000," .
-                       "on_planet = 'N', cleared_defenses = ' ', dev_warpedit = 0, dev_genesis = 0," .
-                       "dev_beacon = 0, dev_emerwarp = 0, dev_escapepod = 'N'," .
-                       "dev_fuelscoop = 'N', dev_minedeflector = 0," .
-                       "ship_destroyed = 'N', dev_lssd = 'N' " .
-                       "WHERE ship_id = :ship_id";
-                $stmt = $pdo_db->prepare($sql);
-                $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                $stmt->bindParam(':rating', $rating, \PDO::PARAM_INT);
-                $stmt->execute();
-                \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                $bounty = new Actions\Bounty();
-                $bounty->cancel($pdo_db, $playerinfo['ship_id']);
-                \Tki\Text::gotoMain($pdo_db, $lang);
-                die();
-            }
-            else
-            {
-                $bounty = new Actions\Bounty();
-                $bounty->cancel($pdo_db, $playerinfo['ship_id']);
-                $character_object = new Actions\Character();
-                $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
-                \Tki\Text::gotoMain($pdo_db, $lang);
-                die();
-            }
-        }
-
-        if ($targetfighters > 0)
-        {
-            $status = 0;
-        }
-        else
-        {
-            $status = 2;
-        }
+        return false;
     }
 
-    public static function fighters(\PDO $pdo_db, string $lang, int $sector, array $playerinfo, \Tki\Registry $tkireg, string $title, string $calledfrom): void
+    /**
+     * Determine if there is a DefenseMines encounter.
+     *
+     * @param MovementLog $movement
+     * @param User $player
+     * @return bool
+     * @throws \Exception
+     */
+    public static function mines(MovementLog $movement, User $player): bool
     {
-        // Database driven language entries
-        $langvars = \Tki\Translate::load($pdo_db, $lang, array(
-                                         'check_defenses', 'combat', 'common',
-                                         'footer', 'insignias', 'news',
-                                         'regional', 'universal'));
-
-        // Put the defense information into the array defenses
-        $total_sec_fighters = 0;
-
-        // Detect if this variable exists, and filter it.
-        // Returns false if anything wasn't right.
-        $response = null;
-        $response = filter_input(INPUT_POST, 'response', FILTER_SANITIZE_STRING);
-        if (($response === null) || (strlen(trim($response)) === 0))
-        {
-            $response = false;
-        }
-
-        $destination = null;
-        if (array_key_exists('destination', $_REQUEST) === true)
-        {
-            $destination = $_REQUEST['destination'];
-        }
-
-        $engage = null;
-        if (array_key_exists('engage', $_REQUEST) === true)
-        {
-            $engage = $_REQUEST['engage'];
-        }
-
-        // Get sector defense info from database
-        $defenses_gateway = new \Tki\Models\SectorDefense($pdo_db);
-        $defenses_present = $defenses_gateway->selectFighterDefenses($sector);
-        $defenses = array();
-        $num_defenses = 0;
-        $owner = true;
-        $i = 0;
-
-        if (!empty($defenses_present))
-        {
-            foreach ($defenses_present as $current_defense)
-            {
-                $defenses[$num_defenses] = $current_defense;
-                $total_sec_fighters += $current_defense['quantity'];
-                if ($defenses[$num_defenses]['ship_id'] != $playerinfo['ship_id'])
-                {
-                    $owner = false;
-                }
-
-                $num_defenses++;
-            }
-        }
-
-        if ($num_defenses > 0 && $total_sec_fighters > 0 && !$owner)
-        {
-            // Find out if the fighter owner and player are on the same team
-            // All sector defenses must be owned by members of the same team
-            $fm_owner = $defenses[0]['ship_id'];
-
-            $sql = "SELECT * FROM ::prefix::ships WHERE ship_id = :fm_owner";
-            $stmt = $pdo_db->prepare($sql);
-            $stmt->bindParam(':fm_owner', $fm_owner, \PDO::PARAM_INT);
-            $stmt->execute();
-            $fighters_owner = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-            if ($fighters_owner['team'] != $playerinfo['team'] || $playerinfo['team'] == 0)
-            {
-                switch ($response)
-                {
-                    case "fight":
-                        $sql = "UPDATE ::prefix::ships SET cleared_defenses = ' ' WHERE " .
-                               "ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        echo "<h1>" . $title . "</h1>\n";
-                        \Tki\CheckDefenses::sectorFighters($pdo_db, $lang, $sector, $calledfrom, 0, $playerinfo, $tkireg);
-                        break;
-
-                    case "retreat":
-                        $sql = "UPDATE ::prefix::ships SET cleared_defenses = ' ' WHERE " .
-                               "ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        $cur_time_stamp = date("Y-m-d H:i:s");
-                        $sql = "UPDATE ::prefix::ships SET last_login = ':last_login' " .
-                               " turns = turns -2, turns_used = turns_used + 2, " .
-                               "sector = :sector WHERE " .
-                               "ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':last_login', $cur_time_stamp, \PDO::PARAM_INT);
-                        $stmt->bindParam(':sector', $playerinfo['sector'], \PDO::PARAM_INT);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        echo "<h1>" . $title . "</h1>\n";
-                        echo $langvars['l_chf_youretreatback'] . "<br>";
-                        \Tki\Text::gotoMain($pdo_db, $lang);
-                        die();
-
-                    case "pay":
-                        $sql = "UPDATE ::prefix::ships SET cleared_defenses = ' ' WHERE " .
-                               "ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        $fighterstoll = (int) round($total_sec_fighters * $tkireg->fighter_price * 0.6);
-                        if ($playerinfo['credits'] < $fighterstoll)
-                        {
-                            echo $langvars['l_chf_notenoughcreditstoll'] . "<br>";
-                            echo $langvars['l_chf_movefailed'] . "<br>";
-
-                            // Undo the move
-                            $sql = "UPDATE ::prefix::ships SET sector = :sector WHERE " .
-                                   "ship_id = :ship_id";
-                            $stmt = $pdo_db->prepare($sql);
-                            $stmt->bindParam(':sector', $playerinfo['sector'], \PDO::PARAM_INT);
-                            $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                            $stmt->execute();
-                            \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                            $status = 0;
-                        }
-                        else
-                        {
-                            $tollstring = number_format($fighterstoll, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']);
-                            $langvars['l_chf_youpaidsometoll'] = str_replace("[chf_tollstring]", $tollstring, $langvars['l_chf_youpaidsometoll']);
-                            echo $langvars['l_chf_youpaidsometoll'] . "<br>";
-                            $sql = "UPDATE ::prefix::ships SET credits = credits - :fighterstoll " .
-                                   "WHERE ship_id = :ship_id";
-                            $stmt = $pdo_db->prepare($sql);
-                            $stmt->bindParam(':fighterstoll', $fighterstoll, \PDO::PARAM_INT);
-                            $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                            $stmt->execute();
-                            \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                            Actions\Toll::distribute($pdo_db, $sector, $fighterstoll, (int) $total_sec_fighters);
-                            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], Types\LogEnums::TOLL_PAID, "$tollstring|$sector");
-                            $status = 1;
-                        }
-                        break;
-
-                    case "sneak":
-                        $sql = "UPDATE ::prefix::ships SET cleared_defenses = ' ' " .
-                               "WHERE ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        $success = Helpers\Scan::success($fighters_owner['sensors'], $playerinfo['cloak']);
-                        if ($success < 5)
-                        {
-                            $success = 5;
-                        }
-
-                        if ($success > 95)
-                        {
-                            $success = 95;
-                        }
-
-                        $roll = random_int(1, 100);
-                        if ($roll < $success)
-                        {
-                            // Sector defenses detect incoming ship
-                            echo "<h1>" . $title . "</h1>\n";
-                            echo $langvars['l_chf_thefightersdetectyou'] . "<br>";
-                            \Tki\CheckDefenses::sectorFighters($pdo_db, $lang, $sector, $calledfrom, 0, $playerinfo, $tkireg);
-                            break;
-                        }
-                        else
-                        {
-                            // Sector defenses don't detect incoming ship
-                            $status = 1;
-                        }
-                        break;
-
-                    default:
-                        $interface_string = $calledfrom . '?sector=' . $sector . '&destination=' . $destination . '&engage=' . $engage;
-                        $sql = "UPDATE ::prefix::ships SET cleared_defenses = :cleared_defenses " .
-                               "WHERE ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':cleared_defenses', $interface_string, \PDO::PARAM_STR);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-
-                        $fighterstoll = (int) round($total_sec_fighters * $tkireg->fighter_price * 0.6);
-                        echo "<h1>" . $title . "</h1>\n";
-                        echo "<form accept-charset='utf-8' action='{$calledfrom}' method='post'>";
-                        $langvars['l_chf_therearetotalfightersindest'] = str_replace("[chf_total_sec_fighters]", (string) $total_sec_fighters, $langvars['l_chf_therearetotalfightersindest']);
-                        echo $langvars['l_chf_therearetotalfightersindest'] . "<br>";
-                        if ($defenses[0]['fm_setting'] == "toll")
-                        {
-                            $langvars['l_chf_creditsdemanded'] = str_replace("[chf_number_fighterstoll]", number_format($fighterstoll, 0, $langvars['local_number_dec_point'], $langvars['local_number_thousands_sep']), $langvars['l_chf_creditsdemanded']);
-                            echo $langvars['l_chf_creditsdemanded'] . "<br>";
-                        }
-
-                        $langvars['l_chf_youcanretreat'] = str_replace("[retreat]", "<strong>Retreat</strong>", $langvars['l_chf_youcanretreat']);
-                        echo $langvars['l_chf_youcan'] . " <br><input type='radio' name='response' value='retreat'>" . $langvars['l_chf_youcanretreat'] . "<br></input>";
-                        if ($defenses[0]['fm_setting'] == "toll")
-                        {
-                            $langvars['l_chf_inputpay'] = str_replace("[pay]", "<strong>Pay</strong>", $langvars['l_chf_inputpay']);
-                            echo "<input type='radio' name='response' checked value='pay'>" . $langvars['l_chf_inputpay'] . "<br></input>";
-                        }
-
-                        echo "<input type='radio' name='response' checked value='fight'>";
-                        $langvars['l_chf_inputfight'] = str_replace("[fight]", "<strong>Fight</strong>", $langvars['l_chf_inputfight']);
-                        echo $langvars['l_chf_inputfight'] . "<br></input>";
-
-                        echo "<input type=radio name=response checked value=sneak>";
-                        $langvars['l_chf_inputcloak'] = str_replace("[cloak]", "<strong>Cloak</strong>", $langvars['l_chf_inputcloak']);
-                        echo $langvars['l_chf_inputcloak'] . "<br></input><br>";
-
-                        echo "<input type='submit' value='" . $langvars['l_chf_go'] . "'><br><br>";
-                        echo "<input type='hidden' name='sector' value='{$sector}'>";
-                        echo "<input type='hidden' name='engage' value='1'>";
-                        echo "<input type='hidden' name='destination' value='{$destination}'>";
-                        echo "</form>";
-                        die();
-                }
-
-                // Clean up any sectors that have used up all mines or fighters
-                $sql = "DELETE FROM ::prefix::sector_defense " .
-                       "WHERE quantity <= :quantity";
-                $stmt = $pdo_db->prepare($sql);
-                $stmt->bindValue(':quantity', 0, \PDO::PARAM_INT);
-                $stmt->execute();
-                \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-            }
-        }
-    }
-
-    public static function mines(\PDO $pdo_db, string $lang, int $sector, string $title, array $playerinfo, \Tki\Registry $tkireg): void
-    {
-        // Database driven language entries
-        $langvars = \Tki\Translate::load($pdo_db, $lang, array('combat',
-                                         'common', 'check_defenses',
-                                         'insignias', 'footer', 'news'));
-
-        // Get sector defense info from database
-        $defenses_gateway = new \Tki\Models\SectorDefense($pdo_db);
-        $defenses_present = $defenses_gateway->selectMineDefenses($sector);
-
-        // Correct the targetship bug to reflect the player info
-        $targetship = $playerinfo;
-
-        $defenses = array();
-        $num_defenses = 0;
-        $total_sector_mines = 0;
-        $owner = true;
-        if (!empty($defenses_present))
-        {
-            foreach ($defenses_present as $current_defense)
-            {
-                $defenses[$num_defenses] = $current_defense;
-                $total_sector_mines += $current_defense['quantity'];
-                if ($defenses[$num_defenses]['ship_id'] != $playerinfo['ship_id'])
-                {
-                    $owner = false;
-                }
-
-                $num_defenses++;
-            }
-        }
-
         // Compute the ship average. If it's too low then the ship will not hit mines.
-        $shipavg = Helpers\CalcLevels::avgTech($targetship, 'ship');
+        $shipAvg = Helpers\CalcLevels::avgTech($player->ship->toArray());
+        if ($shipAvg < config('game.mine_hullsize')) return false;
+
+        // Get sector defense info from database
+        $defenses = SectorDefense::mines($movement->sector_id);
+
+        $total_sector_mines = 0;
+
+        foreach ($defenses as $defense){
+            // Can't be attacked if portion of defense was deployed by player
+            if ($defense->owner_id === $player->id) return false;
+
+            // Can't be attacked if defense is deployed by someone on the same team
+            // All sector defenses must be owned by members of the same team.
+            if ($defense->owner->team_id === $player->team_id && !is_null($player->team_id)) return false;
+
+            $total_sector_mines += $defense->quantity;
+        }
 
         // The mines will attack if 4 conditions are met
         //    1) There is at least 1 group of mines in the sector
         //    2) There is at least 1 mine in the sector
-        //    3) You are not the owner or on the team of the owner - team 0 dosent count
-        //    4) You ship is at least $tkireg->mine_hullsize (setable in config/classic_config.ini) big
+        //    3) You are not the owner or on the team of the owner - team null doesn't count
+        //    4) You ship is at least mine_hullsize (settable in config/game.php) big
 
-        if ($num_defenses > 0 && $total_sector_mines > 0 && !$owner && $shipavg > $tkireg->mine_hullsize)
-        {
-            // Find out if the mine owner and player are on the same team
-            $fm_owner = $defenses[0]['ship_id'];
+        if ($total_sector_mines === 0) return false;
 
-            $sql = "SELECT * FROM ::prefix::ships WHERE ship_id = :fm_owner";
-            $stmt = $pdo_db->prepare($sql);
-            $stmt->bindParam(':fm_owner', $fm_owner, \PDO::PARAM_INT);
-            $stmt->execute();
-            $mine_owner = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        /**
+         * Player hit mines, create encounter and calculate log entries
+         * @var Encounter $encounter
+         */
+        $encounter = $movement->encounter()->save(new Encounter([
+            'user_id' => $player->id,
+            'sector_id' => $movement->sector_id,
+            'type' => EncounterType::DefenseMines,
+        ]));
 
-            if ($mine_owner['team'] != $playerinfo['team'] || $playerinfo['team'] == 0)
-            {
-                // You hit mines
-                echo "<h1>" . $title . "</h1>\n";
-                $totalmines = $total_sector_mines;
-                // Before we had an issue where if there were a lot of mines in the sector the result will go -
-                // I changed the behaivor so that rand will chose a % of mines to attack at will
-                // (it will always be at least 5% of the mines or at the very least 1 mine);
-                // and if you are very unlucky they will all hit you
-                $pren = (random_int(5, 100) / 100);
-                $roll = (int) round($pren * $total_sector_mines - 1) + 1;
-                $totalmines = $totalmines - $roll;
+        // Choose % of mines that attack, always at least 5% of the deployed mines or at the very least 1 mine.
+        // Very unlucky players will be hit by all mines.
+        $pren = (random_int(5, 100) / 100);
+        $roll = (int) round($pren * $total_sector_mines - 1) + 1;
 
-                // You are hit. Tell the player and put it in the log
-                $langvars['l_chm_youhitsomemines'] = str_replace("[chm_roll]", (string) $roll, $langvars['l_chm_youhitsomemines']);
-                echo $langvars['l_chm_youhitsomemines'] . "<br>";
-                \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], Types\LogEnums::HIT_MINES, "$roll|$sector");
+        $encounterData = [
+            'attacking_mines' => $roll,
+            'messages' => [],
+        ];
 
-                // Tell the owner that his mines were hit
-                $langvars['l_chm_hehitminesinsector'] = str_replace("[chm_playerinfo_character_name]", $playerinfo['character_name'], $langvars['l_chm_hehitminesinsector']);
-                $langvars['l_chm_hehitminesinsector'] = str_replace("[chm_roll]", "$roll", $langvars['l_chm_hehitminesinsector']);
-                $langvars['l_chm_hehitminesinsector'] = str_replace("[chm_sector]", (string) $sector, $langvars['l_chm_hehitminesinsector']);
-                Actions\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_chm_hehitminesinsector']);
+        // You are hit. Tell the player and put it in the log
+        $encounterData['messages'][] = __('check_defenses.l_chm_youhitsomemines', ['qty' => $roll]);
+        PlayerLog::writeLog($player->id, Types\LogEnums::HIT_MINES, "$roll|$movement->sector_id");
 
-                // If the player has enough mine deflectors then subtract the ammount and continue
-                if ($playerinfo['dev_minedeflector'] >= $roll)
-                {
-                    $langvars['l_chm_youlostminedeflectors'] = str_replace("[chm_roll]", (string) $roll, $langvars['l_chm_youlostminedeflectors']);
-                    echo $langvars['l_chm_youlostminedeflectors'] . "<br>";
+        // Tell the owner that their mines were hit
+        Actions\SectorDefense::messageDefenseOwner($defenses, __('check_defenses.l_chm_hehitminesinsector', [
+            'player_character_name' => $player->name,
+            'qty' => $roll,
+            'sector' => $movement->sector_id
+        ]));
 
-                    $sql = "UPDATE ::prefix::ships SET dev_minedeflector = dev_minedeflector - :roll" .
-                           " WHERE ship_id = :ship_id";
-                    $stmt = $pdo_db->prepare($sql);
-                    $stmt->bindParam(':roll', $roll, \PDO::PARAM_INT);
-                    $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                    $stmt->execute();
-                    \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                }
-                else
-                {
-                    if ($playerinfo['dev_minedeflector'] > 0)
-                    {
-                        echo $langvars['l_chm_youlostallminedeflectors'] . "<br>";
-                    }
-                    else
-                    {
-                        echo $langvars['l_chm_youhadnominedeflectors'] . "<br>";
-                    }
+        $ship = $player->ship;
 
-                    // Shields up
-                    $mines_left = $roll - $playerinfo['dev_minedeflector'];
-                    $playershields = Helpers\CalcLevels::abstractLevels($playerinfo['shields'], $tkireg);
-                    if ($playershields > $playerinfo['ship_energy'])
-                    {
-                        $playershields = $playerinfo['ship_energy'];
-                    }
+        // If the player has enough mine deflectors then subtract the amount and return
+        if ($ship->dev_minedeflector >= $roll) {
+            $encounterData['messages'][] = __('check_defenses.l_chm_youlostminedeflectors', ['qty' => $roll]);
 
-                    if ($playershields >= $mines_left)
-                    {
-                        $langvars['l_chm_yourshieldshitforminesdmg'] = str_replace("[chm_mines_left]", (string) $mines_left, $langvars['l_chm_yourshieldshitforminesdmg']);
-                        echo $langvars['l_chm_yourshieldshitforminesdmg'] . "<br>";
+            $ship->decrement('dev_minedeflector', $roll);
+            $encounter->persistData($encounterData);
+            Actions\Mines::explode($movement->sector_id, $roll);
 
-                        $sql = "UPDATE ::prefix::ships SET ship_energy = ship_energy - :mines_left, dev_minedeflector = 0 " .
-                               "WHERE ship_id = :ship_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':mines_left', $mines_left, \PDO::PARAM_INT);
-                        $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                        if ($playershields == $mines_left)
-                        {
-                            echo $langvars['l_chm_yourshieldsaredown'] . "<br>";
-                        }
-                    }
-                    else
-                    {
-                        // Direct hit
-                        echo $langvars['l_chm_youlostallyourshields'] . "<br>";
-                        $mines_left = $mines_left - $playershields;
-                        if ($playerinfo['armor_pts'] >= $mines_left)
-                        {
-                            $langvars['l_chm_yourarmorhitforminesdmg'] = str_replace("[chm_mines_left]", (string) $mines_left, $langvars['l_chm_yourarmorhitforminesdmg']);
-                            echo $langvars['l_chm_yourarmorhitforminesdmg'] . "<br>";
-
-                            $sql = "UPDATE ::prefix::ships SET armor_pts = armor_pts - :mines_left, ship_energy = 0, dev_minedeflector = 0  " .
-                                   "WHERE ship_id = :ship_id";
-                            $stmt = $pdo_db->prepare($sql);
-                            $stmt->bindParam(':mines_left', $mines_left, \PDO::PARAM_INT);
-                            $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
-                            $stmt->execute();
-                            \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                            if ($playerinfo['armor_pts'] == $mines_left)
-                            {
-                                echo $langvars['l_chm_yourhullisbreached'] . "<br>";
-                            }
-                        }
-                        else
-                        {
-                            // BOOM
-                            $pod = $playerinfo['dev_escapepod'];
-                            \Tki\Models\PlayerLog::writeLog($pdo_db, $playerinfo['ship_id'], Types\LogEnums::SHIP_DESTROYED_MINES, "$sector|$pod");
-                            $langvars['l_chm_hewasdestroyedbyyourmines'] = str_replace("[chm_playerinfo_character_name]", $playerinfo['character_name'], $langvars['l_chm_hewasdestroyedbyyourmines']);
-                            $langvars['l_chm_hewasdestroyedbyyourmines'] = str_replace("[chm_sector]", (string) $sector, $langvars['l_chm_hewasdestroyedbyyourmines']);
-                            Actions\SectorDefense::messageDefenseOwner($pdo_db, $sector, $langvars['l_chm_hewasdestroyedbyyourmines']);
-                            echo $langvars['l_chm_yourshiphasbeendestroyed'] . "<br><br>";
-
-                            // Survival
-                            if ($playerinfo['dev_escapepod'] == "Y")
-                            {
-                                $rating = round($playerinfo['rating'] / 2);
-                                echo $langvars['l_chm_luckescapepod'] . "<br><br>";
-
-                                $ships_gateway = new \Tki\Models\Ship($pdo_db);
-                                $ships_gateway->updateDestroyedShip($playerinfo['ship_id'], $rating);
-
-                                $bounty = new Actions\Bounty();
-                                $bounty->cancel($pdo_db, $playerinfo['ship_id']);
-                            }
-                            else
-                            {
-                                // Or they lose!
-                                $bounty = new Actions\Bounty();
-                                $bounty->cancel($pdo_db, $playerinfo['ship_id']);
-
-                                $character_object = new Actions\Character();
-                                $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
-                            }
-                        }
-                    }
-                }
-
-                Actions\Mines::explode($pdo_db, $sector, $roll);
-            }
+            return true;
         }
+
+        if ($ship->dev_minedeflector > 0) {
+            $encounterData['messages'][] = __('check_defenses.l_chm_youlostallminedeflectors');
+        } else {
+            $encounterData['messages'][] = __('check_defenses.l_chm_youhadnominedeflectors');
+        }
+
+        // Mine Deflectors reduce the attack qty
+        $mines_left = $roll - $ship->dev_minedeflector;
+
+        // Ship either had no mine deflectors installed, or had fewer than needed to deflect attack.
+        $ship->dev_minedeflector = 0;
+
+        // Shields up
+        $playershields = Helpers\CalcLevels::abstractLevels($ship->shields);
+        if ($playershields > $ship->ship_energy) {
+            $playershields = $ship->ship_energy;
+        }
+
+        // Shields have absorbed the attack. Subtract energy used by shields and return.
+        if ($playershields >= $mines_left) {
+            $encounterData['messages'][] = __('check_defenses.l_chm_yourshieldshitforminesdmg', ['qty'=>$mines_left]);
+
+            $ship->ship_energy = max(0, $ship->ship_energy - $mines_left);
+            $ship->save();
+
+            if ($playershields == $mines_left) {
+                $encounterData['messages'][] = __('check_defenses.l_chm_yourshieldsaredown');
+            }
+
+            $encounter->persistData($encounterData);
+            Actions\Mines::explode($movement->sector_id, $roll);
+
+            return true;
+        }
+
+        // When shields fail, the energy reserve is wiped out
+        $ship->ship_energy = 0;
+
+        // Direct hit, down to armor
+        $encounterData['messages'][] = __('check_defenses.l_chm_youlostallyourshields');
+        $mines_left = $mines_left - $playershields;
+
+        if ($ship->armor_pts >= $mines_left) {
+            $encounterData['messages'][] = __('check_defenses.l_chm_yourarmorhitforminesdmg', ['qty' => $mines_left]);
+            $encounterData['messages'][] = __('check_defenses.l_chm_yourhullisbreached');
+            $ship->armor_pts = max(0, $ship->armor_pts - $mines_left);
+
+            $ship->save();
+            $encounter->persistData($encounterData);
+            Actions\Mines::explode($movement->sector_id, $roll);
+
+            return true;
+        }
+
+        // BOOM, players ship is no more.
+
+        $pod = $ship->dev_escapepod ? 'Y' : 'N';
+        PlayerLog::writeLog($player->id, Types\LogEnums::SHIP_DESTROYED_MINES, "$movement->sector_id|$pod");
+
+        Actions\SectorDefense::messageDefenseOwner(
+            $defenses,
+            __('check_defenses.l_chm_hewasdestroyedbyyourmines', [
+                'player_character_name' => $player->name,
+                'sector' => $movement->sector_id
+            ])
+        );
+
+        $encounterData['messages'][] = __('check_defenses.l_chm_yourshiphasbeendestroyed');
+
+        // Survival
+        if ($ship->dev_escapepod) {
+            $encounterData['messages'][] = __('check_defenses.l_chm_luckescapepod');
+            // Listener on the ShipDestroyed event will place them into escape pod if ship had one
+        } else {
+            // Or they lose!
+            // In BNT this would act to remove all the players activity from the game that is
+            // all bounties placed, all planets owned, etc. Trade Wars logs the player out
+            // and bans them for a day. I like Eve Online's approach, where the player is
+            // reincarnated via clone but loose XP.
+
+            // TODO $encounterData['messages']
+        }
+
+        // Destroyed method also saves the changes made to Ship Model. In doing so a ShipDestroyed event is
+        // dispatched and that gets picked up for placing the player into their escape pod,
+        // or reincarnating them.
+        $ship->setDestroyed();
+
+        $ship->save();
+        $encounter->persistData($encounterData);
+        Actions\Mines::explode($movement->sector_id, $roll);
+
+        return false;
     }
 }

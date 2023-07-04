@@ -24,23 +24,22 @@
 
 namespace Tki\Actions;
 
+use Illuminate\Support\Collection;
+use Tki\Models\PlayerLog;
 use Tki\Types\LogEnums;
 
 class SectorDefense
 {
-    public static function messageDefenseOwner(\PDO $pdo_db, int $sector, string $message): void
+    /**
+     * @todo should this be moved on to the \Tki\Models\SectorDefense Model?
+     * @param Collection<\Tki\Models\SectorDefense> $defenses
+     * @param string $message
+     * @return void
+     */
+    public static function messageDefenseOwner(Collection $defenses, string $message): void
     {
-        $sql = "SELECT ship_id FROM ::prefix::sector_defense WHERE sector_id = :sector_id";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector, \PDO::PARAM_INT);
-        $stmt->execute();
-        $defense_present = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        if ($defense_present !== false)
-        {
-            foreach ($defense_present as $tmp_defense)
-            {
-               Tki\Models\PlayerLog::writeLog($pdo_db, $tmp_defense['ship_id'], LogEnums::RAW, $message);
-            }
+        foreach ($defenses as $defense) {
+            PlayerLog::writeLog($defense->owner_id, LogEnums::RAW, $message);
         }
     }
 }

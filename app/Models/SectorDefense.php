@@ -80,12 +80,22 @@ class SectorDefense extends Model
             ->sum('quantity');
     }
 
+    public static function fightersHaveToll(int $sector_id): bool
+    {
+        return SectorDefense::query()
+            ->where('sector_id', $sector_id)
+            ->where('defense_type', DefenseType::Fighters)
+            ->where('quantity', '>', 0)
+            ->where('fm_setting', 'toll')
+            ->exists();
+    }
+
     /**
      * @param int $sector_id
      * @return Collection<SectorDefense>
      *@todo refactor usages for new Collection return
      */
-    public function selectMineDefenses(int $sector_id): Collection
+    public function mines(int $sector_id): Collection
     {
         return SectorDefense::with('owner')
             ->where('sector_id', $sector_id)

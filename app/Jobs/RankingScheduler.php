@@ -44,7 +44,7 @@ class RankingScheduler extends ScheduledTask
     {
         /** @var Ship[] $ships */
         $ships = Ship::query()
-            ->where('ship_destroyed', false)
+            ->whereNull('destroyed_at')
             ->get();
 
         foreach ($ships as $ship) {

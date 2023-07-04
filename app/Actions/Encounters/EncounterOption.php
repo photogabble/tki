@@ -30,7 +30,7 @@ use Tki\Models\User;
 
 abstract class EncounterOption
 {
-    protected Encounter $model;
+    protected Encounter $encounter;
 
     protected Request $request;
 
@@ -44,7 +44,7 @@ abstract class EncounterOption
 
     public function setEncounter(Encounter $model): void
     {
-        $this->model = $model;
+        $this->encounter = $model;
     }
 
     abstract public function execute(): bool;

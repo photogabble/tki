@@ -52,7 +52,7 @@ class TowScheduler extends ScheduledTask
             ->join(Universe::class, 'ships.sector_id', '=', 'universes.id')
             ->join(Zone::class, 'universe.zone_id', '=', 'zones.id')
             ->where('max_hull', '<>', 0)
-            ->where('ship_destroyed', false)
+            ->whereNull('destroyed_at')
             ->whereRaw('((ships.hull + ships.engines + ships.computer + ships.beams + ships.torp_launchers + ships.shields + ships.armor) /7) > max_hull')
             ->select(['ships.id', 'character_name', 'hull', 'sector_id', 'universe.zone_id', 'max_hull'])
             ->get();

@@ -33,9 +33,34 @@ use Tki\Actions\Encounters\DefenseFighters\Fight;
 use Tki\Actions\Encounters\DefenseFighters\Pay;
 use Tki\Actions\Encounters\DefenseFighters\Retreat;
 use Tki\Actions\Encounters\DefenseFighters\Sneak;
+use Tki\Models\SectorDefense;
 
 final class DefenseFighters extends EncounterFactory
 {
+
+    public function title(): string
+    {
+        return 'Defense Fighters';
+    }
+
+    public function introduction(): array
+    {
+        $totalFighters = SectorDefense::fightersCount($this->model->sector_id);
+
+        $arr = [__('check_defenses.l_chf_therearetotalfightersindest', ['total' => $totalFighters])];
+
+        if (SectorDefense::fightersHaveToll($this->model->sector_id)) {
+            $tollFee = (int) round($totalFighters * config('game.fighter_price') * 0.6);
+            $arr[] = __('check_defenses.l_chf_creditsdemanded', ['tollFee' => $tollFee]);
+        }
+
+        // l_chf_youcan l_chf_youcanretreat
+        // l_chf_inputpay
+        // l_chf_inputfight
+        // l_chf_inputcloak
+
+        return $arr;
+    }
 
     public function options(): array
     {
@@ -45,10 +70,5 @@ final class DefenseFighters extends EncounterFactory
             'pay' => Pay::class,
             'sneak' => Sneak::class,
         ];
-    }
-
-    public function introduction(): void
-    {
-        // TODO: Implement introduction() method.
     }
 }

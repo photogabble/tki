@@ -46,7 +46,7 @@ final class Pay extends EncounterOption
         if ($this->user->credits < $fightersTollFee) {
             // Player doesn't have enough credits to pay, they must return to where they came
             // TODO: Should this cost turns? If the player hasn't the turns... what happens then?
-            $this->user->ship->moveTo($this->model->movement->previous_id, $this->model->movement->mode);
+            $this->user->ship->moveTo($this->encounter->movement->previous_id, $this->encounter->movement->mode);
 
             // l_chf_notenoughcreditstoll
             // l_chf_movefailed

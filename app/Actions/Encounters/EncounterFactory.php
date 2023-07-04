@@ -41,7 +41,12 @@ abstract class EncounterFactory
 
     abstract public function options(): array;
 
-    abstract public function introduction(): void;
+    /**
+     * @return string[]
+     */
+    abstract public function introduction(): array;
+
+    abstract public function title(): string;
 
     public function has(string $action): bool
     {

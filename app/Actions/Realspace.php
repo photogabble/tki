@@ -28,6 +28,9 @@ use Tki\Translate;
 use Tki\Registry;
 use Tki\Helpers;
 
+/**
+ * @deprecated
+ */
 class Realspace
 {
     /**

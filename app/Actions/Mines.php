@@ -26,7 +26,7 @@ namespace Tki\Actions;
 
 class Mines
 {
-    public static function explode(\PDO $pdo_db, int $sector, int $num_mines): void
+    public static function explode(int $sector, int $num_mines): void
     {
         $sql = "SELECT * FROM ::prefix::sector_defense WHERE " .
                "sector_id = :sector_id AND defense_type ='M' ORDER BY QUANTITY ASC";

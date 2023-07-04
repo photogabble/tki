@@ -2,20 +2,22 @@
 
 namespace Tki\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 use Tki\Types\EncounterType;
+use Carbon\Carbon;
 
 /**
- * @property-read User $user
- * @property-read Universe $sector
- * @property-read MovementLog $movement
  * @property Carbon|null $completed_at
  * @property int $sector_id
  * @property int $user_id
  * @property EncounterType $type
+ * @property array $data
+ *
+ * @property-read User $user
+ * @property-read Universe $sector
+ * @property-read MovementLog $movement
  */
 class Encounter extends Model
 {
@@ -24,6 +26,7 @@ class Encounter extends Model
     protected $casts = [
         'type' => EncounterType::class,
         'completed_at' => 'datetime',
+        'data' => 'json',
     ];
 
     protected $fillable = [
@@ -45,5 +48,11 @@ class Encounter extends Model
     public function movement(): BelongsTo
     {
         return $this->belongsTo(MovementLog::class, 'movement_id');
+    }
+
+    public function persistData(array $data): void
+    {
+        $this->data = $data;
+        $this->save();
     }
 }

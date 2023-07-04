@@ -20,6 +20,9 @@ return new class extends Migration
             $table->unsignedBigInteger('sector_id'); // Where
             $table->unsignedBigInteger('movement_id')->nullable(); // Where
 
+            // Encounters store their state between requests in this data column.
+            $table->json('data')->default('{}');
+
             $table->timestamp('completed_at')->nullable()->default(null);
 
             $table->foreign('user_id')
