@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ships', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->timestamp('destroyed_at')->nullable()->default(null);
 
             // TODO: Rename to name
             $table->string('ship_name', 20);

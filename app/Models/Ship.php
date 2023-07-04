@@ -37,7 +37,7 @@ use Tki\Types\MovementMode;
  * @property bool $cleared_defenses
  *
  * @property string $ship_name
- * @property bool $ship_destroyed
+ * @property Carbon $destroyed_at
  * @property int $hull
  * @property int $engines
  * @property int $power
@@ -98,6 +98,13 @@ class Ship extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    public function setDestroyed(): bool
+    {
+        $this->destroyed_at = Carbon::now();
+        // TODO: Dispatch Event which can trigger a new ship being provided
+        return $this->save();
     }
 
     /**
