@@ -148,13 +148,14 @@ class User extends Authenticatable
 
     public function spendTurns(int $amount): void
     {
+        $amount = $this->turns >= $amount ? $amount : $this->turns;
         $this->decrement('turns', $amount);
         $this->increment('turns_used', $amount);
     }
 
     public function spendCredits(int $amount, string $on): void
     {
-        $this->decrement('credits', $amount);
+        $this->decrement('credits', $this->credits >= $amount ? $amount : $this->credits);
     }
 
     /**

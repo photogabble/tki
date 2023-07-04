@@ -67,7 +67,7 @@ class DegradeScheduler extends ScheduledTask
                 // Degrade the defense if quantity > 0
                 if ($sectorDefense->quantity > 0) {
                     $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
-                    $sectorDefense->decrement('quantity', $degradeAmount);
+                    $sectorDefense->decrement('quantity', $sectorDefense->quantity >= $degradeAmount ? $degradeAmount : $sectorDefense->quantity);
 
                     \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\Types\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
                 }
@@ -93,7 +93,7 @@ class DegradeScheduler extends ScheduledTask
 
             // Not enough energy to operate, degrade defenses
             $degradeAmount = max($sectorDefense->quantity * config('game.defense_degrade_rate'), 1);
-            $sectorDefense->decrement('quantity', $degradeAmount);
+            $sectorDefense->decrement('quantity', $sectorDefense->quantity >= $degradeAmount ? $degradeAmount : $sectorDefense->quantity);
 
             \Tki\Models\PlayerLog::writeLog($sectorDefense->ship_id, \Tki\Types\LogEnums::DEFENSE_DEGRADE, $sectorDefense->sector_id . '|' . $degradeAmount);
         }
