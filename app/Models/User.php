@@ -62,7 +62,8 @@ class User extends Authenticatable
         'last_login',
         'turns_used',
         'turns',
-        'credits'
+        'credits',
+        'rating'
     ];
 
     /**

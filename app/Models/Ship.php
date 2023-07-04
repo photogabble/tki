@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Ships/ShipsGateway.php from The Kabal Invasion.
+ * Models/Ship.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
- * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
+ * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
  *
  * @license GNU AGPL version 3.0 or (at your option) any later version.
  *
@@ -20,6 +20,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * ---
+ *
+ * This class is the refactored result of classes/Ships/ShipsGateway.php
+ * from The Kabal Invasion.
  */
 
 namespace Tki\Models;
@@ -27,6 +31,8 @@ namespace Tki\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Tki\Actions\Bounty;
 use Tki\Types\MovementMode;
 
 /**
@@ -102,6 +108,16 @@ class Ship extends Model
 
     public function setDestroyed(): bool
     {
+        // Cancel bounties on owner
+        (new Bounty())->cancel($this->owner_id);
+
+        // Rating is halved if they have an escape pod, or zeroed if killed.
+        $this->owner->update([
+            'rating' => $this->dev_escapepod
+                ? round($this->owner->rating / 2)
+                : 0,
+        ]);
+
         $this->destroyed_at = Carbon::now();
         // TODO: Dispatch Event which can trigger a new ship being provided
         return $this->save();
