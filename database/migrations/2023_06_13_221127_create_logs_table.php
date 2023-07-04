@@ -11,17 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TODO: Rename ship_logs ???
-        Schema::create('logs', function (Blueprint $table) {
+        Schema::create('player_logs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
-            $table->unsignedBigInteger('ship_id');
+            $table->unsignedBigInteger('user_id');
 
             $table->unsignedInteger('type')->default(0);
             $table->text('data'); // TODO JSON?
 
-            // TODO Add Foreign Key
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

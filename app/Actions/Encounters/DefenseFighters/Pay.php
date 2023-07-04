@@ -61,7 +61,7 @@ final class Pay extends EncounterOption
         $tollstring = number_format($fightersTollFee);
         Toll::distribute($sector, $fightersTollFee, $total_sec_fighters);
         PlayerLog::writeLog(
-            $this->user->ship_id,
+            $this->user->id,
             LogEnums::TOLL_PAID,
             "$tollstring|$sector"
         );

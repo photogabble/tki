@@ -48,7 +48,7 @@ class Toll
             // TODO: This should go into their iBank account as a transaction
             $defense->owner->increment('credits', $tollShare);
             PlayerLog::writeLog(
-                $defense->owner->ship_id,
+                $defense->owner_id,
                 LogEnums::TOLL_RECV,
                 "$tollShare|$sector"
             );

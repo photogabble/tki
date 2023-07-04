@@ -30,28 +30,25 @@ use Illuminate\Database\Eloquent\Model;
 class PlayerLog extends Model
 {
     /**
-     * @todo refactor usage to be Collection aware
-     * @param int $ship_id
+     * @todo refactor usage to be Collection aware and use user id rather than ship id
+     * @param int $user_id
      * @param string $startdate
      * @return Collection
      */
-    public function selectLogsInfo(int $ship_id, string $startdate): Collection
+    public function selectLogsInfo(int $user_id, string $startdate): Collection
     {
-        return PlayerLog::where('ship_id', $ship_id)
+        return PlayerLog::where('user_id', $user_id)
             ->where('created_at', 'LIKE', "$startdate%")
             ->get();
     }
 
-    public static function writeLog(int $ship_id, int $log_type, ?string $data = null): void
+    public static function writeLog(int $user_id, int $log_type, ?string $data = null): void
     {
-        if (!is_null($data)) $data = addslashes($data);
-
-        // Write log_entry to the player's log - identified by player's ship_id.
         static::query()
             ->create([
-                'ship_id' => $ship_id,
+                'user_id' => $user_id,
                 'type' => $log_type,
-                'data' => $data
+                'data' => (!is_null($data)) ? addslashes($data) : null,
             ]);
     }
 }
