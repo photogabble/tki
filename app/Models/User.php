@@ -63,7 +63,8 @@ class User extends Authenticatable
         'turns_used',
         'turns',
         'credits',
-        'rating'
+        'rating',
+        'score',
     ];
 
     /**
@@ -84,7 +85,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'last_login' => 'datetime'
+        'last_login' => 'datetime',
     ];
 
     /**
