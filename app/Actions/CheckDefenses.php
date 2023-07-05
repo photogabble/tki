@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 /**
- * classes/CheckDefenses.php from The Kabal Invasion.
+ * Actions/CheckDefenses.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
- * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
+ * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
  *
  * @license GNU AGPL version 3.0 or (at your option) any later version.
  *
@@ -22,9 +22,7 @@
  *
  */
 
-namespace Tki;
-
-// TODO: unsure if this is an action class or a helper class, or if these methods belong on a Model
+namespace Tki\Actions;
 
 use Tki\Models\SectorDefense;
 use Tki\Types\EncounterType;
@@ -32,30 +30,16 @@ use Tki\Models\MovementLog;
 use Tki\Models\PlayerLog;
 use Tki\Models\Encounter;
 use Tki\Models\User;
+use Tki\Actions;
+use Tki\Helpers;
+use Tki\Types;
 
 class CheckDefenses
 {
     /**
      * @deprecated use Fight
-     * @param PDO $pdo_db
-     * @param string $lang
-     * @param int $sector
-     * @param string $calledfrom
-     * @param int $energyscooped
-     * @param array $playerinfo
-     * @param Registry $tkireg
-     * @return void
-     * @throws \Exception
      */
-    public static function sectorFighters(
-        PDO $pdo_db,
-        string $lang,
-        int $sector,
-        string $calledfrom,
-        int $energyscooped,
-        array $playerinfo,
-        Registry $tkireg
-    ): void {
+    public static function sectorFighters(): void {
         throw new \Exception('Deprecated');
     }
 

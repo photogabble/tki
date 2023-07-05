@@ -32,9 +32,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Tki\Actions\Bounty;
+use Tki\Actions\CheckDefenses;
 use Tki\Types\MovementMode;
-use Tki\CheckDefenses;
+use Tki\Actions\Bounty;
 
 /**
  * @property bool $trade_colonists
