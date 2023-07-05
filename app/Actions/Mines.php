@@ -1,9 +1,9 @@
 <?php declare(strict_types = 1);
 /**
- * classes/Mines.php from The Kabal Invasion.
+ * Actions/Mines.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
- * @copyright 2020 The Kabal Invasion development team, Ron Harwood, and the BNT development team
+ * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
  *
  * @license GNU AGPL version 3.0 or (at your option) any later version.
  *
@@ -24,42 +24,22 @@
 
 namespace Tki\Actions;
 
+use Tki\Models\SectorDefense;
+
 class Mines
 {
     public static function explode(int $sector, int $num_mines): void
     {
-        $sql = "SELECT * FROM ::prefix::sector_defense WHERE " .
-               "sector_id = :sector_id AND defense_type ='M' ORDER BY QUANTITY ASC";
-        $stmt = $pdo_db->prepare($sql);
-        $stmt->bindParam(':sector_id', $sector, \PDO::PARAM_INT);
-        $stmt->execute();
-        $defense_present = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        if ($defense_present !== false)
-        {
-            foreach ($defense_present as $tmp_defense)
-            {
-                if ($num_mines > 0)
-                {
-                    // Put the defense information into the array "defenseinfo"
-                    if ($tmp_defense['quantity'] > $num_mines)
-                    {
-                        $sql = "UPDATE ::prefix::sector_defense SET " .
-                               "quantity = quantity - :num_mines WHERE defense_id = :defense_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':num_mines', $num_mines, \PDO::PARAM_INT);
-                        $stmt->bindParam(':defense_id', $tmp_defense['defense_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        $num_mines = 0;
-                    }
-                    else
-                    {
-                        $sql = "DELETE FROM ::prefix::sector_defense WHERE defense_id = :defense_id";
-                        $stmt = $pdo_db->prepare($sql);
-                        $stmt->bindParam(':defense_id', $tmp_defense['defense_id'], \PDO::PARAM_INT);
-                        $stmt->execute();
-                        $num_mines -= $tmp_defense['quantity'];
-                    }
-                }
+        $defenses = SectorDefense::mines($sector);
+        if ($defenses->count() === 0 || $num_mines <= 0) return;
+
+        foreach ($defenses as $defense) {
+            if ($defense->quantity >= $num_mines) {
+                $defense->update(['quantity' => min(0, $defense->quantity - $num_mines)]);
+                return;
+            } else {
+                $num_mines -= $defense->quantity;
+                $defense->delete();
             }
         }
     }

@@ -95,7 +95,7 @@ class SectorDefense extends Model
      * @return Collection<SectorDefense>
      *@todo refactor usages for new Collection return
      */
-    public function mines(int $sector_id): Collection
+    public static function mines(int $sector_id): Collection
     {
         return SectorDefense::with('owner')
             ->where('sector_id', $sector_id)
