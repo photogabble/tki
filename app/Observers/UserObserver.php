@@ -2,8 +2,6 @@
 
 namespace Tki\Observers;
 
-use Tki\Actions\Bounty;
-use Tki\Actions\Character;
 use Tki\Models\User;
 
 class UserObserver

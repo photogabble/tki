@@ -34,7 +34,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Tki\Actions\CheckDefenses;
 use Tki\Types\MovementMode;
-use Tki\Actions\Bounty;
 
 /**
  * @property bool $trade_colonists
@@ -110,7 +109,9 @@ class Ship extends Model
     public function setDestroyed(): bool
     {
         // Cancel bounties on owner
-        (new Bounty())->cancel($this->owner_id);
+        $this->owner->bounties->each(function(\Tki\Models\Bounty $bounty){
+            $bounty->cancel();
+        });
 
         // Rating is halved if they have an escape pod, or zeroed if killed.
         $this->owner->update([

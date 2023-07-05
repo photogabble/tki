@@ -41,10 +41,11 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int $turns_used
  * @property int $score
  * @property-read Ship|null $ship // If a player has no ship (escape pods are ships) then they have died in space
- * @property-read Preset|Collection $presets
+ * @property-read Collection<Preset> $presets
  * @property-read Team|null $team
- * @property-read MovementLog[]|Collection $movementLog
+ * @property-read Collection<MovementLog> $movementLog
  * @property-read Universe $sector
+ * @property-read Collection<Bounty> $bounties
  */
 class User extends Authenticatable
 {
@@ -124,6 +125,11 @@ class User extends Authenticatable
         return $this->hasMany(Encounter::class);
     }
 
+    public function bounties(): HasMany
+    {
+        return $this->hasMany(Bounty::class, 'bounty_on');
+    }
+
     /**
      * Players might have multiple Encounters which need to be dealt with one after the other,
      * for example Hostile followed by Death.
@@ -155,9 +161,20 @@ class User extends Authenticatable
         $this->increment('turns_used', $amount);
     }
 
+    /**
+     * @todo both spendCredits and depositCredits need refactoring to a new Wallet system
+     * @param int $amount
+     * @param string $on
+     * @return void
+     */
     public function spendCredits(int $amount, string $on): void
     {
         $this->decrement('credits', $this->credits >= $amount ? $amount : $this->credits);
+    }
+
+    public function depositCredits(int $amount, string $description): void
+    {
+        $this->increment('credits', $amount);
     }
 
     /**

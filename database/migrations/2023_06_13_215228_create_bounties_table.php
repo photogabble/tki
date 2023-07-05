@@ -17,11 +17,18 @@ return new class extends Migration
 
             $table->unsignedInteger('amount')->default(0);
             $table->unsignedBigInteger('bounty_on');
-            $table->unsignedBigInteger('placed_by');
+            $table->unsignedBigInteger('placed_by')->nullable();
 
             $table->index(['bounty_on', 'placed_by']);
 
-            // TODO: Add Foreign Keys
+            $table->foreign('bounty_on')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+            $table->foreign('placed_by')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
         });
     }
 

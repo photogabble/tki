@@ -76,8 +76,9 @@ elseif ($sure == 2)
     $stmt->bindParam(':owner', $playerinfo['ship_id'], \PDO::PARAM_INT);
     $stmt->execute();
 
-    $bounty = new \Tki\Actions\Bounty();
-    $bounty->cancel($pdo_db, $playerinfo['ship_id']);
+    // $player->bounties->each(function(\Tki\Models\Bounty $bounty){
+    //     $bounty->cancel();
+    // });
 
     $admin_log = new Tki\AdminLog();
     $admin_log->writeLog($pdo_db, \Tki\Types\LogEnums::ADMIN_HARAKIRI, "$playerinfo[character_name]|" . $request->server->get('REMOTE_ADDR') . "");

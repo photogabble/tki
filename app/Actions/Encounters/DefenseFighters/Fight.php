@@ -28,9 +28,7 @@
 
 namespace Tki\Actions\Encounters\DefenseFighters;
 
-use Tki\Actions\Bounty;
 use Tki\Actions\Encounters\EncounterOption;
-use Tki\Actions\Fighters;
 use Tki\Helpers\CalcLevels;
 use Tki\Models\PlayerLog;
 use Tki\Models\SectorDefense;

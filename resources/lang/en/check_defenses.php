@@ -2,7 +2,7 @@
     "l_chf_youretreatback" => "You retreat back to your previous location",
     "l_chf_notenoughcreditstoll" => "You do not have enough credits to pay the toll.",
     "l_chf_movefailed" => "Move failed.",
-    "l_chf_youpaidsometoll" => "You paid [chf_tollstring] credits for the toll.",
+    "l_chf_youpaidsometoll" => "You paid :toll credits for the toll.",
     "l_chf_thefightersdetectyou" => "The fighters detect you!",
     "l_chf_therearetotalfightersindest" => "There are :total fighters in your destination sector.",
     "l_chf_creditsdemanded" => "They demand :tollFee credits to enter this sector.",

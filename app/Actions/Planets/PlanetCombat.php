@@ -429,13 +429,19 @@ class PlanetCombat
                 $stmt->bindParam(':ship_id', $playerinfo['ship_id'], \PDO::PARAM_INT);
                 $stmt->execute();
                 \Tki\Db::logDbErrors($pdo_db, $sql, __LINE__, __FILE__);
-                Actions\Bounty::collect($pdo_db, $lang, $planetinfo['owner'], $playerinfo['ship_id']);
+                // $planet->owner->bounties->each(function(\Tki\Models\Bounty $bounty){
+                //     $bounty->collect($player);
+                // });
+                // Actions\Bounty::collect($pdo_db, $lang, $planetinfo['owner'], $playerinfo['ship_id']);
             }
             else
             {
                 $character_object = new Character();
                 $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
-                Actions\Bounty::collect($pdo_db, $lang, $planetinfo['owner'], $playerinfo['ship_id']);
+                // $planet->owner->bounties->each(function(\Tki\Models\Bounty $bounty){
+                //     $bounty->collect($player);
+                // });
+                // Actions\Bounty::collect($pdo_db, $lang, $planetinfo['owner'], $playerinfo['ship_id']);
             }
         }
         else

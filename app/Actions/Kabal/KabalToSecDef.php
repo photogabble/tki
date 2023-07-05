@@ -211,8 +211,10 @@ class KabalToSecDef
                     $langvars['l_sf_sendlog2'] = str_replace("[sector]", (string) $targetlink, $langvars['l_sf_sendlog2']);
                     Actions\SectorDefense::messageDefenseOwner($pdo_db, $targetlink, $langvars['l_sf_sendlog2']);
 
-                    $bounty = new Actions\Bounty();
-                    $bounty->cancel($pdo_db, $playerinfo['ship_id']);
+                    // Actually kill the Kabal now
+                    // $kabal->bounties->each(function(\Tki\Models\Bounty $bounty){
+                    //     $bounty->cancel();
+                    // });
                     $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
                     return;
                 }
@@ -260,8 +262,10 @@ class KabalToSecDef
                             Actions\SectorDefense::messageDefenseOwner($pdo_db, $targetlink, $langvars['l_chm_hewasdestroyedbyyourmines']);
 
                             // Actually kill the Kabal now
-                            $bounty = new Actions\Bounty();
-                            $bounty->cancel($pdo_db, $playerinfo['ship_id']);
+                            // $kabal->bounties->each(function(\Tki\Models\Bounty $bounty){
+                            //     $bounty->cancel();
+                            // });
+
                             $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
 
                             // Lets get rid of the mines now and return
