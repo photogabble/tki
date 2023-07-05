@@ -57,6 +57,15 @@ class SectorDefense extends Model
         return $this->belongsTo(Universe::class, 'sector_id');
     }
 
+    public static function inSector(int $sector, DefenseType $type): Collection
+    {
+        return SectorDefense::with('owner')
+            ->where('sector_id', $sector)
+            ->where('defense_type', $type)
+            ->orderBy('quantity', 'DESC')
+            ->get();
+    }
+
     /**
      * @param int $sector_id
      * @return Collection<SectorDefense>

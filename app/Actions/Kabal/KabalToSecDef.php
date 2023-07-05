@@ -29,6 +29,7 @@ use Tki\Actions\Character;
 use Tki\Helpers;
 use Tki\Registry;
 use Tki\Translate;
+use Tki\Types\DefenseType;
 use Tki\Types\LogEnums;
 
 class KabalToSecDef
@@ -180,7 +181,7 @@ class KabalToSecDef
 
                 // Get rid of the sector fighters that died
                 $fighterslost = $all_sector_fighters - $targetfighters;
-                Actions\Fighters::destroy($pdo_db, $targetlink, $fighterslost);
+                \Tki\Actions\SectorDefense::destroy($targetlink, $fighterslost, DefenseType::Fighters);
 
                 // Message the defense owner with what happened
                 $langvars['l_sf_sendlog'] = str_replace("[player]", "Kabal $playerinfo[character_name]", $langvars['l_sf_sendlog']);
@@ -264,14 +265,15 @@ class KabalToSecDef
                             $character_object->kill($pdo_db, $lang, $playerinfo['ship_id'], $tkireg);
 
                             // Lets get rid of the mines now and return
-                            Actions\Mines::explode($pdo_db, $targetlink, $roll);
+                            \Tki\Actions\SectorDefense::destroy($targetlink, $roll, \Tki\Types\DefenseType::Mines);
 
                             return;
                         }
                     }
                 }
 
-                Actions\Mines::explode($pdo_db, $targetlink, $roll); // Dispose of the mines now
+                // Dispose of the mines now
+                \Tki\Actions\SectorDefense::destroy($targetlink, $roll, \Tki\Types\DefenseType::Mines);
             }
             else
             {

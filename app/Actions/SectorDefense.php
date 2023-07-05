@@ -26,6 +26,7 @@ namespace Tki\Actions;
 
 use Illuminate\Support\Collection;
 use Tki\Models\PlayerLog;
+use Tki\Types\DefenseType;
 use Tki\Types\LogEnums;
 
 class SectorDefense
@@ -40,6 +41,22 @@ class SectorDefense
     {
         foreach ($defenses as $defense) {
             PlayerLog::writeLog($defense->owner_id, LogEnums::RAW, $message);
+        }
+    }
+
+    public static function destroy(int $sector, int $qty, DefenseType $type): void
+    {
+        $defenses = \Tki\Models\SectorDefense::inSector($sector, $type);
+        if ($defenses->count() === 0 || $qty <= 0) return;
+
+        foreach ($defenses as $defense) {
+            if ($defense->quantity >= $qty) {
+                $defense->update(['quantity' => min(0, $defense->quantity - $qty)]);
+                return;
+            } else {
+                $qty -= $defense->quantity;
+                $defense->delete();
+            }
         }
     }
 }

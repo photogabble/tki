@@ -24,7 +24,9 @@
 
 namespace Tki\Actions;
 
+use Exception;
 use Tki\Models\SectorDefense;
+use Tki\Types\DefenseType;
 use Tki\Types\EncounterType;
 use Tki\Models\MovementLog;
 use Tki\Models\PlayerLog;
@@ -40,7 +42,7 @@ class CheckDefenses
      * @deprecated use Fight
      */
     public static function sectorFighters(): void {
-        throw new \Exception('Deprecated');
+        throw new Exception('Deprecated');
     }
 
     /**
@@ -95,7 +97,7 @@ class CheckDefenses
      * @param MovementLog $movement
      * @param User $player
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public static function mines(MovementLog $movement, User $player): bool
     {
@@ -166,7 +168,7 @@ class CheckDefenses
 
             $ship->decrement('dev_minedeflector', $roll);
             $encounter->persistData($encounterData);
-            Actions\Mines::explode($movement->sector_id, $roll);
+            \Tki\Actions\SectorDefense::destroy($movement->sector_id, $roll, DefenseType::Mines);
 
             return true;
         }
@@ -201,7 +203,7 @@ class CheckDefenses
             }
 
             $encounter->persistData($encounterData);
-            Actions\Mines::explode($movement->sector_id, $roll);
+            \Tki\Actions\SectorDefense::destroy($movement->sector_id, $roll, DefenseType::Mines);
 
             return true;
         }
@@ -220,7 +222,7 @@ class CheckDefenses
 
             $ship->save();
             $encounter->persistData($encounterData);
-            Actions\Mines::explode($movement->sector_id, $roll);
+            \Tki\Actions\SectorDefense::destroy($movement->sector_id, $roll, DefenseType::Mines);
 
             return true;
         }
@@ -261,7 +263,7 @@ class CheckDefenses
 
         $ship->save();
         $encounter->persistData($encounterData);
-        Actions\Mines::explode($movement->sector_id, $roll);
+        \Tki\Actions\SectorDefense::destroy($movement->sector_id, $roll, DefenseType::Mines);
 
         return false;
     }

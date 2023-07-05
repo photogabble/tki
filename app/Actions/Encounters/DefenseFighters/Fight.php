@@ -34,6 +34,7 @@ use Tki\Actions\Fighters;
 use Tki\Helpers\CalcLevels;
 use Tki\Models\PlayerLog;
 use Tki\Models\SectorDefense;
+use Tki\Types\DefenseType;
 use Tki\Types\LogEnums;
 
 final class Fight extends EncounterOption
@@ -146,7 +147,7 @@ final class Fight extends EncounterOption
         }
 
         $fightersLost = $totalFighters - $targetFighters;
-        Fighters::destroy($this->encounter->sector_id, $fightersLost);
+        \Tki\Actions\SectorDefense::destroy($this->encounter->sector_id, $fightersLost, DefenseType::Fighters);
 
         \Tki\Actions\SectorDefense::messageDefenseOwner(
             SectorDefense::fighters($this->encounter->sector_id),
