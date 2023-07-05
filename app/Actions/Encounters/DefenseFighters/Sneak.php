@@ -28,6 +28,7 @@
 
 namespace Tki\Actions\Encounters\DefenseFighters;
 
+use Tki\Actions\CheckDefenses;
 use Tki\Actions\Encounters\EncounterOption;
 use Tki\Helpers\Scan;
 use Tki\Models\SectorDefense;
@@ -63,10 +64,13 @@ final class Sneak extends EncounterOption
 
         if ($roll < $success) {
             // Sector defenses detect incoming ship
+            $this->encounter->persistData([
+                'messages' => [
+                    __('check_defenses.l_chf_thefightersdetectyou'),
+                ],
+            ]);
 
-            // l_chf_thefightersdetectyou
-            // \Tki\CheckDefenses::sectorFighters($pdo_db, $lang, $sector, $calledfrom, 0, $playerinfo, $tkireg);
-            return true;
+            return CheckDefenses::fighters($this->encounter->movement, $this->user);
         }
 
         // Sector defenses don't detect incoming ship

@@ -48,22 +48,33 @@ final class Pay extends EncounterOption
             // TODO: Should this cost turns? If the player hasn't the turns... what happens then?
             $this->user->ship->moveTo($this->encounter->movement->previous_id, $this->encounter->movement->mode);
 
-            // l_chf_notenoughcreditstoll
-            // l_chf_movefailed
+            $this->encounter->persistData([
+                'messages' => [
+                    __('check_defenses.l_chf_notenoughcreditstoll'),
+                    __('check_defenses.l_chf_movefailed')
+                ],
+                'tollFee' => $fightersTollFee,
+            ]);
 
             return true; // This action is complete
         }
 
-        // l_chf_youpaidsometoll
+        $tollString = number_format($fightersTollFee);
+
+        $this->encounter->persistData([
+            'messages' => [
+                __('check_defenses.l_chf_youpaidsometoll', ['toll' => $tollString]),
+            ],
+            'tollFee' => $fightersTollFee,
+        ]);
 
         $this->user->spendCredits($fightersTollFee, 'Paid Toll Fee in sector: ' . $sector);
 
-        $tollstring = number_format($fightersTollFee);
         Toll::distribute($sector, $fightersTollFee, $total_sec_fighters);
         PlayerLog::writeLog(
             $this->user->id,
             LogEnums::TOLL_PAID,
-            "$tollstring|$sector"
+            "$tollString|$sector"
         );
 
         return true;

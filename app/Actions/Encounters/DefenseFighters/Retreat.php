@@ -34,8 +34,12 @@ final class Retreat extends EncounterOption
 {
     public function execute(): bool
     {
-        // TODO: Add an EncounterLog model and then output below lang line to it.
-        // lang: l_chf_youretreatback
+        $this->encounter->persistData([
+            'messages' => [
+                __('check_defenses.l_chf_youretreatback'),
+            ],
+        ]);
+
         $this->user->spendTurns(2);
         $this->user->ship->moveTo($this->encounter->movement->previous_id, $this->encounter->movement->mode);
         return true;
