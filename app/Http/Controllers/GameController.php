@@ -28,9 +28,11 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Tki\Actions\NavCom;
+use Tki\Http\Resources\EncounterResource;
 use Tki\Http\Resources\SectorResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
+use Tki\Types\MovementMode;
 use Tki\Types\WarpRoute;
 
 class GameController extends Controller
@@ -41,17 +43,37 @@ class GameController extends Controller
         $user = $request->user();
         $user->load(['ship', 'presets', 'ship.sector', 'ship.sector.links', 'ship.sector.zone']);
 
+        // Page Props
+        $props = [
+            'encounters' => EncounterResource::collection($user->pendingEncounters()),
+        ];
+
         // The above is passed through to the frontend via the Middleware attaching user
         // to all responses...
 
-        if ($route = $request->get('waypoints')) {
-            $route = WarpRoute::fromUrlParam($request);
+        // If player is following an autopilot route then waypoints will be set containing the
+        // route as computed by the NavCom:
+        if ($route = WarpRoute::fromUrlParam($request)) {
+//            if ($next = $route->next($user->ship->sector_id))
+//            {
+//                // TODO: Need a MovementResource for passing this plus encounters to the frontend; frontend should then display navigation
+//                //       result and encounters before allowing continuing of nav route if possible.
+//
+//                $props['movement'] = $user->ship->travelTo($next, MovementMode::Warp, $user->ship->warpTravelTurnCost(), 0);
+//                $user->fresh(['ship', 'presets', 'ship.sector', 'ship.sector.links', 'ship.sector.zone']);
+//            }
+
+            if ($route->contains($user->ship->sector_id)) {
+                $props['route'] = [
+                    'route' => $route,
+                    'remaining' => $route->remaining($user->ship->sector_id),
+                    'next' => $route->next($user->ship->sector_id),
+                    'ids' => $route->ids,
+                ];
+            }
         }
 
-        return Inertia::render('Dashboard', [
-            'navigation' => $request->get('navigation', false),
-            'route' => $route,
-        ]);
+        return Inertia::render('Dashboard', $props);
     }
 
     public function galaxyMap(Request $request): Response
