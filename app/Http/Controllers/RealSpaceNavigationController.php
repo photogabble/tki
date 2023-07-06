@@ -74,6 +74,13 @@ final class RealSpaceNavigationController extends Controller
     {
         if (!$navigation = $this->calculateRoute($request)) return new JsonResponse(['message' => 'Destination sector was not found'], 404);
 
+        // Check players encounter's stack for any pending action.
+        if (!is_null($this->user->currentEncounter)) {
+            return new JsonResponse([
+                'message' => __('move.l_move_encounter')
+            ], 400);
+        }
+
         if ($this->user->turns < $navigation['turns']) {
             // rsmove.php also reset cleared_defenses, I don't yet know why
             $this->user->update(['cleared_defenses' => ' ']);

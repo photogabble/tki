@@ -44,6 +44,14 @@ class WarpNavigationController extends Controller
         $user = $request->user();
         $sector = $request->get('sector');
 
+        // Check players encounter's stack for any pending action.
+        if (!is_null($user->currentEncounter)) {
+            return new JsonResponse([
+                'message' => __('move.l_move_encounter')
+            ], 400);
+        }
+
+
         // Check to see if the player has less than one turn available
         // and if so return 412
         if ($user->turns < 1) {
@@ -63,12 +71,10 @@ class WarpNavigationController extends Controller
             ], 404);
         }
 
-        // TODO: make warp turns dependant upon ship classification
         $turns = $user->ship->warpTravelTurnCost();
-
         $movement = $user->ship->travelTo($sector, MovementMode::Warp, $turns, 0);
-
         $destination = Universe::queryForUser($user)->find($sector);
+
         return new JsonResponse([
             'movement' => $movement,
             'sector' => new SectorResource($destination),
