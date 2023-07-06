@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('movement_id')->nullable(); // Where
 
             // Encounters store their state between requests in this data column.
-            $table->json('data')->default('{}');
+            $table->json('data');
 
             $table->timestamp('completed_at')->nullable()->default(null);
 
