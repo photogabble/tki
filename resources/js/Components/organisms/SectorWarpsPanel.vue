@@ -24,12 +24,10 @@ const hasLinks = computed(() => {
 const navigateTo = async (sector: number) => {
   const response = await api.post(route('warp.move'), {sector});
 
-  // const json = await response.json();
-
   if (response.ok) {
     router.visit(route('dashboard'), {data:{navigation: true}});
-  } else if (response.status === 402) {
-    // Fighters in sector are demanding a payment to continue
+  } else if (response.status === 300) {
+    // An encounter!
   } else if (response.status === 404) {
     // Warp link does not exist
   } else {

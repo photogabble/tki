@@ -43,9 +43,14 @@ import PlayerPresetsPanel from "@/Components/organisms/PlayerPresetsPanel.vue";
 import ShipCargoPanel from "@/Components/organisms/ShipCargoPanel.vue";
 import PlayerShipPanel from "@/Components/organisms/PlayerShipPanel.vue";
 import {DashboardPageProps} from "@/types/dashboard";
+import NavigationReportPopup from "@/Components/organisms/NavigationReportPopup.vue";
+import {ref} from "vue";
+import EncounterPopup from "@/Components/organisms/EncounterPopup.vue";
 
 const { sector, presets, ship } = useAuth();
-const { navigation, route } = usePage<DashboardPageProps>().props
+const { navigation, route, encounters } = usePage<DashboardPageProps>().props
+
+const hasNavigated = ref<boolean>(Boolean(navigation));
 
 </script>
 
@@ -79,6 +84,14 @@ const { navigation, route } = usePage<DashboardPageProps>().props
       <main-panel>
         <!-- If on planet display planet overview else display sector overview -->
         <sector-info />
+        <navigation-report-popup v-model="hasNavigated" />
+        <encounter-popup v-model="encounters" />
+
+        <div v-if="navigation">
+          Nav
+          <pre>{{ route }}</pre>
+        </div>
+
       </main-panel>
     </GameUI>
 </template>

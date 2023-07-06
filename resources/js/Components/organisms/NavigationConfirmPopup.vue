@@ -168,8 +168,8 @@ const engage = async () => {
       // All is fine redirect to dashboard for report
       router.visit(route('dashboard'), {data:{navigation: true}});
 
-    } else if (response.status === 402) {
-      // Fighters in sector are demanding a payment to continue
+    } else if (response.status === 300) {
+      // An encounter is blocking progress!
 
     } else {
       error.value = json.message;

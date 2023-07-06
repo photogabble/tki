@@ -1,6 +1,6 @@
-<?php declare(strict_types = 1);
+<script setup lang="ts">
 /**
- * Actions/Mines.php from The Kabal Invasion.
+ * NavigationReportPopup.vue from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -22,25 +22,31 @@
  *
  */
 
-namespace Tki\Actions;
+import PopUpWithHeader from "@/Components/molecules/modal/PopUpWithHeader.vue";
 
-use Tki\Models\SectorDefense;
+defineProps<{
+  modelValue: Boolean;
+}>();
 
-class Mines
-{
-    public static function explode(int $sector, int $num_mines): void
-    {
-        $defenses = SectorDefense::mines($sector);
-        if ($defenses->count() === 0 || $num_mines <= 0) return;
+const emit = defineEmits(['update:modelValue']);
 
-        foreach ($defenses as $defense) {
-            if ($defense->quantity >= $num_mines) {
-                $defense->update(['quantity' => min(0, $defense->quantity - $num_mines)]);
-                return;
-            } else {
-                $num_mines -= $defense->quantity;
-                $defense->delete();
-            }
-        }
-    }
+// Navigation Mode: Real Space or Warp
+// Autopilot Engaged: Yes or No
+// Has Event:
+// - Fighter Demanding
+
+
+const cancelNavigation = () => {
+  emit('update:modelValue', false);
 }
+</script>
+
+<template>
+  <pop-up-with-header title="Auto Pilot" :show="modelValue" @close="cancelNavigation" close-button close-button-text="Cancel Auto Pilot">
+
+    <p>
+      TODO...
+    </p>
+
+  </pop-up-with-header>
+</template>
