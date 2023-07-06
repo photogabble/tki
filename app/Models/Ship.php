@@ -220,4 +220,13 @@ class Ship extends Model
         //       ship doesn't have enough to make the movement
         //       then throw an exception.
     }
+
+    /**
+     * Added so that different ship classes can cost different amount of turns for travel.
+     * @return int
+     */
+    public function warpTravelTurnCost(): int
+    {
+        return 1;
+    }
 }

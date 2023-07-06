@@ -64,14 +64,15 @@ class WarpNavigationController extends Controller
         }
 
         // TODO: make warp turns dependant upon ship classification
+        $turns = $user->ship->warpTravelTurnCost();
 
-        $movement = $user->ship->travelTo($sector, MovementMode::Warp, 1, 0);
+        $movement = $user->ship->travelTo($sector, MovementMode::Warp, $turns, 0);
 
         $destination = Universe::queryForUser($user)->find($sector);
         return new JsonResponse([
             'movement' => $movement,
             'sector' => new SectorResource($destination),
-            'turns' => 1,
+            'turns' => $turns,
             'energy_scooped' => 0,
         ]);
     }
