@@ -187,6 +187,9 @@ class Ship extends Model
      * This function handles moving the player between sectors, it returns a movement log which
      * can contain events that have happened during travel.
      *
+     * @todo travelling should cost some energy
+     * @todo add random encounters
+     *
      * @param int $sectorId
      * @param MovementMode $mode
      * @param int $turnsUsed
@@ -213,16 +216,14 @@ class Ship extends Model
             return $movement; // Player has a Mines Encounter
         }
 
-        // TODO Add random encounters...
+        // Random Encounters...
 
         return $movement;
-        // TODO: Implement, travelling should cost some energy, if
-        //       ship doesn't have enough to make the movement
-        //       then throw an exception.
     }
 
     /**
      * Added so that different ship classes can cost different amount of turns for travel.
+     * @todo make warp travel cost differently depending upon ship class
      * @return int
      */
     public function warpTravelTurnCost(): int

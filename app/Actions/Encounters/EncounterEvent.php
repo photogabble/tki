@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * Actions/EncounterFactory.php from The Kabal Invasion.
+ * Actions/EncounterEvent.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -30,7 +30,7 @@ use Illuminate\Container\Container;
 use Exception;
 use Tki\Models\Encounter;
 
-abstract class EncounterFactory
+abstract class EncounterEvent
 {
     protected Encounter $model;
 
@@ -44,7 +44,7 @@ abstract class EncounterFactory
     /**
      * @return string[]
      */
-    abstract public function introduction(): array;
+    abstract public function messages(): array;
 
     abstract public function title(): string;
 

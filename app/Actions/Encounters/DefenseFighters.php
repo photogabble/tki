@@ -35,7 +35,7 @@ use Tki\Actions\Encounters\DefenseFighters\Retreat;
 use Tki\Actions\Encounters\DefenseFighters\Sneak;
 use Tki\Models\SectorDefense;
 
-final class DefenseFighters extends EncounterFactory
+final class DefenseFighters extends EncounterEvent
 {
 
     public function title(): string
@@ -43,7 +43,7 @@ final class DefenseFighters extends EncounterFactory
         return 'Defense Fighters';
     }
 
-    public function introduction(): array
+    public function messages(): array
     {
         $totalFighters = SectorDefense::fightersCount($this->model->sector_id);
 

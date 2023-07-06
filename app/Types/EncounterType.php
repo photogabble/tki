@@ -46,7 +46,7 @@
 
 namespace Tki\Types;
 
-use Tki\Actions\Encounters\EncounterFactory;
+use Tki\Actions\Encounters\EncounterEvent;
 use Tki\Actions\Encounters\Navigation;
 use Tki\Models\Encounter;
 
@@ -60,7 +60,7 @@ enum EncounterType : string {
     case Tow = 'T'; // You have been towed out of sector, maybe there was a fine?
     case Death = 'D'; // Oh no...
 
-    public function class(Encounter $model) : ?EncounterFactory
+    public function class(Encounter $model) : ?EncounterEvent
     {
         $class = match ($this) {
             EncounterType::Navigation => Navigation::class,

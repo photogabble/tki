@@ -46,6 +46,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Collection<MovementLog> $movementLog
  * @property-read Universe $sector
  * @property-read Collection<Bounty> $bounties
+ * @property-read Encounter|null $currentEncounter
  */
 class User extends Authenticatable
 {
@@ -115,6 +116,11 @@ class User extends Authenticatable
         return $this->hasMany(MovementLog::class);
     }
 
+    public function lastMovement(): HasOne
+    {
+        return $this->hasOne(MovementLog::class)->latestOfMany();
+    }
+
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
@@ -140,6 +146,17 @@ class User extends Authenticatable
         return $this->hasOne(Encounter::class)
             ->whereNull('completed_at')
             ->oldestOfMany();
+    }
+
+    /**
+     * @return Collection<Encounter>
+     */
+    public function pendingEncounters(): Collection
+    {
+        return $this->encounters()
+            ->whereNull('completed_at')
+            ->orderBy('id', 'ASC')
+            ->get();
     }
 
     public function hasVisitedSector(int $sectorId) : bool

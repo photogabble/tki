@@ -5,10 +5,12 @@ namespace Tki\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Tki\Actions\Encounters\EncounterEvent;
 use Tki\Types\EncounterType;
 use Carbon\Carbon;
 
 /**
+ * @property int $id
  * @property Carbon|null $completed_at
  * @property int $sector_id
  * @property int $user_id
@@ -34,6 +36,11 @@ class Encounter extends Model
         'sector_id',
         'user_id',
     ];
+
+    public function action(): ?EncounterEvent
+    {
+        return $this->type->class($this);
+    }
 
     public function user(): BelongsTo
     {
