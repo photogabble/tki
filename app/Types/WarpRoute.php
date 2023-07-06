@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * app/Types/WarpRoute.php from The Kabal Invasion.
+ * Types/WarpRoute.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -24,11 +24,11 @@
 
 namespace Tki\Types;
 
-use Illuminate\Container\Container;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Tki\Http\Resources\LinkResource;
+use Illuminate\Container\Container;
+use Illuminate\Http\Request;
 use Tki\Models\Universe;
 use Tki\Models\User;
 
@@ -85,19 +85,18 @@ class WarpRoute implements Arrayable
 
     public function remaining(int $sector): int
     {
-        $ord = array_search($sector, $this->ids);
-        if ($ord === false) return 0;
+        $key = array_search($sector, $this->ids);
+        if ($key === false) return 0;
 
-        return count($this->ids) - ($ord + 1);
+        return count($this->ids) - ($key + 1);
     }
 
-    public function next(int $sector): int
+    public function next(int $sector): ?int
     {
-        $ord = array_search($sector, $this->ids);
-        if ($ord === false) return 0;
+        $key = array_search($sector, $this->ids);
+        if ($key === false) return null;
 
-        $key = count($this->ids) - 1 - $ord;
-        return $this->ids[$key];
+        return $this->ids[$key+1] ?? null;
     }
 
     public function toArray(): array
