@@ -46,7 +46,12 @@
 
 namespace Tki\Types;
 
+use Tki\Actions\Encounters\EncounterFactory;
+use Tki\Actions\Encounters\Navigation;
+use Tki\Models\Encounter;
+
 enum EncounterType : string {
+    case Navigation = 'N';
     case TravellingTrader = 'TT'; // Offers goods for sale
     case Quest = 'Q'; // Has a quest for the player to complete for a reward
     case Hostile = 'H'; // PvE, PvP, etc. This just shows the log of the battle.
@@ -54,4 +59,16 @@ enum EncounterType : string {
     case DefenseMines = 'DM'; // Kaboom
     case Tow = 'T'; // You have been towed out of sector, maybe there was a fine?
     case Death = 'D'; // Oh no...
+
+    public function class(Encounter $model) : ?EncounterFactory
+    {
+        $class = match ($this) {
+            EncounterType::Navigation => Navigation::class,
+            default => null,
+        };
+
+        if (!$class) return null;
+
+        return new $class($model);
+    }
 }
