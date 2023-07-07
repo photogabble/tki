@@ -32,7 +32,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [GameController::class, 'index'])
         ->name('dashboard');
     Route::get('/explore', [GameController::class, 'galaxyMap'])
-        ->middleware('cache.response:galaxy-'.(request()->user()->id ?? 'unknown'))
         ->name('explore');
 
     Route::group(['prefix' => 'navigation'], function () {

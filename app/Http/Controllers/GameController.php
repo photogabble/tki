@@ -27,16 +27,29 @@ namespace Tki\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Tki\Actions\NavCom;
 use Tki\Http\Resources\EncounterResource;
 use Tki\Http\Resources\SectorResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
-use Tki\Types\MovementMode;
 use Tki\Types\WarpRoute;
 
 class GameController extends Controller
 {
+
+    public function __construct()
+    {
+        // Only CacheResponse for galaxy map as that gets invalidated on navigation.
+        $this->middleware(function(Request $request, $next) {
+            if (!$request->routeIs('explore')) return $next($request);
+            $cache = app(CacheResponse::class);
+
+            // Need to handle in this way to set user id for cache tag.
+            return $cache->handle($request, $next, 'galaxy-'.$request->user()->id);
+        });
+    }
+
     public function index(Request $request, NavCom $navCom): Response
     {
         /** @var User $user */
