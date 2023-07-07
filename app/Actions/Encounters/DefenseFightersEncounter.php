@@ -35,7 +35,7 @@ use Tki\Actions\Encounters\DefenseFighters\Retreat;
 use Tki\Actions\Encounters\DefenseFighters\Sneak;
 use Tki\Models\SectorDefense;
 
-final class DefenseFighters extends EncounterEvent
+final class DefenseFightersEncounter extends EncounterEvent
 {
 
     public function title(): string
@@ -65,10 +65,22 @@ final class DefenseFighters extends EncounterEvent
     public function options(): array
     {
         return [
-            'fight' => Fight::class,
-            'retreat' => Retreat::class,
-            'pay' => Pay::class,
-            'sneak' => Sneak::class,
+            'fight' => [
+                'class' => Fight::class,
+                'text' => 'Fight',
+            ],
+            'retreat' => [
+                'class' => Retreat::class,
+                'text' => 'Retreat',
+            ],
+            'pay' => [
+                'class' => Pay::class,
+                'text' => 'Pay Toll',
+            ],
+            'sneak' => [
+                'class' => Sneak::class,
+                'text' => 'Sneak',
+            ],
         ];
     }
 }

@@ -44,7 +44,7 @@ final class Fight extends EncounterOption
      * @todo replace with a turn based system (automatic?) giving more detail on the resulting battle
      * @return bool
      */
-    public function execute(): bool
+    public function execute(array $payload): bool
     {
         $targetFighters = SectorDefense::fightersCount($this->encounter->sector_id);
         if ($targetFighters === 0) return true;

@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Tki\Actions\CheckDefenses;
+use Tki\Types\EncounterType;
 use Tki\Types\MovementMode;
 
 /**
@@ -217,6 +218,14 @@ class Ship extends Model
         }
 
         // Random Encounters...
+
+        $encounter = new Encounter();
+        $encounter->type = EncounterType::Navigation;
+        $encounter->user_id = $this->owner_id;
+        $encounter->sector_id = $sectorId;
+        $encounter->movement_id = $movement->id;
+        $encounter->data = [];
+        $encounter->save();
 
         return $movement;
     }

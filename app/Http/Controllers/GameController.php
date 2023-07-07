@@ -43,26 +43,17 @@ class GameController extends Controller
         $user = $request->user();
         $user->load(['ship', 'presets', 'ship.sector', 'ship.sector.links', 'ship.sector.zone']);
 
+        // The above is passed through to the frontend via the Middleware attaching user
+        // to all responses...
+
         // Page Props
         $props = [
             'encounters' => EncounterResource::collection($user->pendingEncounters()),
         ];
 
-        // The above is passed through to the frontend via the Middleware attaching user
-        // to all responses...
-
         // If player is following an autopilot route then waypoints will be set containing the
         // route as computed by the NavCom:
         if ($route = WarpRoute::fromUrlParam($request)) {
-//            if ($next = $route->next($user->ship->sector_id))
-//            {
-//                // TODO: Need a MovementResource for passing this plus encounters to the frontend; frontend should then display navigation
-//                //       result and encounters before allowing continuing of nav route if possible.
-//
-//                $props['movement'] = $user->ship->travelTo($next, MovementMode::Warp, $user->ship->warpTravelTurnCost(), 0);
-//                $user->fresh(['ship', 'presets', 'ship.sector', 'ship.sector.links', 'ship.sector.zone']);
-//            }
-
             if ($route->contains($user->ship->sector_id)) {
                 $props['route'] = [
                     'route' => $route,

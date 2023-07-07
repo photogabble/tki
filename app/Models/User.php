@@ -145,7 +145,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Encounter::class)
             ->whereNull('completed_at')
-            ->oldestOfMany();
+            ->oldest();
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use Tki\Http\Controllers\EncounterController;
 use Tki\Http\Controllers\GameController;
 use Tki\Http\Controllers\HomeController;
 use Tki\Http\Controllers\NavigationPresetsController;
@@ -49,6 +50,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::patch('preset/{preset}', [NavigationPresetsController::class, 'store'])
             ->name('real-space.preset.store');
+    });
+
+    Route::group(['prefix' => 'encounter'], function() {
+        Route::get('current', [EncounterController::class, 'current'])
+            ->name('encounter.current');
+
+        Route::get('do/{action}', [EncounterController::class, 'doAction'])
+            ->name('encounter.execute');
     });
 });
 

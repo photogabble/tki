@@ -35,7 +35,7 @@ use Tki\Models\SectorDefense;
 
 final class Sneak extends EncounterOption
 {
-    public function execute(): bool
+    public function execute(array $payload): bool
     {
         $sector = $this->user->ship->sector_id;
         $fighters = SectorDefense::fighters($sector);

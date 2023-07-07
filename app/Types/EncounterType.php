@@ -47,7 +47,7 @@
 namespace Tki\Types;
 
 use Tki\Actions\Encounters\EncounterEvent;
-use Tki\Actions\Encounters\Navigation;
+use Tki\Actions\Encounters\NavigationEncounter;
 use Tki\Models\Encounter;
 
 enum EncounterType : string {
@@ -63,7 +63,7 @@ enum EncounterType : string {
     public function class(Encounter $model) : ?EncounterEvent
     {
         $class = match ($this) {
-            EncounterType::Navigation => Navigation::class,
+            EncounterType::Navigation => NavigationEncounter::class,
             default => null,
         };
 

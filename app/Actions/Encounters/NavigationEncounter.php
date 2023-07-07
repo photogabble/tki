@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * Actions/Encounters/DefenseFighters/Retreat.php from The Kabal Invasion.
+ * Actions/Encounters/Navigation.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -20,28 +20,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * ---
- *
- * This class is the refactored result of CheckDefenses::fighters
- *
  */
 
-namespace Tki\Actions\Encounters\DefenseFighters;
+namespace Tki\Actions\Encounters;
 
-use Tki\Actions\Encounters\EncounterOption;
-
-final class Retreat extends EncounterOption
+final class NavigationEncounter extends EncounterEvent
 {
-    public function execute(array $payload): bool
+    public function title(): string
     {
-        $this->encounter->persistData([
-            'messages' => [
-                __('check_defenses.l_chf_youretreatback'),
-            ],
-        ]);
+        return 'Navigation Report';
+    }
 
-        $this->user->spendTurns(2);
-        $this->user->ship->moveTo($this->encounter->movement->previous_id, $this->encounter->movement->mode);
-        return true;
+    public function messages(): array
+    {
+        return [
+            "You safely enter sector <white>{$this->model->sector_id}</white> in Titus (<green>Federation Space</green>).",
+            "Your sensors indicate that there are no planets in this sector."
+        ];
+    }
+
+    public function options(): array
+    {
+        return [
+            'complete' => [
+                'class' => Complete::class,
+                'text' => 'OK',
+            ]
+        ];
     }
 }

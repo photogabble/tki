@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * Actions/Encounters/DefenseFighters/Retreat.php from The Kabal Invasion.
+ * Actions/Encounters/Complete.php from The Kabal Invasion.
  * The Kabal Invasion is a Free & Opensource (FOSS), web-based 4X space/strategy game.
  *
  * @copyright 2023 Simon Dann, The Kabal Invasion development team, Ron Harwood, and the BNT development team
@@ -20,28 +20,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * ---
- *
- * This class is the refactored result of CheckDefenses::fighters
- *
  */
 
-namespace Tki\Actions\Encounters\DefenseFighters;
+namespace Tki\Actions\Encounters;
 
-use Tki\Actions\Encounters\EncounterOption;
+use Carbon\Carbon;
 
-final class Retreat extends EncounterOption
+final class Complete extends EncounterOption
 {
     public function execute(array $payload): bool
     {
-        $this->encounter->persistData([
-            'messages' => [
-                __('check_defenses.l_chf_youretreatback'),
-            ],
-        ]);
-
-        $this->user->spendTurns(2);
-        $this->user->ship->moveTo($this->encounter->movement->previous_id, $this->encounter->movement->mode);
-        return true;
+        $this->encounter->completed_at = Carbon::now();
+        return $this->encounter->save();
     }
 }

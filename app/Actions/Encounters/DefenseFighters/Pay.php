@@ -36,7 +36,7 @@ use Tki\Types\LogEnums;
 
 final class Pay extends EncounterOption
 {
-    public function execute(): bool
+    public function execute(array $payload): bool
     {
         $sector = $this->user->ship->sector_id;
         $total_sec_fighters = SectorDefense::fightersCount($sector);

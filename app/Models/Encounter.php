@@ -12,6 +12,7 @@ use Carbon\Carbon;
 /**
  * @property int $id
  * @property Carbon|null $completed_at
+ * @property int $movement_id
  * @property int $sector_id
  * @property int $user_id
  * @property EncounterType $type

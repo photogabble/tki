@@ -20,13 +20,21 @@ class EncounterResource extends JsonResource
     public function toArray(Request $request): array
     {
         $action = $this->resource->action();
+        $options = $action->options();
 
         return [
             'id' => $this->id,
             'type' => $this->type,
             'title' => $action->title(),
             'messages' => $action->messages(),
-            'options' => [],
+            'options' => array_reduce(array_keys($options), function($carry, $key) use ($options){
+                $option = $options[$key];
+                $carry[$key] = [
+                    ...array_filter($option, fn($key) => $key !== 'class', ARRAY_FILTER_USE_KEY),
+                    'link' => route('encounter.execute', ['action' => $key]),
+                ];
+                return $carry;
+            }, []),
         ];
     }
 }

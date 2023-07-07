@@ -47,7 +47,7 @@ abstract class EncounterOption
         $this->encounter = $model;
     }
 
-    abstract public function execute(): bool;
+    abstract public function execute(array $payload): bool;
 
     public function can(): bool
     {

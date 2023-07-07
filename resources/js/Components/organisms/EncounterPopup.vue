@@ -25,6 +25,7 @@
 import PopUpWithHeader from "@/Components/molecules/modal/PopUpWithHeader.vue";
 import type {EncounterResource} from "@/types/resources/encounter";
 import {computed} from "vue";
+import {router} from "@inertiajs/vue3";
 
 const props = defineProps<{
   modelValue: Array<EncounterResource>;
@@ -32,8 +33,15 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:modelValue']);
 
-const current = computed(() => props.modelValue[0]);
-const canExit = computed(() => current.value && Object.keys(current.value.options).length === 0)
+const current = computed(() => {
+  const current = props.modelValue[0];
+  return (current) ?
+      {
+        ...current,
+        canExit: current.options.hasOwnProperty('complete'),
+        exitAction: current.options['complete'],
+      } : undefined;
+});
 
 const parseMessage = (message:string) => {
   const replace = {
@@ -56,15 +64,18 @@ const parseMessage = (message:string) => {
 };
 
 const exit = () => {
-  if (canExit.value) {
-    props.modelValue.shift();
-    emit('update:modelValue', props.modelValue);
+  if (!current.value) return;
+
+  if (current.value.canExit) {
+    router.visit(current.value.exitAction.link, {
+      method: 'get',
+    });
   }
 };
 </script>
 
 <template>
-  <pop-up-with-header @close="exit" :title="current?.title ?? ''" :show="current" close-button-text="OK" :close-button="canExit">
-    <p v-for="message of current.messages" v-html="parseMessage(message)" />
+  <pop-up-with-header @close="exit" :title="current?.title ?? ''" :show="typeof current !== 'undefined'" :close-button-text="current?.exitAction?.text" :close-button="current?.canExit">
+    <p v-if="current" v-for="message of current.messages" v-html="parseMessage(message)" />
   </pop-up-with-header>
 </template>

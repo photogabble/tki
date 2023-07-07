@@ -66,7 +66,7 @@ abstract class EncounterEvent
             throw new Exception("Invalid Encounter action [$action]");
         }
         /** @var EncounterOption $class */
-        $class = Container::getInstance()->get($this->options()[$action]);
+        $class = Container::getInstance()->get($this->options()[$action]['class']);
         $class->setEncounter($this->model);
 
         return $class;
@@ -78,8 +78,8 @@ abstract class EncounterEvent
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function do(string $action): bool
+    public function do(string $action, array $payload = []): bool
     {
-        return $this->make($action)->execute();
+        return $this->make($action)->execute($payload);
     }
 }
