@@ -23,7 +23,6 @@ declare module 'vue' {
     interface ComponentCustomProperties {
         route: typeof ziggyRoute;
         __: typeof Lang;
-
     }
 }
 

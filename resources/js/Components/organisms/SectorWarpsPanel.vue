@@ -38,7 +38,7 @@ const navigateTo = async (sector: number) => {
 </script>
 
 <template>
-  <navigation-confirm-popup v-model="selectedSector" mode="Warps" />
+  <navigation-confirm-popup v-model="selectedSector" mode="Warp" />
   <sidebar-panel>
     <template #heading>
       <span class="text-white flex-grow">Sector Warps</span>

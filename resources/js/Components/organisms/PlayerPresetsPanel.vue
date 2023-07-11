@@ -17,7 +17,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <navigation-confirm-popup v-model="selectedSector" />
+  <navigation-confirm-popup v-model="selectedSector" mode="RealSpace" />
   <preset-editor-popup v-model="editingPreset" />
   <sidebar-panel>
     <template #heading>

@@ -44,217 +44,111 @@
  * This component contains front end elements from rsmove.php and navcomp.php.
  */
 
-import InputError from "@/Components/atoms/form/InputError.vue";
 import TextButton from "@/Components/atoms/form/TextButton.vue";
-import TextInput from "@/Components/atoms/form/TextInput.vue";
+import type {WarpRouteResource} from "@/types/resources/link";
 import type {RealSpaceMove} from "@/types/galaxy-overview";
 import PopUp from "@/Components/atoms/modal/PopUp.vue";
-import {useStack} from "@/Composables/useStack";
 import {useAuth} from "@/Composables/useAuth";
-import {useApi} from "@/Composables/useApi";
-import {router} from "@inertiajs/vue3";
-import {computed, ref, watch} from 'vue';
-import {CalculateWarpMovesResource} from "@/types/resources/link";
-import NavComWarpPath from "@/Components/molecules/NavComWarpPath.vue";
+import {ref, watch} from 'vue';
+import NavcomSectorForm from "@/Components/molecules/navigation/NavcomSectorForm.vue";
+import NavcomRealSpaceCourse from "@/Components/molecules/navigation/NavcomRealSpaceCourse.vue";
+import NavcomPlottedCourse from "@/Components/molecules/navigation/NavcomPlottedCourse.vue";
+import {useNavigationComputer} from "@/Composables/useNavigationComputer";
+import {MovementMode} from "@/types/resources/movement";
 
-type States = 'input' | 'loading' | 'error' | 'loadedRealSpace' | 'loadedWarpMoves';
-type Modes  = 'RealSpace' | 'Warps';
+type States = 'input' | 'loading' | 'error' | 'DisplayRealSpaceMove' | 'DisplayWarpMoves';
 
 defineEmits(['update:modelValue']);
 
 interface Props {
   modelValue: number;
-  mode: Modes;
+  mode: MovementMode;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   mode: 'RealSpace',
 });
 
-const {currentState, stackActions} = useStack<States>('input');
-const {currentState: currentMode, stackActions: modeActions} = useStack<Modes>(props.mode ?? 'RealSpace');
-
-const realSpaceMove = ref<RealSpaceMove>({} as RealSpaceMove);
-const warpMoves = ref<CalculateWarpMovesResource|undefined>();
-
-const inputSector = ref<number>();
-const error = ref<string>();
-
-const destSector = ref<number>();
-
+const state = ref<States>('input');
+const currentMode = ref<MovementMode>(props.mode);
+const propSector = ref<number|undefined>(props.modelValue);
+const navigation = ref<RealSpaceMove | WarpRouteResource | undefined>();
 const {sector, config} = useAuth();
-const api = useApi();
 
-const computeRsMove = async (sector: number) => {
-  stackActions.add('loading');
-  const response = await fetch(route('real-space.calculate', {sector}), {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    },
-  });
+const {loading, compute} = useNavigationComputer();
 
-  const json = await response.json();
+const setNavigation = (v: RealSpaceMove | WarpRouteResource) => {
+  navigation.value = v;
+  state.value = currentMode.value === 'RealSpace'
+    ? 'DisplayRealSpaceMove'
+    : 'DisplayWarpMoves';
 
-  if (response.ok) {
-    realSpaceMove.value = json;
-    destSector.value = sector;
-    stackActions.add('loadedRealSpace');
-  } else {
-    error.value = json.message;
-    // TODO: check this works as expected and last isn't set to 'loading'
-    if (stackActions.last() === 'input') {
-      stackActions.previous();
-    } else {
-      stackActions.add('error');
-    }
-  }
+  console.log('===setNavigation', v, state.value, currentMode.value);
 };
 
-const computeWarpMove = async (sector: number) => {
-  stackActions.add('loading');
-  const response = await fetch(route('warp.calculate', {sector}), {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-    },
-  });
-
-  let data : CalculateWarpMovesResource|undefined;
-  const contentType = response.headers.get("content-type");
-  if (contentType && contentType.indexOf("application/json") !== -1) {
-    data = await response.json();
-  } else {
-    data = undefined
-  }
-
-  if (response.ok) {
-    if (response.status === 204) {
-      warpMoves.value = undefined;
-    } else {
-      warpMoves.value = data;
-    }
-
-    stackActions.add('loadedWarpMoves');
-  } else {
-    error.value = data?.message ?? data;
-    stackActions.add('error');
-  }
-};
-
-const compute = async () => {
-  if (!inputSector.value) return;
-  if (currentMode.value === 'Warps') return computeWarpMove(inputSector.value);
-  return computeRsMove(inputSector.value);
+const setState = (s: States) => {
+  if (s === 'input') navigation.value = undefined;
+  if (s === 'DisplayRealSpaceMove') currentMode.value = 'RealSpace';
+  if (s === 'DisplayWarpMoves') currentMode.value = 'Warp';
+  state.value = s;
 }
 
-const engage = async () => {
-  // if loadedRealSpace post to real-space.move
-  // if loadedWarpMoves post to nav-com.move
-  if (currentState.value === 'loadedRealSpace') {
-    const response = await api.post(route('real-space.move'), {
-      sector: destSector.value,
-    });
-
-    const json = await response.json();
-
-    if (response.ok) {
-      // There are a few ok response types:
-      // - player has moved into the new sector without issue: redirect to /dashboard to display navigation result
-      // - player has come up against fighters demanding a payment, display payment form
-      // - player has come up against fighters and battle has begun
-      // - player has come up against mines and detonated them
-
-      // All is fine redirect to dashboard for report
-      router.visit(route('dashboard'), {data:{navigation: true}});
-
-    } else if (response.status === 300) {
-      // An encounter is blocking progress!
-
-    } else {
-      error.value = json.message;
-      stackActions.add('error');
-    }
+const doAction = async (a: string) => {
+  if (a === 'input') {
+    navigation.value = undefined;
+    return setState('input');
   }
-};
 
-const engageAutopilot = async () => {
-  router.visit(route('dashboard'), {
-    data: {navigation: true, waypoints: warpMoves?.value?.engage }
-  })
+  if (a === 'navcom' && propSector.value) {
+    currentMode.value = 'Warp';
+    const result = await compute(propSector.value, 'Warp');
+    if (result) setNavigation(result);
+  }
 }
-
-const cantEngageAutopilot = computed(() => typeof warpMoves.value === 'undefined');
 
 watch(props, async (v) => {
-  if (v.modelValue >= 1) return await computeRsMove(v.modelValue);
+  propSector.value = v.modelValue
+  currentMode.value = v.mode;
+  state.value = 'input';
 
-  // Reset component state
-  realSpaceMove.value = {} as RealSpaceMove;
-  warpMoves.value = undefined;
-  inputSector.value = undefined;
-  error.value = undefined;
-  stackActions.reset();
+  // If we have been passed a v-model value then load it and set the state
+  if (v.modelValue >= 1) {
+    const result = await compute(v.modelValue, v.mode);
+    if (result) {
+      setNavigation(result);
+      return;
+    }
+  }
+
+  navigation.value = undefined;
 });
 </script>
 
 <template>
-  <pop-up :show="modelValue !== -1" @close="$emit('update:modelValue', -1)">
+  <pop-up :show="modelValue !== -1 && !loading" @close="$emit('update:modelValue', -1)">
     <div class="p-6 w-3/5 border border-ui-orange-500 bg-ui-grey-900/90 border-x-4">
       <header class="flex items-center">
-          <h2 class="flex-grow text-lg font-medium text-ui-yellow">{{ currentMode === 'RealSpace' ?  __('rsmove.l_rs_title') : __('navcomp.l_nav_title') }}</h2>
+          <h2 class="flex-grow text-lg font-medium text-ui-yellow">{{ mode === 'RealSpace' ?  __('rsmove.l_rs_title') : __('navcomp.l_nav_title') }}</h2>
           <div class="flex space-x-4">
             <text-button @click="$emit('update:modelValue', -1)" class="underline">Close [ESC]</text-button>
           </div>
         </header>
-      <template v-if="currentMode === 'Warps' && !config.allow_navcomp">
-        <div class="mt-1 text-sm text-red-600">
-          {{ __('navcomp.l_nav_nocomp') }}
-        </div>
-      </template>
-      <form v-else-if="currentState === 'input'" @submit.prevent="compute">
-        <div class="mt-1 text-sm">
-          <label for="sector">{{
-            currentMode === 'RealSpace'
-                ? __('rsmove.l_rs_insector', {sector: sector.id, max_sectors: config.max_sectors})
-                : __('navcomp.l_nav_query')
-          }}</label>
-          <text-input id="sector" v-model="inputSector" autofocus />
-          <input-error :message="error"/>
-        </div>
-        <footer class="mt-5 text-ui-orange-500 font-medium">
-          <text-button>[ {{ __('rsmove.l_rs_submit') }} ] </text-button>
-        </footer>
-      </form>
-      <template v-else-if="currentState === 'loading'">
-        <p class="mt-1 text-sm text-white">[...] NavCom loading</p>
-      </template>
-      <template v-else-if="currentState === 'loadedRealSpace'">
-        <p class="mt-1 text-sm text-white">
-          <template v-if="!realSpaceMove.is_same_sector">
-            {{ __('rsmove.l_rs_movetime', {triptime: realSpaceMove.turns}) }}
-            {{ __('rsmove.l_rs_energy', {energy: realSpaceMove.energy_scooped}) }}
-
-            <span v-if="realSpaceMove.can_navigate">{{ __('rsmove.l_rs_engage', {turns: realSpaceMove.turns_available}) }}</span>
-            <span v-else class="text-red-600">{{ __('rsmove.l_rs_noturns')}}</span>
-          </template>
-          <span v-else>This is the same sector</span>
-        </p>
-        <footer class="mt-5 text-ui-orange-500 font-medium">
-          <text-button @click="engage" :disabled="!realSpaceMove.can_navigate">[ {{ __('rsmove.l_rs_engage_link') }} ] </text-button>
-          <text-button @click="computeWarpMove(modelValue)" :disabled="!config.allow_navcomp">[ Nav Computer ] </text-button>
-          <text-button @click="stackActions.add('input')">[ Other ]</text-button>
-        </footer>
-      </template>
-      <nav-com-warp-path v-else-if="currentState === 'loadedWarpMoves'" :route="warpMoves?.result">
-        <footer class="mt-5 text-ui-orange-500 font-medium">
-          <text-button @click="engageAutopilot" :disabled="cantEngageAutopilot">[ {{ __('navcomp.l_nav_engage')}} ] </text-button>
-          <text-button @click="stackActions.add('input')">[ Other ]</text-button>
-        </footer>
-      </nav-com-warp-path>
-      <template v-else>
-        <p class="mt-1 text-sm text-white">{{error}}</p>
-      </template>
+        <navcom-sector-form
+          v-if="state === 'input'"
+          :mode="currentMode"
+          v-model="propSector"
+          @course="setNavigation"
+        />
+        <navcom-real-space-course
+          v-else-if="state === 'DisplayRealSpaceMove'"
+          :course="navigation"
+          @action="doAction"
+        />
+        <navcom-plotted-course
+          v-else-if="state === 'DisplayWarpMoves'"
+          :plotted-course="navigation"
+          @action="doAction"
+        />
     </div>
   </pop-up>
 </template>

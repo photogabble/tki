@@ -1,7 +1,7 @@
-import type {PageProps as InertiaPageProps} from "@inertiajs/core";
-import type {PageProps as GlobalPageProps} from "./index";
 import {SectorResourceWithPlayerMeta} from "@/types/resources/sector";
+import type {PageProps as InertiaPageProps} from "@inertiajs/core";
 import {PaginatedResource} from "@/types/laravel/pagination";
+import type {PageProps as GlobalPageProps} from "./index";
 
 export interface RealSpaceMove {
     sector: SectorResourceWithPlayerMeta;
