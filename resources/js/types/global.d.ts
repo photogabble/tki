@@ -1,13 +1,14 @@
 import {PageProps as InertiaPageProps} from '@inertiajs/core';
-import {AxiosInstance} from 'axios';
 import ziggyRoute, {Config as ZiggyConfig} from 'ziggy-js';
 import {PageProps as AppPageProps} from './';
+import {AxiosInstance} from 'axios';
 
 declare global {
     interface Window {
         axios: AxiosInstance;
     }
 
+    type Lang = (string: string, config?: any) => string;
     type TranslationDictionary = Record<string, Record<string, string> | string>;
 
     var route: typeof ziggyRoute;
@@ -15,13 +16,14 @@ declare global {
 
     var Translations: TranslationDictionary;
 
-    // Need to add the below to stop PHPStorm crawling to a halt at every usage
-    const __ = (string: string, config?: any) => string;
+    const __: Lang;
 }
 
 declare module 'vue' {
     interface ComponentCustomProperties {
         route: typeof ziggyRoute;
+        __: typeof Lang;
+
     }
 }
 
