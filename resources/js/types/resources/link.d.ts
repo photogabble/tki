@@ -7,8 +7,14 @@ export interface LinkResource {
 }
 
 export interface WarpRouteResource {
-    start: LinkResource;
-    waypoints: Array<LinkResource>;
+    route: {
+        start: LinkResource;
+        waypoints: Array<LinkResource>;
+    };
+    remaining: number;
+    next: number;
+    sectors: Array<number>;
+    id: string;
 }
 
 export interface CalculateWarpMovesResource {

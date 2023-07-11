@@ -35,8 +35,11 @@ use Tki\Models\User;
 class WarpRoute implements Arrayable
 {
 
-    public array $ids;
+    /** @var int[]  */
+    public array $sectors;
+
     public LinkResource $start;
+
     /** @var LinkResource[] */
     public array $waypoints;
 
@@ -47,10 +50,10 @@ class WarpRoute implements Arrayable
      */
     public function __construct(User $user, int $start, array $waypoints)
     {
-        $this->ids = [$start, ...$waypoints];
+        $this->sectors = [$start, ...$waypoints];
 
         $sectors = Universe::queryForUser($user)
-            ->whereIn('id', $this->ids)
+            ->whereIn('id', $this->sectors)
             ->get();
 
         $this->start = new LinkResource($sectors->where('id', $start)->first());
@@ -61,7 +64,7 @@ class WarpRoute implements Arrayable
 
     public function toUrlParam(Request $request): string
     {
-        $key = sha1(implode(',', $this->ids));
+        $key = sha1(implode(',', $this->sectors));
 
         $cache = Cache::tags(['user-' . $request->user()->id, 'navcom']);
 
@@ -80,23 +83,23 @@ class WarpRoute implements Arrayable
 
     public function contains(int $sector): bool
     {
-        return in_array($sector, $this->ids);
+        return in_array($sector, $this->sectors);
     }
 
     public function remaining(int $sector): int
     {
-        $key = array_search($sector, $this->ids);
+        $key = array_search($sector, $this->sectors);
         if ($key === false) return 0;
 
-        return count($this->ids) - ($key + 1);
+        return count($this->sectors) - ($key + 1);
     }
 
     public function next(int $sector): ?int
     {
-        $key = array_search($sector, $this->ids);
+        $key = array_search($sector, $this->sectors);
         if ($key === false) return null;
 
-        return $this->ids[$key+1] ?? null;
+        return $this->sectors[$key+1] ?? null;
     }
 
     public function toArray(): array
