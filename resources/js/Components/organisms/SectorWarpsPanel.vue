@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import NavigationConfirmPopup from "@/Components/organisms/NavigationConfirmPopup.vue";
+import {useNavigationComputer} from "@/Composables/useNavigationComputer";
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import SectorNavButton from "@/Components/atoms/SectorNavButton.vue";
 import TextButton from "@/Components/atoms/form/TextButton.vue";
 import {SectorResource} from "@/types/resources/sector";
 import {useApi} from "@/Composables/useApi";
-import {computed, ref} from "vue";
 import {router} from "@inertiajs/vue3";
+import {computed, ref} from "vue";
 
 const selectedSector = ref(-1);
 
@@ -21,18 +22,11 @@ const hasLinks = computed(() => {
   return props.sector.links.length > 0;
 });
 
-const navigateTo = async (sector: number) => {
-  const response = await api.post(route('warp.move'), {sector});
+const {warpTo} = useNavigationComputer();
 
-  if (response.ok) {
-    router.visit(route('dashboard'), {data:{navigation: true}});
-  } else if (response.status === 300) {
-    // An encounter!
-  } else if (response.status === 404) {
-    // Warp link does not exist
-  } else {
-    // Mystery error
-  }
+const navigateTo = async (sector: number) => {
+  const movement = await warpTo(sector);
+  if (movement) router.visit(route('dashboard'));
 }
 
 </script>
