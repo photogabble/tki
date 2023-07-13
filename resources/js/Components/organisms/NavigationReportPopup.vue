@@ -22,19 +22,16 @@
  *
  */
 
+import NavcomPlottedCourse from "@/Components/molecules/navigation/NavcomPlottedCourse.vue";
 import PopUpWithHeader from "@/Components/molecules/modal/PopUpWithHeader.vue";
+import {WarpRouteResource} from "@/types/resources/link";
 
 defineProps<{
+  route: WarpRouteResource;
   modelValue: Boolean;
 }>();
 
 const emit = defineEmits(['update:modelValue']);
-
-// Navigation Mode: Real Space or Warp
-// Autopilot Engaged: Yes or No
-// Has Event:
-// - Fighter Demanding
-
 
 const cancelNavigation = () => {
   emit('update:modelValue', false);
@@ -42,11 +39,7 @@ const cancelNavigation = () => {
 </script>
 
 <template>
-  <pop-up-with-header title="Auto Pilot" :show="modelValue" @close="cancelNavigation" close-button close-button-text="Cancel Auto Pilot">
-
-    <p>
-      TODO...
-    </p>
-
+  <pop-up-with-header title="Auto Pilot" :show="modelValue" @close="cancelNavigation" close-button close-button-text="Exit Auto Pilot">
+    <navcom-plotted-course :plottedCourse="route" in-flight />
   </pop-up-with-header>
 </template>

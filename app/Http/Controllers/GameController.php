@@ -31,6 +31,7 @@ use Spatie\ResponseCache\Middlewares\CacheResponse;
 use Tki\Actions\NavCom;
 use Tki\Http\Resources\EncounterResource;
 use Tki\Http\Resources\SectorResource;
+use Tki\Http\Resources\WarpRouteResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
 use Tki\Types\WarpRoute;
@@ -68,12 +69,7 @@ class GameController extends Controller
         // route as computed by the NavCom:
         if ($route = WarpRoute::fromUrlParam($request)) {
             if ($route->contains($user->ship->sector_id)) {
-                $props['route'] = [
-                    'route' => $route,
-                    'remaining' => $route->remaining($user->ship->sector_id),
-                    'next' => $route->next($user->ship->sector_id),
-                    'ids' => $route->ids,
-                ];
+                $props['route'] = new WarpRouteResource($route, $user);
             }
         }
 

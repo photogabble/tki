@@ -36,21 +36,19 @@ import {Head, usePage} from '@inertiajs/vue3';
 import GameUI from "@/Layouts/GameUI.vue";
 import SidebarPanel from "@/Components/atoms/layout/SidebarPanel.vue";
 import MainPanel from "@/Components/atoms/layout/MainPanel.vue";
-import SectorInfo from "@/Components/organisms/SectorInfo.vue";
+import ShipDashboard from "@/Components/organisms/dashboards/ShipDashboard.vue";
 import {useAuth} from "@/Composables/useAuth";
 import SectorWarpsPanel from "@/Components/organisms/SectorWarpsPanel.vue";
 import PlayerPresetsPanel from "@/Components/organisms/PlayerPresetsPanel.vue";
 import ShipCargoPanel from "@/Components/organisms/ShipCargoPanel.vue";
 import PlayerShipPanel from "@/Components/organisms/PlayerShipPanel.vue";
 import {DashboardPageProps} from "@/types/dashboard";
-import NavigationReportPopup from "@/Components/organisms/NavigationReportPopup.vue";
-import {ref} from "vue";
 import EncounterPopup from "@/Components/organisms/EncounterPopup.vue";
+import {ref} from "vue";
 
 const { sector, presets, ship } = useAuth();
 const { navigation, route, encounters } = usePage<DashboardPageProps>().props
-
-const hasNavigated = ref<boolean>(Boolean(navigation));
+const hasNavigated = ref<boolean>(typeof route !== 'undefined');
 
 </script>
 
@@ -83,15 +81,8 @@ const hasNavigated = ref<boolean>(Boolean(navigation));
 
       <main-panel>
         <!-- If on planet display planet overview else display sector overview -->
-        <sector-info />
-        <navigation-report-popup v-model="hasNavigated" />
+        <ship-dashboard />
         <encounter-popup v-model="encounters" />
-
-        <div v-if="navigation">
-          Nav
-          <pre>{{ route }}</pre>
-        </div>
-
       </main-panel>
     </GameUI>
 </template>

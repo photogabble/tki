@@ -12,5 +12,6 @@ export interface WarpRouteResource {
     remaining: number;
     next: number;
     sectors: Array<number>;
+    inProgress: boolean;
     id: string;
 }

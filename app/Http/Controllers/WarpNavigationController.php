@@ -28,6 +28,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tki\Actions\NavCom;
 use Tki\Http\Resources\SectorResource;
+use Tki\Http\Resources\WarpRouteResource;
 use Tki\Models\Universe;
 use Tki\Models\User;
 use Tki\Types\MovementMode;
@@ -51,10 +52,8 @@ class WarpNavigationController extends Controller
             ], 400);
         }
 
-
-        // Check to see if the player has less than one turn available
-        // and if so return 412
-        if ($user->turns < 1) {
+        // Check to see if the player has fewer turns available than needed and if so return 412
+        if ($user->turns < $user->ship->warpTravelTurnCost()) {
             return new JsonResponse([
                 'message' => __('move.l_move_turn')
             ], 412);
@@ -83,7 +82,7 @@ class WarpNavigationController extends Controller
         ]);
     }
 
-    public function calculateWarpMoves(Request $request, NavCom $navCom): JsonResponse
+    public function calculateWarpMoves(Request $request, NavCom $navCom): JsonResponse|WarpRouteResource
     {
         /** @var User $user */
         $user = $request->user();
@@ -96,9 +95,6 @@ class WarpNavigationController extends Controller
 
         if (is_null($result)) return new JsonResponse(null, 204);
 
-        return new JsonResponse([
-            'result' => $result->toArray(),
-            'engage' => $result->toUrlParam($request),
-        ], 200);
+        return new WarpRouteResource($result, $user);
     }
 }

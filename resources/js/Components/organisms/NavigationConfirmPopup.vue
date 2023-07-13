@@ -44,17 +44,17 @@
  * This component contains front end elements from rsmove.php and navcomp.php.
  */
 
+import NavcomRealSpaceCourse from "@/Components/molecules/navigation/NavcomRealSpaceCourse.vue";
+import NavcomPlottedCourse from "@/Components/molecules/navigation/NavcomPlottedCourse.vue";
+import NavcomSectorForm from "@/Components/molecules/navigation/NavcomSectorForm.vue";
+import {useNavigationComputer} from "@/Composables/useNavigationComputer";
 import TextButton from "@/Components/atoms/form/TextButton.vue";
 import type {WarpRouteResource} from "@/types/resources/link";
+import type {MovementMode} from "@/types/resources/movement";
 import type {RealSpaceMove} from "@/types/galaxy-overview";
 import PopUp from "@/Components/atoms/modal/PopUp.vue";
 import {useAuth} from "@/Composables/useAuth";
 import {ref, watch} from 'vue';
-import NavcomSectorForm from "@/Components/molecules/navigation/NavcomSectorForm.vue";
-import NavcomRealSpaceCourse from "@/Components/molecules/navigation/NavcomRealSpaceCourse.vue";
-import NavcomPlottedCourse from "@/Components/molecules/navigation/NavcomPlottedCourse.vue";
-import {useNavigationComputer} from "@/Composables/useNavigationComputer";
-import {MovementMode} from "@/types/resources/movement";
 
 type States = 'input' | 'loading' | 'error' | 'DisplayRealSpaceMove' | 'DisplayWarpMoves';
 
