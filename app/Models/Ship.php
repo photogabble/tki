@@ -42,6 +42,7 @@ use Tki\Types\MovementMode;
  * @property bool $trade_torps
  * @property bool $trade_energy
  * @property bool $cleared_defenses
+ * @property int|null $planet_id
  *
  * @property string $ship_name
  * @property Carbon $destroyed_at
@@ -105,6 +106,34 @@ class Ship extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    /**
+     * Refactored from CalcLevels::avgTech
+     * @return float
+     */
+    public function avgTechLevel(): float {
+       $values = array_map(function(string $key){
+           return $this->{$key};
+       }, ['hull', 'engines', 'computer', 'armor', 'shields', 'beams', 'torp_launchers']);
+
+       return array_sum($values) / count($values);
+    }
+
+    /**
+     * Returns the ships integer level based upon its avg tech level.
+     * Refactored from main.php.
+     * @return int
+     */
+    public function level(): int {
+        $avg = $this->avgTechLevel();
+
+        if ($avg < 8) return 0;
+        if ($avg < 12) return 1;
+        if ($avg < 16) return 2;
+        if ($avg < 20) return 3;
+
+        return 4;
     }
 
     public function setDestroyed(): bool

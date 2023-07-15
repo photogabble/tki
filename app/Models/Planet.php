@@ -24,6 +24,7 @@
 
 namespace Tki\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Collection;
@@ -72,6 +73,43 @@ class Planet extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ?? __('common.l_unnamed') ,
+        );
+    }
+
+    /**
+     * Refactored from CalcLevels::avgTech
+     * @todo update so that a planet's tech level is independent from the players current ship
+     * @return float
+     */
+    public function avgTechLevel(): float {
+        if (!$this->owner) return 0;
+        if (!$this->owner->ship) return 0;
+
+        return $this->owner->ship->avgTechLevel();
+    }
+
+    /**
+     * Returns the planet's integer level based upon its avg tech level.
+     * Refactored from main.php.
+     * @return int
+     */
+    public function level(): int {
+        if (!$this->owner) return 0;
+
+        $planetAvg = $this->avgTechLevel();
+
+        if ($planetAvg < 8) return 0;
+        if ($planetAvg < 12) return 1;
+        if ($planetAvg < 16) return 2;
+        if ($planetAvg < 20) return 3;
+
+        return 4;
     }
 
     public function setDefeated(int $planettorps): void
