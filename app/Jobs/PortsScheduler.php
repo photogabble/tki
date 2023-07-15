@@ -24,7 +24,7 @@
 
 namespace Tki\Jobs;
 
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Illuminate\Support\Facades\Log;
 
 class PortsScheduler extends ScheduledTask
@@ -44,7 +44,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Ore in Commodities Ports
         Log::info(__('scheduler.l_sched_ports_addore'));
-        Universe::query()
+        System::query()
             ->where('port_type', 'ore')
             ->where('port_ore', '<', config('game.ore_limit'))
             ->increment(
@@ -55,7 +55,7 @@ class PortsScheduler extends ScheduledTask
         // Regenerate Ore in all Ore ports
         // Note: Ore ports regen twice
         Log::info(__('scheduler.l_sched_ports_addore_ore'));
-        Universe::query()
+        System::query()
             ->where('port_type', '!=', 'special')
             ->where('port_type', '!=', 'none')
             ->where('port_ore', '<', config('game.ore_limit'))
@@ -70,7 +70,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Organics in all commodities ports
         Log::info(__('scheduler.l_sched_ports_addorg'));
-        Universe::query()
+        System::query()
             ->where('port_type', 'organics')
             ->where('port_organics', '<', config('game.organics_limit'))
             ->increment(
@@ -80,7 +80,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Organics in all organics ports
         Log::info(__('scheduler.l_sched_ports_addorg_org'));
-        Universe::query()
+        System::query()
             ->where('port_type', '!=', 'special')
             ->where('port_type', '!=', 'none')
             ->where('port_organics', '<', config('game.organics_limit'))
@@ -95,7 +95,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Goods in all commodities ports
         Log::info(__('scheduler.l_sched_ports_addgoods'));
-        Universe::query()
+        System::query()
             ->where('port_type', 'goods')
             ->where('port_goods', '<', config('game.goods_limit'))
             ->increment(
@@ -105,7 +105,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Goods in all goods ports
         Log::info(__('scheduler.l_sched_ports_addgoods_goods'));
-        Universe::query()
+        System::query()
             ->where('port_type', '!=', 'special')
             ->where('port_type', '!=', 'none')
             ->where('port_goods', '<', config('game.goods_limit'))
@@ -120,7 +120,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Energy in all commodities ports
         Log::info(__('scheduler.l_sched_ports_addenergy'));
-        Universe::query()
+        System::query()
             ->where('port_type', 'energy')
             ->where('port_energy', '<', config('game.energy_limit'))
             ->increment(
@@ -130,7 +130,7 @@ class PortsScheduler extends ScheduledTask
 
         // Regenerate Energy in all Energy ports
         Log::info(__('scheduler.l_sched_ports_addenergy_energy'));
-        Universe::query()
+        System::query()
             ->where('port_type', '!=', 'special')
             ->where('port_type', '!=', 'none')
             ->where('port_energy', '<', config('game.energy_limit'))
@@ -142,22 +142,22 @@ class PortsScheduler extends ScheduledTask
         // Now check to see if any ports are over max, if so correct them.
 
         Log::info(__('scheduler.l_sched_ports_energy_cap'));
-        Universe::query()
+        System::query()
             ->where('port_energy', '>', config('game.energy_limit'))
             ->update(['port_energy' => config('game.energy_limit')]);
 
         Log::info(__('scheduler.l_sched_ports_goods_cap'));
-        Universe::query()
+        System::query()
             ->where('port_goods', '>', config('game.goods_limit'))
             ->update(['port_energy' => config('game.goods_limit')]);
 
         Log::info(__('scheduler.l_sched_ports_organics_cap'));
-        Universe::query()
+        System::query()
             ->where('port_organics', '>', config('game.organics_limit'))
             ->update(['port_energy' => config('game.organics_limit')]);
 
         Log::info(__('scheduler.l_sched_ports_ore_cap'));
-        Universe::query()
+        System::query()
             ->where('port_ore', '>', config('game.ore_limit'))
             ->update(['port_energy' => config('game.ore_limit')]);
     }

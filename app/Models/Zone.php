@@ -33,7 +33,7 @@ use Tki\Types\ZoneInfo;
 use Tki\Types\ZonePermission;
 
 /**
- * @property-read Universe[]|Collection $sectors
+ * @property-read System[]|Collection $sectors
  * @property-read User|Team $owner
  * @property bool $is_team_zone
  * @property int $owner_id
@@ -68,7 +68,7 @@ class Zone extends Model
 
     public function sectors(): HasMany
     {
-        return $this->hasMany(Universe::class);
+        return $this->hasMany(System::class);
     }
 
     public function owner(): BelongsTo

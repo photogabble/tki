@@ -19,7 +19,7 @@ use Carbon\Carbon;
  * @property array $data
  *
  * @property-read User $user
- * @property-read Universe $sector
+ * @property-read System $sector
  * @property-read MovementLog $movement
  */
 class Encounter extends Model
@@ -50,7 +50,7 @@ class Encounter extends Model
 
     public function sector(): BelongsTo
     {
-        return $this->belongsTo(Universe::class, 'sector_id');
+        return $this->belongsTo(System::class, 'sector_id');
     }
 
     public function movement(): BelongsTo

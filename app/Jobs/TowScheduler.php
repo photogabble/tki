@@ -27,7 +27,7 @@ namespace Tki\Jobs;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Tki\Models\Ship;
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\Zone;
 
 class TowScheduler extends ScheduledTask
@@ -49,7 +49,7 @@ class TowScheduler extends ScheduledTask
 
         /** @var Ship[]|Collection $ships */
         $ships = Ship::query()
-            ->join(Universe::class, 'ships.sector_id', '=', 'universes.id')
+            ->join(System::class, 'ships.sector_id', '=', 'systems.id')
             ->join(Zone::class, 'universe.zone_id', '=', 'zones.id')
             ->where('max_hull', '<>', 0)
             ->whereNull('destroyed_at')

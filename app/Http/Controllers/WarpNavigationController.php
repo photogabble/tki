@@ -29,7 +29,7 @@ use Illuminate\Http\Request;
 use Tki\Actions\NavCom;
 use Tki\Http\Resources\SectorResource;
 use Tki\Http\Resources\WarpRouteResource;
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\User;
 use Tki\Types\MovementMode;
 
@@ -38,7 +38,7 @@ class WarpNavigationController extends Controller
     public function makeWarpMove(Request $request): JsonResponse
     {
         $this->validate($request, [
-            'sector' => ['required', 'exists:universes,id'],
+            'sector' => ['required', 'exists:systems,id'],
         ]);
 
         /** @var User $user */
@@ -72,7 +72,7 @@ class WarpNavigationController extends Controller
 
         $turns = $user->ship->warpTravelTurnCost();
         $movement = $user->ship->travelTo($sector, MovementMode::Warp, $turns, 0);
-        $destination = Universe::queryForUser($user)->find($sector);
+        $destination = System::queryForUser($user)->find($sector);
 
         return new JsonResponse([
             'movement' => $movement,
@@ -88,7 +88,7 @@ class WarpNavigationController extends Controller
         $user = $request->user();
 
         $this->validate($request, [
-            'sector' => ['required', 'numeric', 'between:0,' . config('game.max_sectors'), 'exists:universes,id'],
+            'sector' => ['required', 'numeric', 'between:0,' . config('game.max_sectors'), 'exists:systems,id'],
         ]);
 
         $result = $navCom->calculate($user, $user->ship, (int)$request->get('sector'));

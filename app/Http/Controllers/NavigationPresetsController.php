@@ -38,7 +38,7 @@ class NavigationPresetsController extends Controller {
     public function store(Preset $preset, Request $request): JsonResponse|RedirectResponse
     {
         $this->validate($request, [
-            'sector' =>  ['required', 'numeric', 'between:0,'.config('game.max_sectors'), 'exists:universes,id'],
+            'sector' =>  ['required', 'numeric', 'between:0,'.config('game.max_sectors'), 'exists:systems,id'],
         ]);
 
         $preset->update([

@@ -32,7 +32,7 @@ return new class extends Migration
 
             $table->foreign('sector_id')
                 ->references('id')
-                ->on('universes')
+                ->on('systems')
                 ->onDelete('cascade');
 
             $table->foreign('movement_id')

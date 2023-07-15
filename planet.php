@@ -74,7 +74,7 @@ if ($planet_id <= 0)
 }
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Models\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\System($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 // Get planetinfo from database

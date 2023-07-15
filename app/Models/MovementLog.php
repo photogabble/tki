@@ -36,7 +36,7 @@ use Tki\Types\MovementMode;
  * @property Carbon $created_at
  * @property int $sector_id
  * @property string $mode
- * @property-read Universe $sector
+ * @property-read System $sector
  * @property-read MovementLog $previous
  * @property-read Encounter|null $encounter
  */
@@ -57,7 +57,7 @@ class MovementLog extends Model
 
     public function sector(): BelongsTo
     {
-        return $this->belongsTo(Universe::class, 'sector_id');
+        return $this->belongsTo(System::class, 'sector_id');
     }
 
     public function previous(): BelongsTo

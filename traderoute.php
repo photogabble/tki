@@ -361,7 +361,7 @@ else
         if ($traderoutes[$i]['source_type'] == 'P')
         {
             // Get sectorinfo from database
-            $sectors_gateway = new \Tki\Models\Universe($pdo_db);
+            $sectors_gateway = new \Tki\Models\System($pdo_db);
             $port1 = $sectors_gateway->selectSectorInfo($traderoutes[$i]['source_id']);
             echo "&nbsp;" . Tki\Ports::getType($pdo_db, $lang, $port1['port_type']) . "</font></td>";
         }
@@ -402,7 +402,7 @@ else
         if ($traderoutes[$i]['dest_type'] == 'P')
         {
             // Get sectorinfo from database
-            $sectors_gateway = new \Tki\Models\Universe($pdo_db);
+            $sectors_gateway = new \Tki\Models\System($pdo_db);
             $port2 = $sectors_gateway->selectSectorInfo($traderoutes[$i]['dest_id']);
             echo "&nbsp;" . Tki\Ports::getType($pdo_db, $lang, $port2['port_type']) . "</font></td>";
         }

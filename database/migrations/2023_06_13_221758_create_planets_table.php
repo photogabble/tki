@@ -1,6 +1,6 @@
 <?php
 
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -44,7 +44,7 @@ return new class extends Migration
 
             $table->foreign('sector_id')
                 ->references('id')
-                ->on((new Universe)->getTable())
+                ->on((new System)->getTable())
                 ->onDelete('cascade');
 
             // TODO: Add foreign keys for teams and owner once used

@@ -44,7 +44,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read Collection<Preset> $presets
  * @property-read Team|null $team
  * @property-read Collection<MovementLog> $movementLog
- * @property-read Universe $sector
+ * @property-read System $sector
  * @property-read Collection<Bounty> $bounties
  * @property-read Encounter|null $currentEncounter
  */
@@ -103,7 +103,7 @@ class User extends Authenticatable
 
     public function sector(): HasOneThrough
     {
-        return $this->hasOneThrough(Universe::class, Ship::class, 'id', 'id', 'ship_id' , 'sector_id');
+        return $this->hasOneThrough(System::class, Ship::class, 'id', 'id', 'ship_id' , 'sector_id');
     }
 
     public function presets(): HasMany

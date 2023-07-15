@@ -62,7 +62,7 @@ class Planet extends Model
 
     public function sector(): BelongsTo
     {
-        return $this->belongsTo(Universe::class, 'sector_id');
+        return $this->belongsTo(System::class, 'sector_id');
     }
 
     public function team(): BelongsTo

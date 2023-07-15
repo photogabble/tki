@@ -28,14 +28,14 @@ use Tki\Http\Resources\SectorResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tki\Types\MovementMode;
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\User;
 
 final class RealSpaceNavigationController extends Controller
 {
     private User $user;
 
-    private Universe|null $destination;
+    private System|null $destination;
 
     /**
      * GET: /navigation/real-space
@@ -111,10 +111,10 @@ final class RealSpaceNavigationController extends Controller
         $this->user = $request->user();
 
         $this->validate($request, [
-            'sector' => ['required', 'exists:universes,id'],
+            'sector' => ['required', 'exists:systems,id'],
         ]);
 
-        $this->destination = Universe::queryForUser($this->user)
+        $this->destination = System::queryForUser($this->user)
             ->find($request->get('sector', 0));
 
         if (!$this->destination) return null;

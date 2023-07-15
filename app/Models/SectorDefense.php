@@ -34,7 +34,7 @@ use Tki\Types\DefenseType;
  * @property int $quantity
  * @property int $owner_id
  * @property-read User $owner
- * @property-read Universe $sector
+ * @property-read System $sector
  */
 class SectorDefense extends Model
 {
@@ -54,7 +54,7 @@ class SectorDefense extends Model
     // TODO: Rename to System?
     public function sector(): BelongsTo
     {
-        return $this->belongsTo(Universe::class, 'sector_id');
+        return $this->belongsTo(System::class, 'sector_id');
     }
 
     public static function inSector(int $sector, DefenseType $type): Collection

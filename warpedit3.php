@@ -115,7 +115,7 @@ if ($zoneinfo['allow_warpedit'] == 'N' && $bothway)
 }
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Models\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\System($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($target_sector);
 
 if (empty($sectorinfo))

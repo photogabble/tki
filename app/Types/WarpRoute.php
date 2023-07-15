@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Cache;
 use Tki\Http\Resources\LinkResource;
 use Illuminate\Container\Container;
 use Illuminate\Http\Request;
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\User;
 
 class WarpRoute implements Arrayable
@@ -52,7 +52,7 @@ class WarpRoute implements Arrayable
     {
         $this->sectors = [$start, ...$waypoints];
 
-        $sectors = Universe::queryForUser($user)
+        $sectors = System::queryForUser($user)
             ->whereIn('id', $this->sectors)
             ->get();
 

@@ -3,10 +3,10 @@
 namespace Tki\Http\Resources;
 
 use Illuminate\Http\Request;
-use Tki\Models\Universe;
+use Tki\Models\System;
 
 /**
- * @mixin Universe
+ * @mixin System
  */
 class SectorScanResource extends SectorResource
 {

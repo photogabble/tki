@@ -4,16 +4,16 @@ namespace Tki\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Tki\Models\Universe;
+use Tki\Models\System;
 
 /**
- * @mixin Universe
+ * @mixin System
  *
  * On the galaxy map thousands of sectors are being json_encoded for passing to the
  * frontend; this was adding up to 400ms to the page load. To help alleviate that
  * the resource can either be the Universe model _or_ if its never been visited
  * then resource will be sector id:
- * @property-read Universe|int $resource
+ * @property-read System|int $resource
  *
  * Virtual Attributes only loaded occasionally making this Resource
  * SectorResourceWithPlayerMeta on the frontend:

@@ -5,11 +5,11 @@ namespace Tki\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Tki\Models\Link;
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\User;
 
 /**
- * @mixin Link|Universe
+ * @mixin Link|System
  */
 class LinkResource extends JsonResource
 {
@@ -31,7 +31,7 @@ class LinkResource extends JsonResource
             ];
         }
 
-        if ($this->resource instanceof Universe) {
+        if ($this->resource instanceof System) {
             return [
                 'to_sector_id' => $this->id,
                 'hasVisited' => $this->has_visited,

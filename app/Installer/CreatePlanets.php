@@ -4,7 +4,7 @@ namespace Tki\Installer;
 
 // 70.php
 use Tki\Models\Planet;
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Collection;
@@ -20,12 +20,12 @@ class CreatePlanets extends Step implements InstallStep
         $this->timer->start();
 
         // Get the sectors belonging to zones that allows planets
-        /** @var Universe[]|Collection<Universe> $sectors */
-        $sectors = Universe::query()
+        /** @var System[]|Collection<System> $sectors */
+        $sectors = System::query()
             ->inRandomOrder()
             ->join('zones', 'zone_id', '=', 'zones.id')
             ->where('zones.allow_planet', true)
-            ->select('universes.*')
+            ->select('systems.*')
             ->get();
 
 
@@ -42,7 +42,7 @@ class CreatePlanets extends Step implements InstallStep
         DB::beginTransaction();
 
         while ($added < $config->unownedPlanets) {
-            /** @var Universe $sector */
+            /** @var System $sector */
             if (!$sector = $sectors->pop()) break; // Run out of sectors... this shouldn't happen but this break stops the infinite loop
             $adding = random_int(1, config('game.max_planets_sector'));
 

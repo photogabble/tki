@@ -3,7 +3,7 @@
 namespace Tki\Installer;
 
 // First half of 60.php
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
 
@@ -18,7 +18,7 @@ class CreateSystems extends Step implements InstallStep{
 
         // Create Sol
         $this->timer->start();
-        $system = new Universe();
+        $system = new System();
         $system->name = 'Sol';
         $system->port_type = 'special';
         $system->beacon = 'Sol: Hub of the Universe';
@@ -28,7 +28,7 @@ class CreateSystems extends Step implements InstallStep{
 
         // Create Alpha Centauri
         $this->timer->start();
-        $system = new Universe();
+        $system = new System();
         $system->name = 'Alpha Centauri';
         $system->port_type = 'energy';
         $system->beacon = 'Alpha Centauri: Gateway to the Galaxy';
@@ -56,7 +56,7 @@ class CreateSystems extends Step implements InstallStep{
 
             for ($j = $start; $j <= $finish; $j++)
             {
-                $sector = new Universe();
+                $sector = new System();
                 $sector->distance = random_int(1, config('game.universe_size'));
                 $sector->angle1 = random_int(0, 180);
                 $sector->angle2 = random_int(0, 90);

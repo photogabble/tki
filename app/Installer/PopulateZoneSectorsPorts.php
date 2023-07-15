@@ -3,7 +3,7 @@
 namespace Tki\Installer;
 
 // Second half of 60.php
-use Tki\Models\Universe;
+use Tki\Models\System;
 use Tki\Models\Zone;
 use Illuminate\Console\OutputStyle;
 
@@ -26,7 +26,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
         $this->timer->start();
 
         // Assign Fed Sectors, this will also include Sol and Alpha Centauri
-        Universe::query()
+        System::query()
             ->where('id', '<=', $config->federationSectors)
             ->update([
                 'zone_id' => 2
@@ -35,7 +35,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
         $this->logger->info(__('create_universe.l_cu_setup_fed_sectors', ['elapsed' => $this->timer->sample()]));
 
         // Insert special ports
-        Universe::query()
+        System::query()
             ->inRandomOrder()
             ->where('port_type', 'none')
             ->where('zone_id', 1) // Only swap out unexplored space
@@ -48,7 +48,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
         $this->logger->info(__('create_universe.l_cu_setup_special_ports', ['elapsed' => $this->timer->sample()]));
 
         // Insert Ore Ports
-        Universe::query()
+        System::query()
             ->inRandomOrder()
             ->where('port_type', 'none')
             ->where('zone_id', 1) // Only swap out unexplored space
@@ -64,7 +64,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
         $this->logger->info(__('create_universe.l_cu_setup_ore_ports', ['elapsed' => $this->timer->sample()]));
 
         // Insert organics ports
-        Universe::query()
+        System::query()
             ->inRandomOrder()
             ->where('port_type', 'none')
             ->where('zone_id', 1) // Only swap out unexplored space
@@ -81,7 +81,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
 
 
         // Insert goods ports
-        Universe::query()
+        System::query()
             ->inRandomOrder()
             ->where('port_type', 'none')
             ->where('zone_id', 1) // Only swap out unexplored space
@@ -97,7 +97,7 @@ class PopulateZoneSectorsPorts extends Step implements InstallStep{
         $this->logger->info(__('create_universe.l_cu_setup_goods_ports', ['elapsed' => $this->timer->sample()]));
 
         // Insert energy ports
-        Universe::query()
+        System::query()
             ->inRandomOrder()
             ->where('port_type', 'none')
             ->where('zone_id', 1) // Only swap out unexplored space

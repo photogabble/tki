@@ -133,7 +133,7 @@ if ($sector == "*")
         $num_ships = $row2['count'];
 
         // Pull sector info from database
-        $sectors_gateway = new \Tki\Models\Universe($pdo_db);
+        $sectors_gateway = new \Tki\Models\System($pdo_db);
         $sectorinfo = $sectors_gateway->selectSectorInfo($row['link_dest']);
 
         // Get port type and discover the presence of a planet in scanned sector
@@ -230,7 +230,7 @@ else
     $links = array();
 
     // Get sectorinfo from database
-    $sectors_gateway = new \Tki\Models\Universe($pdo_db);
+    $sectors_gateway = new \Tki\Models\System($pdo_db);
     $sectorinfo = $sectors_gateway->selectSectorInfo((int) $sector);
 
     // Get sectors which can be reached through scanned sector

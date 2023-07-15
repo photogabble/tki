@@ -91,7 +91,7 @@ if ($playerinfo['ship_goods'] < 0)
 }
 
 // Get sectorinfo from database
-$sectors_gateway = new \Tki\Models\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\System($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 if ($sectorinfo['port_ore'] < 0)

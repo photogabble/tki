@@ -52,7 +52,7 @@ use DB;
  * @property bool $has_visited
  * @property bool $is_current_sector
  */
-class Universe extends Model
+class System extends Model
 {
     use HasFactory;
 
@@ -103,10 +103,10 @@ class Universe extends Model
      * This functionality was refactored from rsmove.php, which was also
      * similar or the same as classes/Realspace.php.
      * @param Ship $ship
-     * @param Universe $destination
+     * @param System $destination
      * @return array
      */
-    public function calculateRealSpaceMove(Ship $ship, Universe $destination): array
+    public function calculateRealSpaceMove(Ship $ship, System $destination): array
     {
         if ($destination->id === $ship->sector_id) {
             return [
@@ -149,11 +149,11 @@ class Universe extends Model
      */
     public static function queryForUser(User $user): Builder
     {
-        return Universe::query()
+        return System::query()
             ->select([
-                'universes.*',
-                DB::raw("(SELECT COUNT(id) FROM movement_logs WHERE `movement_logs`.`sector_id` = `universes`.`id` AND `movement_logs`.`user_id` = $user->id) > 0 as has_visited"),
-                DB::raw("(SELECT COUNT(id) FROM ships WHERE `ships`.`sector_id` = `universes`.`id` AND `ships`.`id` = $user->ship_id) > 0 as is_current_sector"),
+                'systems.*',
+                DB::raw("(SELECT COUNT(id) FROM movement_logs WHERE `movement_logs`.`sector_id` = `systems`.`id` AND `movement_logs`.`user_id` = $user->id) > 0 as has_visited"),
+                DB::raw("(SELECT COUNT(id) FROM ships WHERE `ships`.`sector_id` = `systems`.`id` AND `ships`.`id` = $user->ship_id) > 0 as is_current_sector"),
             ]);
     }
 

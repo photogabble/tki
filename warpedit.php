@@ -40,7 +40,7 @@ echo "<h1>" . $title . "</h1>\n";
 
 $players_gateway = new \Tki\Models\User($pdo_db);
 $playerinfo = $players_gateway->selectPlayerInfo($_SESSION['username']);
-$sectors_gateway = new \Tki\Models\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\System($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 if ($playerinfo['turns'] < 1)

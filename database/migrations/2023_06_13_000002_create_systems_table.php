@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TODO: Rename to Sectors
-        Schema::create('universes', function (Blueprint $table) {
+        Schema::create('systems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
 
@@ -20,6 +19,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('zone_id')->nullable()->default(null);
 
+            // TODO: Move ports to being waypoint with a port trait
             $table->string('port_type', 8)->default('none');
             $table->integer('port_organics')->default(0);
             $table->integer('port_ore')->default(0);
@@ -47,6 +47,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('universes');
+        Schema::dropIfExists('systems');
     }
 };

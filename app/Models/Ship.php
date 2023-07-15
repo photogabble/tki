@@ -81,7 +81,7 @@ use Tki\Types\MovementMode;
  * @property int $dev_minedeflector
  *
  * @property int $owner_id
- * @property-read Universe $sector
+ * @property-read System $sector
  * @property-read User|null $owner
  */
 class Ship extends Model
@@ -100,7 +100,7 @@ class Ship extends Model
 
     public function sector(): BelongsTo
     {
-        return $this->belongsTo(Universe::class, 'sector_id');
+        return $this->belongsTo(System::class, 'sector_id');
     }
 
     public function owner(): BelongsTo

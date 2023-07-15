@@ -61,7 +61,7 @@ if ($playerinfo['cleared_defenses'] > ' ')
 }
 
 // Pull sector info from database
-$sectors_gateway = new \Tki\Models\Universe($pdo_db);
+$sectors_gateway = new \Tki\Models\System($pdo_db);
 $sectorinfo = $sectors_gateway->selectSectorInfo($playerinfo['sector']);
 
 if ($playerinfo['on_planet'] == "Y")
