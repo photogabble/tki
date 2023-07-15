@@ -46,9 +46,12 @@ const autopilotStatus = computed(() => {
     <navigation-report-popup v-model="navcomVisible" v-if="encounters.length === 0" :route="route" />
     <zone-info-popup v-model="displayingZoneInfo" :zone="user.ship.sector.zone" />
 
-    <div class="w-full h-8 flex justify-end items-center pr-2 space-x-2">
-      <text-button v-if="route && route.remaining > 0" @click="navcomVisible = true" class="text-green-600">[ {{autopilotStatus}} ]</text-button>
-      <span>Sector {{ user.ship.sector_id }}</span>&nbsp;in&nbsp;<button class="text-yellow-500 underline" @click="displayingZoneInfo=true">{{ user.ship.sector.zone.name }}</button>
+    <div class="w-full h-8 flex items-center px-2">
+      <span v-if="typeof sector?.beacon !== 'undefined'">{{ sector.beacon }}</span>
+      <div class="flex flex-grow justify-end space-x-2">
+        <text-button v-if="route && route.remaining > 0" @click="navcomVisible = true" class="text-green-600">[ {{autopilotStatus}} ]</text-button>
+        <span>Sector {{ user.ship.sector_id }}</span>&nbsp;in&nbsp;<button class="text-yellow-500 underline" @click="displayingZoneInfo=true">{{ user.ship.sector.zone.name }}</button>
+      </div>
     </div>
 
     <pre>{{ route }}</pre>
