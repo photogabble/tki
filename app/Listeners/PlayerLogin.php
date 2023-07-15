@@ -3,6 +3,7 @@
 namespace Tki\Listeners;
 
 use Carbon\Carbon;
+use Tki\Actions\Score;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -17,6 +18,8 @@ class PlayerLogin
         $event->user->update([
             'last_login' => Carbon::now(),
         ]);
+
+        Score::updateScore($event->user);
 
         // TODO: Copy functionality from login2.php
     }
