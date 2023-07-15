@@ -75,19 +75,19 @@ class Score
         $calc_planet_defense    = "SUM(planets.fighters) * " . config('game.fighter_price') . "+ IF(planets.base='Y', " . config('game.base_credits') . "+ SUM(planets.torps) * " . config('game.torpedo_price') . ", 0)";
         $calc_planet_credits    = "SUM(planets.credits)";
 
-        $planet = DB::table('planets')
-            ->selectRaw("SELECT IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_cols + $calc_planet_defense + $calc_planet_credits, 0) AS score")
+        $planet = new \Tki\Types\Structs\Score(DB::table('planets')
+            ->selectRaw("IF(COUNT(*)>0, $calc_planet_goods + $calc_planet_cols + $calc_planet_defense + $calc_planet_credits, 0) AS score")
             ->where('owner_id', $user->id)
             ->groupBy('id')
-            ->first();
+            ->first());
 
-        $ship = DB::table('ships')
-            ->selectRaw("SELECT IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + ships.credits, 0) AS score")
+        $ship = new \Tki\Types\Structs\Score(DB::table('ships')
+            ->selectRaw("IF(COUNT(*)>0, $calc_levels + $calc_equip + $calc_dev + $user->credits, 0) AS score")
             ->join('planets', 'planets.owner_id', '=', 'ships.owner_id')
-            ->where('owner_id', $user->id)
+            ->where('ships.owner_id', $user->id)
             ->whereNull('destroyed_at')
             ->groupBy('ships.id')
-            ->first();
+            ->first());
 
         $score = $ship->score + $planet->score + (new BankAccount)->selectIbankScore($user->id);
         if ($score < 0) $score = 0;
