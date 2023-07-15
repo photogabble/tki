@@ -127,6 +127,30 @@ class Ship extends Model
     }
 
     /**
+     * Is this ship in space or docked at port, landed on planet, etc.
+     * @return bool
+     */
+    public function inSpace(): bool
+    {
+        return is_null($this->planet_id);
+    }
+
+    public function onPlanet(): bool
+    {
+        return !is_null($this->planet_id) && $this->on_planet === true;
+    }
+
+    public function inOrbit(): bool
+    {
+        return !is_null($this->planet_id) && $this->on_planet === false;
+    }
+
+    public function isDocked(): bool
+    {
+        return false;
+    }
+
+    /**
      * @todo refactor usages to be Model aware
      * @todo then remove $ship_id
      * @param int $ship_id
